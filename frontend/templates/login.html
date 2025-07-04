@@ -9,6 +9,12 @@
   <body
     class="min-h-screen bg-gradient-to-tr from-purple-600 via-indigo-500 to-blue-600 flex items-center justify-center px-4"
   >
+    <style>
+      ::selection {
+        background-color: #ff006fa4; /* фиолетовый фон, можно свой цвет */
+        color: white; /* цвет текста при выделении */
+      }
+    </style>
     <div
       class="max-w-md w-full bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-2xl text-white"
     >
@@ -17,13 +23,14 @@
         Login to continue using Scheduloo
       </p>
 
-      <form action="#" class="space-y-6">
+      <form method="post" action="/login" class="space-y-6">
         <div>
           <label for="email" class="block text-sm font-medium mb-1"
             >Email</label
           >
           <input
             id="email"
+            name="email"
             type="email"
             placeholder="you@example.com"
             required
@@ -37,6 +44,7 @@
           >
           <input
             id="password"
+            name="password"
             type="password"
             placeholder="••••••••"
             required
