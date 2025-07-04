@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Scheduloo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-tr from-purple-600 via-indigo-500 to-blue-600 flex items-center justify-center px-4"
+  >
+    <div
+      class="max-w-md w-full bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-2xl text-white"
+    >
+      <h2 class="text-3xl font-bold text-center mb-6">Welcome Back</h2>
+      <p class="text-center text-white/70 mb-8 text-sm">
+        Login to continue using Scheduloo
+      </p>
+
+      <form action="#" class="space-y-6">
+        <div>
+          <label for="email" class="block text-sm font-medium mb-1"
+            >Email</label
+          >
+          <input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 transition"
+          />
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium mb-1"
+            >Password</label
+          >
+          <input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            required
+            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 transition"
+          />
+        </div>
+
+        <div class="flex justify-between items-center text-sm">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" class="accent-white/70" />
+            Remember me
+          </label>
+          <a href="#" class="hover:underline text-white/70">Forgot password?</a>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-3 bg-white text-indigo-700 font-semibold rounded-lg hover:scale-105 transition transform"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <p class="text-center text-sm text-white/60 mt-6">
+        Don’t have an account?
+        <a
+          href="/signup"
+          class="underline font-medium text-white hover:text-white/90"
+          >Sign up</a
+        >
+      </p>
+    </div>
+  </body>
+</html>
