@@ -25,5 +25,5 @@ async def login(request: Request):
 
 
 @app.get("/signup", response_class=HTMLResponse)
-async def login(request: Request):
+async def signup(request: Request):
     return templates.TemplateResponse('signup.html', context={'request': request})
