@@ -17,3 +17,13 @@ app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_DIR,
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("landing.html", {"request": request})
+
+
+@app.get("/login", response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse('login.html', context={'request': request})
+
+
+@app.get("/signup", response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse('signup.html', context={'request': request})
