@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.api import login, signup, landing
+from app.api import login, signup, landing, dashboard
 
 app = FastAPI()
 
@@ -18,3 +18,4 @@ app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_DIR,
 app.include_router(login.router)
 app.include_router(signup.router)
 app.include_router(landing.router)
+app.include_router(dashboard.router)
