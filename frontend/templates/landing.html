@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scheduloo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-tr from-purple-600 via-indigo-500 to-blue-600 flex items-center justify-center px-6"
+  >
+    <style>
+      ::selection {
+        background-color: #ff006fa4; /* фиолетовый фон, можно свой цвет */
+        color: white; /* цвет текста при выделении */
+      }
+    </style>
+    <div
+      class="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-xl max-w-4xl w-full p-10 text-white"
+    >
+      <header class="flex items-center justify-between mb-10">
+        <h1 class="text-3xl font-bold">Scheduloo</h1>
+        <nav class="space-x-6 text-sm font-medium">
+          <a href="#" class="hover:underline">Features</a>
+          <a href="#" class="hover:underline">Pricing</a>
+          <a href="/login" class="hover:underline">Login</a>
+        </nav>
+      </header>
+
+      <section class="text-center">
+        <h2 class="text-5xl font-extrabold mb-4 leading-tight">
+          Scheduloo - kepp your task connected
+        </h2>
+        <p class="text-white/80 text-lg mb-8">
+          Transform your workflow with a beautifully crafted platform using AI
+          and automation.
+        </p>
+        <a
+          href="/login"
+          class="inline-block px-8 py-4 bg-white text-indigo-700 font-semibold rounded-xl shadow-lg hover:scale-105 transition transform duration-200"
+        >
+          Get Started for Free
+        </a>
+      </section>
+
+      <section class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          class="p-6 rounded-xl bg-white/10 border border-white/10 backdrop-blur-lg text-left"
+        >
+          <h3 class="text-xl font-semibold mb-2">🚀 Fast Setup</h3>
+          <p class="text-white/80 text-sm">
+            Launch your project in minutes with our plug-and-play tools.
+          </p>
+        </div>
+        <div
+          class="p-6 rounded-xl bg-white/10 border border-white/10 backdrop-blur-lg text-left"
+        >
+          <h3 class="text-xl font-semibold mb-2">🔒 Secure by Default</h3>
+          <p class="text-white/80 text-sm">
+            End-to-end encryption and compliance out of the box.
+          </p>
+        </div>
+        <div
+          class="p-6 rounded-xl bg-white/10 border border-white/10 backdrop-blur-lg text-left"
+        >
+          <h3 class="text-xl font-semibold mb-2">📊 Analytics Ready</h3>
+          <p class="text-white/80 text-sm">
+            Understand your users and optimize your funnel easily.
+          </p>
+        </div>
+      </section>
+
+      <footer class="mt-16 text-center text-sm text-white/60">
+        &copy; 2025 Scheduloo Inc. All rights reserved.
+      </footer>
+    </div>
+  </body>
+</html>
