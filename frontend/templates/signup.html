@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up | Scheduloo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center px-4"
+  >
+    <style>
+      ::selection {
+        background-color: #ff006fa4; /* фиолетовый фон, можно свой цвет */
+        color: white; /* цвет текста при выделении */
+      }
+    </style>
+    <div
+      class="max-w-md w-full bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-2xl text-white"
+    >
+      <h2 class="text-3xl font-bold text-center mb-6">Create an Account</h2>
+      <p class="text-center text-white/70 mb-8 text-sm">
+        Start using Scheduloo today
+      </p>
+
+      <form action="/signup" class="space-y-6" method="post">
+        <div>
+          <label for="name" class="block text-sm font-medium mb-1"
+            >Full Name</label
+          >
+          <input
+            id="name"
+            name="name"
+            type="text"
+            placeholder="John Doe"
+            required
+            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 transition"
+          />
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium mb-1"
+            >Email</label
+          >
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 transition"
+          />
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium mb-1"
+            >Password</label
+          >
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            required
+            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 transition"
+          />
+        </div>
+
+        <div>
+          <label for="confirm_password" class="block text-sm font-medium mb-1"
+            >Confirm Password</label
+          >
+          <input
+            id="confirm_password"
+            name="confirm_password"
+            type="password"
+            placeholder="••••••••"
+            required
+            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 transition"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-3 bg-white text-indigo-700 font-semibold rounded-lg hover:scale-105 transition transform"
+        >
+          Create Account
+        </button>
+      </form>
+
+      <p class="text-center text-sm text-white/60 mt-6">
+        Already have an account?
+        <a
+          href="/login"
+          class="underline font-medium text-white hover:text-white/90"
+          >Log in</a
+        >
+      </p>
+      {% if error %}
+      <div
+        class="text-red-400 bg-white/20 border border-red-300/20 rounded-md p-3 text-sm mb-4"
+      >
+        {{ error }}
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
