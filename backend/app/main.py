@@ -1,4 +1,5 @@
 from app.api import login, signup, landing, dashboard
+from app import version
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
@@ -17,3 +18,4 @@ app.include_router(login.router)
 app.include_router(signup.router)
 app.include_router(landing.router)
 app.include_router(dashboard.router)
+app.include_router(version.router)
