@@ -1,4 +1,4 @@
-from db.base_class import Base
+from backend.app.db.base_class import Base
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from datetime import datetime
 
@@ -11,4 +11,5 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    admin = Column(Boolean, default=False)
+    is_superuser = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
