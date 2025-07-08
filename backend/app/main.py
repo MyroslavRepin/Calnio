@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from backend.app.api import login, signup, landing, dashboard, users
 from backend.app import version
 
+
 app = FastAPI()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
