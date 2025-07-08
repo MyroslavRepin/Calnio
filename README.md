@@ -16,8 +16,11 @@ The goal is to provide a reliable and easy-to-use tool for automatic syncing bet
 
 ## Running the Project
 
-To start the backend server, enter the `backend/` directory and run:
+To start the backend server type this command:
 
 ```bash
-uvicorn app.main:app --reload
+chmod +x START_SERVER.sh
+./START_SERVER.sh
 ```
+
+**Make sure you are in Schedulo/**
