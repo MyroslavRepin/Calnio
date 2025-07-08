@@ -1,0 +1,54 @@
+{
+  "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v10/terminal-keeper.json",
+  "theme": "tribe",
+  "active": "default",
+  "activateOnStartup": true,
+  "keepExistingTerminals": false,
+  "sessions": {
+    "default": [
+      {
+        "name": "Server",
+        "autoExecuteCommands": true,
+        "icon": "server",
+        "color": "terminal.ansiGreen",
+        "commands": [
+          "echo server terminal"
+        ]
+      },
+      {
+        "name": "Git",
+        "autoExecuteCommands": true,
+        "icon": "git-branch",
+        "color": "terminal.ansiBlue",
+        "commands": [
+          "echo Git готов к работе"
+        ]
+      },
+      {
+        "name": "SQL",
+        "autoExecuteCommands": true,
+        "icon": "database",
+        "color": "terminal.ansiMagenta",
+        "commands": [
+          "echo SQL terminal"
+        ]
+      },
+      {
+        "name": "Python",
+        "autoExecuteCommands": true,
+        "icon": "python",
+        "color": "terminal.ansiRed",
+        "commands": [
+          "source .venv/bin/activate"
+        ]
+      },
+      {
+        "name": "Ordinary",
+        "autoExecuteCommands": false,
+        "icon": "tools",
+        "color": "terminal.ansiYellow",
+        "commands": []
+      }
+    ]
+  }
+}
