@@ -22,8 +22,8 @@ def main():
         get_users(SessionLocal())
     elif command == 'create_user':
         try:
-            user = UserCreate(username="testuser",
-                              email="test@example.com", password="password123")
+            user = UserCreate(username="testadmin",
+                              email="test@example.com", password="password123", is_superuser=True)
             create_user(db=SessionLocal(), user=user)
             print("✅ User created successfully.")
         finally:
