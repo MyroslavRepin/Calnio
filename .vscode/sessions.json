@@ -12,7 +12,7 @@
         "icon": "server",
         "color": "terminal.ansiGreen",
         "commands": [
-          "echo server terminal"
+          "echo ./START_SERVER.sh"
         ]
       },
       {
@@ -20,9 +20,7 @@
         "autoExecuteCommands": true,
         "icon": "git-branch",
         "color": "terminal.ansiBlue",
-        "commands": [
-          "echo Git готов к работе"
-        ]
+        "commands": []
       },
       {
         "name": "SQL",
@@ -30,7 +28,7 @@
         "icon": "database",
         "color": "terminal.ansiMagenta",
         "commands": [
-          "echo SQL terminal"
+          "psql -d scheduloo"
         ]
       },
       {
