@@ -14,13 +14,42 @@ The goal is to provide a reliable and easy-to-use tool for automatic syncing bet
 
 ---
 
-## Running the Project
+# Running the Project
 
-To start the backend server type this command:
+To start the backend server, use the following command depending on your operating system.
+
+**Make sure you're in the root of the `Scheduloo/` project directory before running these commands.**
+
+---
+
+## macOS & Linux
+
+**Start normally:**
 
 ```bash
 chmod +x START_SERVER.sh
 ./START_SERVER.sh
 ```
 
-**Make sure you are in Schedulo/**
+**Reset .venv and reinstall dependencies:**
+
+```bash
+./START_SERVER.sh --reset
+```
+
+## Windows
+
+**Start normally:**
+
+Double-click **START_SERVER.bat**
+or run from Command Prompt:
+
+```cmd
+START_SERVER.bat
+```
+
+**Reset .venv and reinstall dependencies:**
+
+```cmd
+START_SERVER.bat --reset
+```
