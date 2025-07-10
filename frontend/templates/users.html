@@ -25,12 +25,17 @@
             <th
               class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
             >
-              Имя пользователя
+              Username
             </th>
             <th
               class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
             >
-              Дата создания
+              Date of creation
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+            >
+              Admin
             </th>
           </tr>
         </thead>
@@ -48,6 +53,9 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ user.created_at }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{user.is_superuser}}
             </td>
           </tr>
           {% endfor %}

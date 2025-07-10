@@ -1,10 +1,9 @@
-from backend.app.db.session import engine
-from backend.app.db.base_class import Base
-import backend.app.models.users
+from backend.app.db.database import engine, Base
 
 
 def create_tables():
     print("Создаю таблицы...")
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(bind=engine)
     print("Таблицы созданы")
 
