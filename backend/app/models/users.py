@@ -11,10 +11,10 @@ class User(Base):
     email: Mapped[str] = mapped_column(unique=True)
     username: Mapped[str] = mapped_column(unique=True)
     hashed_password: Mapped[Optional[str]] = mapped_column(nullable=True)
-    # id = Column(Integer, primary_key=True)
-    # email = Column(String, unique=True, index=True)
-    # username = Column(String, unique=True, index=True)
-    # hashed_password = Column(String, nullable=False)
-    # created_at = Column(DateTime, default=datetime.utcnow)
-    # is_superuser = Column(Boolean, default=False)
-    # is_active = Column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
