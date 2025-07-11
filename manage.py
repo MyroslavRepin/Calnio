@@ -1,10 +1,16 @@
 import sys
-from backend.app.db.check_db import check_connection
-from backend.app.db.create_tables import create_tables
-from backend.app.db.database import SessionLocal
-from backend.app.schemas.users import UserCreate
+from dotenv import load_dotenv
+from pathlib import Path
+from backend.app.core.config import settings
 from backend.app.crud.users import create_user, get_users, print_users_table
-from backend.app.db.database import DATABASE_URL
+from backend.app.schemas.users import UserCreate
+from backend.app.db.database import SessionLocal
+from backend.app.db.create_tables import create_tables
+from backend.app.db.check_db import check_connection
+
+dotenv_path = Path(__file__).parent / ".env"
+load_dotenv(dotenv_path)
+DATABASE_URL = settings.database_url
 
 
 def main():

@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
-
-DATABASE_URL = "postgresql://myroslav:myroslav0818@localhost:5432/scheduloo"
+from backend.app.core.config import settings
 
 
 def check_connection(url):
+    print(f"URL used: {settings.database_url}")
     try:
         engine = create_engine(url)
         # Пытаемся получить соединение
@@ -16,4 +16,4 @@ def check_connection(url):
 
 
 if __name__ == "__main__":
-    check_connection(DATABASE_URL)
+    check_connection(settings.database_url)
