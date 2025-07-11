@@ -1,3 +1,7 @@
+from backend.app.models import users as user_models
+from backend.app.db.database import SessionLocal, engine
+from sqladmin import ModelView
+from sqladmin import Admin
 import os
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
@@ -22,3 +26,11 @@ app.include_router(landing.router)
 app.include_router(dashboard.router)
 app.include_router(version.router)
 app.include_router(users.router)
+
+
+class UserAdmin(ModelView, model=user_models.User):
+    column_list = [user_models.User.id, user_models.User.email]
+
+
+admin = Admin(app, engine)
+admin.add_view(UserAdmin)
