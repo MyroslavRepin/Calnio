@@ -1,7 +1,24 @@
-import os
+from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
+from pathlib import Path
 
-# DATABASE_URL_LOCAL = "postgresql://myroslav:myroslav0818@localhost:5432/scheduloo"
-# DATABASE_URL_PROD = "postgresql://postgres:TxgyMUDOCAXOedvxSoXVsteYpvuprNnt@turntable.proxy.rlwy.net:25860/railway"  # RAILWAY
+# Загрузить .env перед тем, как объявлять настройки
+dotenv_path = Path(__file__).resolve().parents[3] / ".env"
+load_dotenv(dotenv_path)
 
 
-DATABASE_URL = "postgresql://myroslav:myroslav0818@localhost:5432/scheduloo"
+class Settings(BaseSettings):
+    env: str = "local"
+    database_url_local: str
+    database_url_prod: str
+
+    @property
+    def database_url(self) -> str:
+        return self.database_url_prod if self.env == "prod" else self.database_url_local
+
+    class Config:
+        env_file = str(Path(__file__).resolve(
+        ).parents[3] / ".env")  # путь к .env
+
+
+settings = Settings()

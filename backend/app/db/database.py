@@ -2,9 +2,9 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy import MetaData, String, create_engine
-from backend.app.core.config import DATABASE_URL
+from backend.app.core.config import settings
 
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(settings.database_url, echo=True)
 
 SessionLocal = sessionmaker(
     bind=engine, autoflush=False, autocommit=False)
