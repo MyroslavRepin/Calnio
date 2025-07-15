@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Schedola — Coming Soon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Используем Poppins для элегантности и геометричности -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f9fafb; /* очень светлый серо-белый */
+        color: #111827; /* почти черный, но мягкий */
+      }
+      /* Fade-in animation */
+      .fade-in {
+        animation: fadeIn 1.5s ease forwards;
+        opacity: 0;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      /* Pulse animation for button */
+      .pulse {
+        animation: pulse 2.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center px-6">
+    <div class="text-center max-w-xl">
+      <h1
+        class="text-7xl font-extrabold mb-6 tracking-wide fade-in"
+        style="animation-delay: 0.3s"
+      >
+        Schedola
+      </h1>
+      <p
+        class="text-lg md:text-xl mb-8 leading-relaxed fade-in"
+        style="animation-delay: 0.8s"
+      >
+        Your all-in-one smart planner is on its way.<br />
+        Seamlessly sync your notes, calendars, and tasks —<br />
+        designed to keep your life organized and stress-free.
+      </p>
+      <button
+        disabled
+        class="bg-indigo-600 text-white px-10 py-3 rounded-lg font-semibold cursor-not-allowed shadow-lg hover:bg-indigo-700 transition pulse fade-in"
+        style="animation-delay: 1.3s"
+      >
+        Coming Soon
+      </button>
+      <p
+        class="mt-12 text-gray-500 italic text-sm select-none fade-in"
+        style="animation-delay: 1.8s"
+      >
+        © 2025 Schedola. All rights reserved.
+      </p>
+    </div>
+  </body>
+</html>
