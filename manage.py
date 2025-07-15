@@ -1,11 +1,12 @@
+import asyncio
 import sys
 from dotenv import load_dotenv
 from pathlib import Path
 from backend.app.core.config import settings
-from backend.app.crud.users import create_user, get_users, print_users_table
+from backend.app.crud.users import async_create_user, get_users, async_print_users_table, async_delete_by_id, async_update_by_id
 from backend.app.schemas.users import UserCreate
-from backend.app.db.database import SessionLocal
-from backend.app.db.create_tables import create_tables
+from backend.app.db.database import SessionLocal, AsyncSessionLocal
+from backend.app.db.create_tables import create_tables, async_create_tables
 from backend.app.db.check_db import check_connection
 
 dotenv_path = Path(__file__).parent / ".env"
@@ -16,33 +17,61 @@ DATABASE_URL = settings.database_url
 def main():
     if len(sys.argv) < 2:
         print(
-            "Использование: python manage.py [check|create|create_user|get_users]")
+            "Использование: python manage.py [check|create|create_user|get_users|delete_user|update_user]")
         return
 
     command = sys.argv[1]
     if command == "check":
         check_connection(DATABASE_URL)
+
     elif command == "create":
-        create_tables()
+        asyncio.run(async_create_tables())
+
     elif command == "get_users":
-        db = SessionLocal()
-        try:
-            users = get_users(db)
-            print_users_table(users)
-        finally:
-            db.close()
+        async def async_get_users():
+            async with AsyncSessionLocal() as db:
+                users = await get_users(db)
+                async_print_users_table(users)
+        asyncio.run(async_get_users())
 
     elif command == 'create_user':
-        try:
-            user = UserCreate(username="testuser",
-                              email="test@example.com", password="password123", is_superuser=True)
-            user2 = UserCreate(username="jessica",
-                               email="jesica@example.com", password="mikhaiel", is_superuser=False)
-            # create_user(db=SessionLocal(), user=user)
-            create_user(db=SessionLocal(), user=user2)
-            print("✅ User created successfully.")
-        finally:
-            SessionLocal().close()
+        async def create_user_async():
+            try:
+                users = [
+                    UserCreate(username="test_user", email="test@example.com",
+                               password="password123", is_superuser=True),
+                    UserCreate(username="jessica", email="jesica@example.com",
+                               password="mikhaiel", is_superuser=False),
+                    UserCreate(username="bob", email="bob@example.com",
+                               password="bobking!", is_superuser=False),
+                ]
+
+                async with AsyncSessionLocal() as db:
+                    await async_create_user(db, users=users)
+
+            finally:
+                print(f"✅ User created successfully.")
+        asyncio.run(create_user_async())
+
+    elif command == 'delete_user':
+        async def delete_user_async():
+            try:
+                async with AsyncSessionLocal() as db:
+                    await async_delete_by_id(db, 1)
+
+            finally:
+                print(f"✅ User deleted successfully.")
+        asyncio.run(delete_user_async())
+
+    elif command == 'update_user':
+        async def update_user_async():
+            try:
+                async with AsyncSessionLocal() as db:
+                    await async_update_by_id(db=db, user_id=6, new_username="bob_king")
+
+            finally:
+                print(f"✅ User updated successfully.")
+        asyncio.run(update_user_async())
     else:
         print(f"Неизвестная команда: {command}")
 

@@ -1,4 +1,13 @@
-from backend.app.db.database import engine, Base
+import asyncio
+from backend.app.db.database import engine, async_engine, Base, AsyncSessionLocal
+
+
+async def async_create_tables():
+    print("Создаю таблицы...")
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+    print("Таблицы созданы")
 
 
 def create_tables():
@@ -9,4 +18,5 @@ def create_tables():
 
 
 if __name__ == "__main__":
+    asyncio.run(async_create_tables())
     create_tables()
