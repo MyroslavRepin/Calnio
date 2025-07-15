@@ -5,68 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Schedola — Coming Soon</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Используем Poppins для элегантности и геометричности -->
+    <!-- Шрифты: элегантный с засечками и современный -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       body {
-        font-family: "Poppins", sans-serif;
-        background-color: #f9fafb; /* очень светлый серо-белый */
-        color: #111827; /* почти черный, но мягкий */
+        background-color: #fdfcfb; /* мягкий бежевый */
+        color: #1e293b; /* slate-900 */
+        font-family: "Inter", sans-serif;
       }
-      /* Fade-in animation */
+
+      h1,
+      h2 {
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      ::selection {
+        background-color: #ec4899;
+        color: white;
+        font-weight: 700;
+      }
+
       .fade-in {
         animation: fadeIn 1.5s ease forwards;
         opacity: 0;
       }
+
       @keyframes fadeIn {
         to {
           opacity: 1;
         }
       }
-      /* Pulse animation for button */
+
       .pulse {
-        animation: pulse 2.5s infinite;
+        animation: pulse 2.4s infinite;
       }
+
       @keyframes pulse {
         0%,
         100% {
           opacity: 1;
         }
         50% {
-          opacity: 0.7;
+          opacity: 0.75;
         }
       }
     </style>
   </head>
   <body class="min-h-screen flex items-center justify-center px-6">
-    <div class="text-center max-w-xl">
+    <div class="text-center max-w-2xl">
       <h1
-        class="text-7xl font-extrabold mb-6 tracking-wide fade-in"
+        class="text-6xl md:text-7xl mb-6 fade-in"
         style="animation-delay: 0.3s"
       >
         Schedola
       </h1>
-      <p
-        class="text-lg md:text-xl mb-8 leading-relaxed fade-in"
-        style="animation-delay: 0.8s"
+      <h2
+        class="text-lg md:text-xl text-gray-700 mb-4 fade-in"
+        style="animation-delay: 0.5s"
       >
-        Your all-in-one smart planner is on its way.<br />
-        Seamlessly sync your notes, calendars, and tasks —<br />
-        designed to keep your life organized and stress-free.
+        Your future planner.
+      </h2>
+      <p
+        class="text-base md:text-lg text-gray-600 mb-8 fade-in"
+        style="animation-delay: 0.7s"
+      >
+        Elegant, intelligent, and integrated — plan your life with clarity.<br />
+        Sync calendars, tasks, and thoughts into one seamless workspace.
       </p>
       <button
         disabled
-        class="bg-indigo-600 text-white px-10 py-3 rounded-lg font-semibold cursor-not-allowed shadow-lg hover:bg-indigo-700 transition pulse fade-in"
-        style="animation-delay: 1.3s"
+        class="bg-pink-500 text-white px-8 py-3 rounded-full font-semibold cursor-not-allowed shadow-md hover:bg-pink-600 transition pulse fade-in"
+        style="animation-delay: 1s"
       >
         Coming Soon
       </button>
       <p
-        class="mt-12 text-gray-500 italic text-sm select-none fade-in"
-        style="animation-delay: 1.8s"
+        class="mt-12 text-gray-400 text-sm fade-in"
+        style="animation-delay: 1.4s"
       >
         © 2025 Schedola. All rights reserved.
       </p>
