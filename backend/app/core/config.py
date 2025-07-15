@@ -4,7 +4,7 @@ from pathlib import Path
 
 # Загрузить .env перед тем, как объявлять настройки
 dotenv_path = Path(__file__).resolve().parents[3] / ".env"
-load_dotenv(dotenv_path)
+load_dotenv(dotenv_path, override=True)
 
 
 class Settings(BaseSettings):

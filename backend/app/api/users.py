@@ -4,8 +4,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
+
 from sqlalchemy.orm import Session
-from backend.app.db.deps import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+from backend.app.db.deps import get_db, async_get_db
 from backend.app.crud.users import get_users
 
 router = APIRouter()
@@ -18,6 +20,6 @@ templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 
 
 @router.get('/users', response_class=HTMLResponse)
-def users(request: Request, db: Session = Depends(get_db)):
-    users = get_users(db)
+async def users(request: Request, db: AsyncSession = Depends(async_get_db)):
+    users = await get_users(db)
     return templates.TemplateResponse("users.html", {"request": request, "users": users})
