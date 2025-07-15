@@ -1,5 +1,3 @@
-**Template**
-
 # 📜 Changelog
 
 All notable changes to this project will be documented in this file.
@@ -9,46 +7,41 @@ and adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased]
+## v1.0.0
 
 ### 🚀 Added
 
-- ✨ New feature: ...
-- Initial support for ...
+- **Create** function to create database tables.
+- **Create User** function to add new users.
+- **Get Users** function to fetch the list of users.
+- **Delete User** and **Update User** functions for deleting and updating users.
+- Asynchronous versions of CRUD operations for better performance and responsiveness.
+- Updated Users API to support async operations using `AsyncSession`.
 
 ### 🔄 Changed
 
-- Improved performance of ...
-- Refactored structure of ...
-
-### 🐛 Fixed
-
-- Fixed issue with ...
-- Bugfix: corrected behavior in ...
-
-### 🗑 Removed
-
-- Removed deprecated code for ...
-- Cleaned up legacy API endpoint ...
+- Converted main database operations from synchronous to asynchronous.
+- Modified Users API structure to fully support asynchronous workflows.
 
 ---
 
-## [0.2.0] — 2025-07-15
+## v0.4.2
 
 ### 🚀 Added
 
-- 🎉 Google authentication
-- `/sync-calendar` endpoint
-- SQLAlchemy `User` model
+- **CHANGELOQ.md** changelog file to keep track of changes
 
-### 🐛 Fixed
+### 🔄 Changed
 
-- Email validation error on signup
-- Signup page render issue in Safari
+- Refractoring `User` model and schema: `UserCreate`
+
+### 🗑 Removed
+
+- `practise/` directory
 
 ---
 
-## [0.1.0] — 2025-07-10
+## [0.1.0]
 
 ### 🚀 Initial Release
 
