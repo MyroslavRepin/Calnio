@@ -28,24 +28,38 @@ def async_print_users_table(users):
           "Email", "Is Admin"], tablefmt="psql"))
 
 
-async def async_create_user(db: AsyncSession, users: list[UserCreate]):
-    for user in users:
-        try:
-            async_engine.echo = False
-            hashed_password = sha256(user.password.encode()).hexdigest()
-            db_user = User(
-                email=user.email,
-                username=user.username,
-                hashed_password=hashed_password,
-                is_superuser=user.is_superuser
-            )
-            db.add(db_user)
-            await db.commit()
-            await db.refresh(db_user)
-            return db_user
-        except IntegrityError:
-            await db.rollback()
-            print(f"⚠️ Skipped (duplicate): {user.email}")
+async def async_create_user(db: AsyncSession, user: UserCreate):
+    query = select(User).filter(
+        (User.email == user.email) | (User.username == user.username)
+    )
+    result = await db.execute(query)
+    existing_user = result.scalars().first()
+
+    if existing_user:
+        print(
+            f"⚠️ Пользователь с email '{user.email}' или username '{user.username}' уже существует.")
+        return None  # или можно вернуть False, чтобы показать, что не создали
+
+    try:
+        hashed_password = sha256(user.password.encode()).hexdigest()
+        db_user = User(
+            email=user.email,
+            username=user.username,
+            hashed_password=hashed_password,
+            is_superuser=user.is_superuser
+        )
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+        return db_user  # возвращаем созданного пользователя
+    except IntegrityError:
+        await db.rollback()
+        print(f"⚠️ Skipped (duplicate): {user.email}")
+        return None
+    except Exception as e:
+        await db.rollback()
+        print(f"❌ Error creating user {user.email}: {e}")
+        return None
 
 
 async def async_delete_by_id(db: AsyncSession, user_id):
