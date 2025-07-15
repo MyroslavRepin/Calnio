@@ -1,16 +1,26 @@
+import asyncio
+from sqlalchemy import select
 from tabulate import tabulate
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
-from backend.app.models.users import User
-from backend.app.schemas.users import UserCreate
 from hashlib import sha256
 
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
-def get_users(db: Session):
-    return db.query(User).all()
+from backend.app.models.users import User
+from backend.app.schemas.users import UserCreate
+from backend.app.db.database import async_engine
 
 
-def print_users_table(users):
+async def get_users(db: AsyncSession):
+    stmt = select(User)
+    result = await db.execute(stmt)
+    users = result.scalars().all()
+    return users
+
+
+def async_print_users_table(users):
+
     rows = []
     for u in users:
         rows.append([u.id, u.username, u.email, u.is_superuser])
@@ -18,29 +28,44 @@ def print_users_table(users):
           "Email", "Is Admin"], tablefmt="psql"))
 
 
-def create_user(db: Session, user: UserCreate):
-    try:
-        hashed_password = sha256(user.password.encode()).hexdigest()
-        db_user = User(
-            email=user.email,
-            username=user.username,
-            hashed_password=hashed_password,
-            is_superuser=user.is_superuser
-        )
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-        return db_user
-    except IntegrityError:
-        db.rollback()
-        raise ValueError(
-            "❌ Пользователь с таким email или username уже существует")
+async def async_create_user(db: AsyncSession, users: list[UserCreate]):
+    for user in users:
+        try:
+            async_engine.echo = False
+            hashed_password = sha256(user.password.encode()).hexdigest()
+            db_user = User(
+                email=user.email,
+                username=user.username,
+                hashed_password=hashed_password,
+                is_superuser=user.is_superuser
+            )
+            db.add(db_user)
+            await db.commit()
+            await db.refresh(db_user)
+            return db_user
+        except IntegrityError:
+            await db.rollback()
+            print(f"⚠️ Skipped (duplicate): {user.email}")
 
 
-def delete_by_id(db: Session, user_id):
-    user = db.query(User).filter(User.id == user_id).first()
+async def async_delete_by_id(db: AsyncSession, user_id):
+    result = await db.execute(select(User).filter(User.id == user_id))
+    user = result.scalars().first()
     if user:
-        db.delete(user)
-        db.commit()
-        return True
+        await db.delete(user)
+        await db.commit()
+        print(f"User: {user.email} deleted")
+        await db.close()
+        return user.email
+    await db.close()
     return False
+
+
+async def async_update_by_id(db: AsyncSession, user_id, new_username):
+    result = await db.execute(select(User).filter(User.id == user_id))
+    user = result.scalars().first()
+    if user:
+        user.username = new_username
+
+        await db.commit()
+        await db.refresh(user)

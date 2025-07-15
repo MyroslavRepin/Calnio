@@ -4,11 +4,14 @@ from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy import MetaData, String, create_engine
 from backend.app.core.config import settings
 
+async_engine = create_async_engine(settings.database_url, echo=True)
 engine = create_engine(settings.database_url, echo=True)
 
+AsyncSessionLocal = async_sessionmaker(
+    bind=async_engine, autoflush=False, autocommit=False)
 SessionLocal = sessionmaker(
-    bind=engine, autoflush=False, autocommit=False)
-
+    bind=engine, autoflush=False, autocommit=False
+)
 str_256 = Annotated[str, 256]
 
 
