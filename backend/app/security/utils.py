@@ -22,7 +22,8 @@ async def access_token_required(request: Request):
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     try:
-        payload = jwt.decode(token, config.SECRET_KEY, algorithms=["HS256"])
+        payload = jwt.decode(token, config.JWT_SECRET_KEY,
+                             algorithms=["HS256"])
         return payload
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
