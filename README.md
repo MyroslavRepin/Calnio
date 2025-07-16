@@ -1,4 +1,4 @@
-# Scheduloo
+# Schedole
 
 ## About the Project
 
