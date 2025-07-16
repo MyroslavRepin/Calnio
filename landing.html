@@ -5,46 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Schedola — Coming Soon</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Шрифты: элегантный с засечками и современный -->
+    <!-- Шрифты: Playfair Display для заголовков и Inter для текста -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <style>
       body {
-        background-color: #fdfcfb; /* мягкий бежевый */
+        background-color: #fcfbf9; /* мягкий бежевый */
         color: #1e293b; /* slate-900 */
         font-family: "Inter", sans-serif;
       }
-
       h1,
       h2 {
         font-family: "Playfair Display", serif;
         font-weight: 700;
         letter-spacing: -0.02em;
       }
-
       ::selection {
-        background-color: #ec4899;
+        background-color: #38bdf8; /* бирюзовый акцент */
         color: white;
         font-weight: 700;
       }
-
       .fade-in {
-        animation: fadeIn 1.5s ease forwards;
         opacity: 0;
+        animation: fadeIn 1.2s ease forwards;
       }
-
       @keyframes fadeIn {
         to {
           opacity: 1;
         }
       }
-
       .pulse {
         animation: pulse 2.4s infinite;
       }
-
       @keyframes pulse {
         0%,
         100% {
@@ -56,39 +50,78 @@
       }
     </style>
   </head>
-  <body class="min-h-screen flex items-center justify-center px-6">
-    <div class="text-center max-w-2xl">
-      <h1
-        class="text-6xl md:text-7xl mb-6 fade-in"
-        style="animation-delay: 0.3s"
-      >
+  <body
+    class="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+  >
+    <div class="text-center max-w-3xl space-y-6">
+      <h1 class="text-6xl md:text-7xl fade-in" style="animation-delay: 0.2s">
         Schedola
       </h1>
       <h2
-        class="text-lg md:text-xl text-gray-700 mb-4 fade-in"
-        style="animation-delay: 0.5s"
+        class="text-xl md:text-2xl text-gray-700 fade-in"
+        style="animation-delay: 0.4s"
       >
-        Your future planner.
+        The World’s Most Elegant Planner
       </h2>
       <p
-        class="text-base md:text-lg text-gray-600 mb-8 fade-in"
-        style="animation-delay: 0.7s"
+        class="text-base md:text-lg text-gray-600 leading-relaxed fade-in"
+        style="animation-delay: 0.6s"
       >
-        Elegant, intelligent, and integrated — plan your life with clarity.<br />
-        Sync calendars, tasks, and thoughts into one seamless workspace.
+        Discover a new way to organize your life —<br />
+        <span class="font-medium text-pink-500">real-time sync</span>,
+        <span class="font-medium text-pink-500">smart reminders</span>,
+        <span class="font-medium text-pink-500">unified notes</span> &amp;
+        <span class="font-medium text-pink-500">cross‑platform</span> harmony.
       </p>
-      <button
-        disabled
-        class="bg-pink-500 text-white px-8 py-3 rounded-full font-semibold cursor-not-allowed shadow-md hover:bg-pink-600 transition pulse fade-in"
-        style="animation-delay: 1s"
+
+      <!-- Преимущества -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in"
+        style="animation-delay: 0.8s"
       >
-        Coming Soon
-      </button>
+        <div class="space-y-2 text-left">
+          <h3 class="text-lg font-semibold">✨ Real-Time Synchronization</h3>
+          <p class="text-gray-600">
+            Instantly update tasks, events, and notes across all your devices.
+          </p>
+        </div>
+        <div class="space-y-2 text-left">
+          <h3 class="text-lg font-semibold">🗓 Custom Calendars</h3>
+          <p class="text-gray-600">
+            Create multiple calendars to separate work, study, and personal
+            life.
+          </p>
+        </div>
+        <div class="space-y-2 text-left">
+          <h3 class="text-lg font-semibold">✍️ Rich Note-Taking</h3>
+          <p class="text-gray-600">
+            Add images, checklists, and formatting to capture every detail.
+          </p>
+        </div>
+        <div class="space-y-2 text-left">
+          <h3 class="text-lg font-semibold">🔔 Smart Reminders</h3>
+          <p class="text-gray-600">
+            Never miss a deadline with intelligent, context‑aware alerts.
+          </p>
+        </div>
+      </div>
+
+      <!-- Кнопка и подписка -->
+      <div class="mt-8 fade-in" style="animation-delay: 1s">
+        <button
+          disabled
+          class="bg-pink-500 text-white px-10 py-3 rounded-full font-semibold shadow-md cursor-not-allowed hover:bg-pink-600 transition pulse"
+        >
+          Launching Soon
+        </button>
+      </div>
+
+      <!-- Футер -->
       <p
         class="mt-12 text-gray-400 text-sm fade-in"
         style="animation-delay: 1.4s"
       >
-        © 2025 Schedola. All rights reserved.
+        © 2025 Schedola — Crafted with clarity &amp; passion.
       </p>
     </div>
   </body>
