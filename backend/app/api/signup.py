@@ -23,6 +23,11 @@ templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
+@router.get("/signup", response_class=HTMLResponse)
+async def signup(request: Request):
+    return templates.TemplateResponse("signup.html", {"request": request})
+
+
 @router.post('/signup')
 async def signup_post(
     request: Request,
@@ -35,20 +40,23 @@ async def signup_post(
     if password != confirm_password:
         return templates.TemplateResponse("signup.html", {
             "request": request,
-            "error": "Пароли не совпадают!",
+            "error": "Passwords does not match!",
             "username": username,
             "email": email
         })
     try:
         hashed_password = pwd_context.hash(password)
-        user = UserCreate(username=username, email=email,
-                          password=hashed_password)
+        user = UserCreate(
+            username=username,
+            email=email,
+            hashed_password=password
+        )
         created_user = await async_create_user(db=db, user=user)
 
         if not created_user:
             return templates.TemplateResponse("signup.html", {
                 "request": request,
-                "error": "Пользователь с таким email или именем уже существует",
+                "error": "User with this email already exist",
                 "username": username,
                 "email": email
             })
@@ -56,9 +64,9 @@ async def signup_post(
         print(f"Error occured: {e}")
         return templates.TemplateResponse("signup.html", {
             "request": request,
-            "error": "Произошла ошибка при создании пользователя",
+            "error": "Error while creating user",
             "username": username,
             "email": email
         })
 
-    return RedirectResponse('/dashboard', status_code=303)
+    return RedirectResponse('/login', status_code=303)

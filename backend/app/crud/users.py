@@ -10,6 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.models.users import User
 from backend.app.schemas.users import UserCreate
 from backend.app.db.database import async_engine
+# если у тебя pwd_context там
+from backend.app.security.utils import pwd_context, create_hash
 
 
 async def get_users(db: AsyncSession):
@@ -38,14 +40,15 @@ async def async_create_user(db: AsyncSession, user: UserCreate):
     if existing_user:
         print(
             f"⚠️ Пользователь с email '{user.email}' или username '{user.username}' уже существует.")
-        return None  # или можно вернуть False, чтобы показать, что не создали
+        return None
 
     try:
-        hashed_password = sha256(user.password.encode()).hexdigest()
+        # hashed_password = pwd_context.hash(user.hashed_password)
         db_user = User(
             email=user.email,
             username=user.username,
-            hashed_password=hashed_password,
+            # For real its firts layer of hash. user.hashed_password did not hashed before this step
+            hashed_password=create_hash(user.hashed_password),
             is_superuser=user.is_superuser
         )
         db.add(db_user)

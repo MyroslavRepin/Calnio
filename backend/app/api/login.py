@@ -1,22 +1,19 @@
 import os
-from authx import AuthX, AuthXConfig
 
 from fastapi import APIRouter, Request, Form, Depends, HTTPException, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from backend.app.schemas.users import UserLogin
+from backend.app.security.jwt_tokens import config, security
+from backend.app.models.users import User
+from backend.app.db.deps import async_get_db
+from backend.app.security.utils import verify_password
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
 
 router = APIRouter()
-
-
-#! JWT Token CONFIG
-config = AuthXConfig()
-config.JWT_SECRET_KEY = "secret_key"
-config.JWT_ACCESS_COOKIE_NAME = "acces_token"
-config.JWT_TOKEN_LOCATION = ["cookies"]
-
-security = AuthX(config=config)
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -32,10 +29,28 @@ async def login(request: Request):
 
 
 @router.post('/login')
-async def login_post(response: Response, creds: UserLogin = Depends(UserLogin.as_form)):
-    if creds.email == "myroslavrepin@gmail.com" and creds.password == "myroslav0818":
-        token = security.create_access_token(uid="12456")
-        response.set_cookie(config.JWT_ACCESS_COOKIE_NAME, token)
-        print(token)
-        return {"acces_token": token}
-    raise HTTPException(401, detail='Incorrect data')
+async def login_post(
+    request: Request,
+    creds: UserLogin = Depends(UserLogin.as_form),
+    db: AsyncSession = Depends(async_get_db)
+):
+    query = select(User).where(User.email == creds.email)
+    result = await db.execute(query)
+    user = result.scalar_one_or_none()
+
+    if not user or not verify_password(plain_password=creds.password, hashed_password=user.hashed_password):
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error": "Incorrect email or password!"
+        })
+
+    token = security.create_access_token(uid=str(user.id))
+    redirect_response = RedirectResponse("/dashboard", status_code=303)
+    redirect_response.set_cookie(
+        config.JWT_ACCESS_COOKIE_NAME,
+        token,
+        httponly=True,
+        samesite="lax",
+        secure=False
+    )
+    return redirect_response

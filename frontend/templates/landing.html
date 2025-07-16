@@ -3,75 +3,102 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scheduloo</title>
+    <title>Calneo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body
-    class="min-h-screen bg-gradient-to-tr from-purple-600 via-indigo-500 to-blue-600 flex items-center justify-center px-6"
-  >
     <style>
       ::selection {
-        background-color: #ff006fa4; /* фиолетовый фон, можно свой цвет */
-        color: white; /* цвет текста при выделении */
+        background-color: #896978;
+        color: white;
+      }
+      @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500&display=swap");
+
+      html {
+        font-family: "Inter", sans-serif;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Playfair Display", serif;
       }
     </style>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-tr from-[#EFD5C3] via-[#E4DFDA] to-[#FAF4F0] flex items-center justify-center px-6"
+  >
     <div
-      class="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-xl max-w-4xl w-full p-10 text-white"
+      class="backdrop-blur-2xl bg-[#ffffff10] border border-[#ffffff30] rounded-3xl shadow-2xl max-w-4xl w-full p-12 text-[#3E3E3E]"
     >
-      <header class="flex items-center justify-between mb-10">
-        <h1 class="text-3xl font-bold">Scheduloo</h1>
-        <nav class="space-x-6 text-sm font-medium">
-          <a href="#" class="hover:underline">Features</a>
-          <a href="#" class="hover:underline">Pricing</a>
-          <a href="/login" class="hover:underline">Login</a>
+      <header class="flex items-center justify-between mb-12">
+        <h1 class="text-4xl font-bold text-[#896978] tracking-tight">Calneo</h1>
+        <nav
+          class="space-x-8 text-sm font-medium uppercase tracking-wide text-[#896978]"
+        >
+          <a href="#" class="hover:underline hover:text-[#A58988] transition"
+            >Features</a
+          >
+          <a href="#" class="hover:underline hover:text-[#A58988] transition"
+            >Pricing</a
+          >
+          <a
+            href="/login"
+            class="hover:underline hover:text-[#A58988] transition"
+            >Login</a
+          >
         </nav>
       </header>
 
-      <section class="text-center">
-        <h2 class="text-5xl font-extrabold mb-4 leading-tight">
-          Scheduloo - kepp your task connected
+      <section class="text-center max-w-3xl mx-auto">
+        <h2 class="text-5xl font-extrabold mb-6 leading-tight text-[#573F3F]">
+          Calneo — connect your tasks with calm
         </h2>
-        <p class="text-white/80 text-lg mb-8">
-          Transform your workflow with a beautifully crafted platform using AI
-          and automation.
+        <p class="text-[#5e5e5e] text-lg mb-10 tracking-wide">
+          Simplify your digital rhythm with gentle automation and timeless
+          design.
         </p>
         <a
           href="/login"
-          class="inline-block px-8 py-4 bg-white text-indigo-700 font-semibold rounded-xl shadow-lg hover:scale-105 transition transform duration-200"
+          class="inline-block px-10 py-4 bg-[#896978] text-white font-medium rounded-xl shadow-md hover:bg-[#A58988] transition duration-300"
         >
           Get Started for Free
         </a>
       </section>
 
-      <section class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div
-          class="p-6 rounded-xl bg-white/10 border border-white/10 backdrop-blur-lg text-left"
+          class="p-8 rounded-2xl bg-[#ffffff10] border border-[#ffffff20] backdrop-blur-md text-left shadow-md"
         >
-          <h3 class="text-xl font-semibold mb-2">🚀 Fast Setup</h3>
-          <p class="text-white/80 text-sm">
-            Launch your project in minutes with our plug-and-play tools.
+          <h3 class="text-2xl font-semibold mb-3 text-[#573F3F]">
+            🚀 Fast Setup
+          </h3>
+          <p class="text-[#5e5e5e] text-base">
+            Start working in moments with minimal setup and guided steps.
           </p>
         </div>
         <div
-          class="p-6 rounded-xl bg-white/10 border border-white/10 backdrop-blur-lg text-left"
+          class="p-8 rounded-2xl bg-[#ffffff10] border border-[#ffffff20] backdrop-blur-md text-left shadow-md"
         >
-          <h3 class="text-xl font-semibold mb-2">🔒 Secure by Default</h3>
-          <p class="text-white/80 text-sm">
-            End-to-end encryption and compliance out of the box.
+          <h3 class="text-2xl font-semibold mb-3 text-[#573F3F]">
+            🔒 Secure by Default
+          </h3>
+          <p class="text-[#5e5e5e] text-base">
+            Trust your tools — encryption and data privacy from the ground up.
           </p>
         </div>
         <div
-          class="p-6 rounded-xl bg-white/10 border border-white/10 backdrop-blur-lg text-left"
+          class="p-8 rounded-2xl bg-[#ffffff10] border border-[#ffffff20] backdrop-blur-md text-left shadow-md"
         >
-          <h3 class="text-xl font-semibold mb-2">📊 Analytics Ready</h3>
-          <p class="text-white/80 text-sm">
-            Understand your users and optimize your funnel easily.
+          <h3 class="text-2xl font-semibold mb-3 text-[#573F3F]">
+            📊 Analytics Ready
+          </h3>
+          <p class="text-[#5e5e5e] text-base">
+            Intuitive dashboards help you grow and refine your strategy.
           </p>
         </div>
       </section>
 
-      <footer class="mt-16 text-center text-sm text-white/60">
-        &copy; 2025 Scheduloo Inc. All rights reserved.
+      <footer class="mt-20 text-center text-sm text-[#896978]/60 tracking-wide">
+        &copy; 2025 Calneo Inc. All rights reserved.
       </footer>
     </div>
   </body>
