@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from fastapi.exceptions import HTTPException
 from fastapi import Request
 from jose import JWTError, jwt  # библиотека для работы с JWT
-from backend.app.security.jwt_tokens import config
+from backend.app.security.jwt_config import config
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -22,6 +22,8 @@ async def access_token_required(request: Request):
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     try:
+        if not config.JWT_SECRET_KEY:
+            raise RuntimeError("JWT_SECRET_KEY is not set!")
         payload = jwt.decode(token, config.JWT_SECRET_KEY,
                              algorithms=["HS256"])
         return payload

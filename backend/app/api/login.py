@@ -5,10 +5,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from backend.app.schemas.users import UserLogin
-from backend.app.security.jwt_tokens import config, security
+from backend.app.security.jwt_config import config, security
 from backend.app.models.users import User
 from backend.app.db.deps import async_get_db
 from backend.app.security.utils import verify_password
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -38,7 +39,10 @@ async def login_post(
     result = await db.execute(query)
     user = result.scalar_one_or_none()
 
-    if not user or not verify_password(plain_password=creds.password, hashed_password=user.hashed_password):
+    if not user or user.hashed_password is None or not verify_password(
+        plain_password=creds.password,
+        hashed_password=user.hashed_password
+    ):
         return templates.TemplateResponse("login.html", {
             "request": request,
             "error": "Incorrect email or password!"
