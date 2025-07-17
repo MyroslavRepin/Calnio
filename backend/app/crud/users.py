@@ -38,9 +38,9 @@ async def async_create_user(db: AsyncSession, user: UserCreate):
     existing_user = result.scalars().first()
 
     if existing_user:
-        print(
-            f"⚠️ Пользователь с email '{user.email}' или username '{user.username}' уже существует.")
-        return None
+        raise ValueError(
+            f"⚠️ Пользователь с email '{user.email}' или username '{user.username}' уже существует."
+        )
 
     try:
         # hashed_password = pwd_context.hash(user.hashed_password)
@@ -48,7 +48,7 @@ async def async_create_user(db: AsyncSession, user: UserCreate):
             email=user.email,
             username=user.username,
             # For real its firts layer of hash. user.hashed_password did not hashed before this step
-            hashed_password=create_hash(user.hashed_password),
+            hashed_password=user.hashed_password,
             is_superuser=user.is_superuser
         )
         db.add(db_user)
@@ -57,12 +57,10 @@ async def async_create_user(db: AsyncSession, user: UserCreate):
         return db_user  # возвращаем созданного пользователя
     except IntegrityError:
         await db.rollback()
-        print(f"⚠️ Skipped (duplicate): {user.email}")
-        return None
+        raise ValueError(f"⚠️ База данных: email или username уже существует.")
     except Exception as e:
         await db.rollback()
-        print(f"❌ Error creating user {user.email}: {e}")
-        return None
+        raise ValueError(f"❌ Ошибка при создании пользователя: {e}")
 
 
 async def async_delete_by_id(db: AsyncSession, user_id):

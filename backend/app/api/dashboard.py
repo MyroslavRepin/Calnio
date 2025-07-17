@@ -1,7 +1,7 @@
 import os
 
 from backend.app.db.database import AsyncSessionLocal
-from backend.app.security.jwt_tokens import security
+from backend.app.security.jwt_config import security
 from backend.app.security.utils import access_token_required
 
 from sqlalchemy.ext.asyncio import AsyncSession

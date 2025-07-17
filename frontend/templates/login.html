@@ -44,6 +44,12 @@
 
       <form method="post" action="/login" class="space-y-7">
         <div>
+          {% if error %}
+          <div class="text-red-600 text-center mb-4 font-semibold">
+            {{ error }}
+          </div>
+          {% endif %}
+
           <label
             for="email"
             class="block text-base font-semibold mb-2 text-coffee-900"

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Response
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from backend.app.security.jwt_tokens import config
+from backend.app.security.jwt_config import config
 
 router = APIRouter()
 

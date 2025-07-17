@@ -9,8 +9,10 @@ from backend.app.db.database import AsyncSessionLocal, async_engine
 from backend.app.db.deps import async_get_db
 from backend.app.crud.users import async_create_user
 from backend.app.schemas.users import UserCreate
+from backend.app.security.utils import create_hash
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -44,29 +46,31 @@ async def signup_post(
             "username": username,
             "email": email
         })
+    errors = {}
     try:
-        hashed_password = pwd_context.hash(password)
+        # Trying create error
+
+        # Creating user obj
         user = UserCreate(
             username=username,
             email=email,
-            hashed_password=password
+            hashed_password=create_hash(password)
         )
-        created_user = await async_create_user(db=db, user=user)
+        await async_create_user(db=db, user=user)  # Running function
 
-        if not created_user:
-            return templates.TemplateResponse("signup.html", {
+        # Redirecting to login if succes
+        return RedirectResponse('/login', status_code=303)
+
+    # If errors
+    except ValueError as e:
+        print(e)
+        return templates.TemplateResponse(
+            "signup.html",
+            {
                 "request": request,
-                "error": "User with this email already exist",
+                "error": str(e),
                 "username": username,
                 "email": email
-            })
-    except Exception as e:
-        print(f"Error occured: {e}")
-        return templates.TemplateResponse("signup.html", {
-            "request": request,
-            "error": "Error while creating user",
-            "username": username,
-            "email": email
-        })
-
-    return RedirectResponse('/login', status_code=303)
+            },
+            status_code=200
+        )
