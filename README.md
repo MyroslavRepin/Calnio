@@ -53,3 +53,11 @@ START_SERVER.bat
 ```cmd
 START_SERVER.bat --reset
 ```
+
+## Utils
+
+**Check how many lines of code writed**
+
+```cmd
+cloc --include-lang=Python,BourneShell,Markdown,HTML,CSS,Text --exclude-dir=.venv,.git,node_modules,tests,docs,vendor .
+```
