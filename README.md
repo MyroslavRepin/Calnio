@@ -1,8 +1,8 @@
-# Schedole
+# Calnio
 
 ## About the Project
 
-Scheduloo is a service for **two-way synchronization** of tasks and events between **Notion** and **Apple Calendar**. The project uses:
+Calnio is a service for **two-way synchronization** of tasks and events between **Notion** and **Apple Calendar**. The project uses:
 
 - **FastAPI** for building the backend API,
 - **SQLAlchemy** as the ORM for database interactions,
@@ -18,7 +18,7 @@ The goal is to provide a reliable and easy-to-use tool for automatic syncing bet
 
 To start the backend server, use the following command depending on your operating system.
 
-**Make sure you're in the root of the `Scheduloo/` project directory before running these commands.**
+**Make sure you're in the root of the `Calnio/` project directory before running these commands.**
 
 ---
 
@@ -52,4 +52,12 @@ START_SERVER.bat
 
 ```cmd
 START_SERVER.bat --reset
+```
+
+## Utils
+
+**Check how many lines of code writed**
+
+```cmd
+cloc --include-lang=Python,BourneShell,Markdown,HTML,CSS,Text --exclude-dir=.venv,.git,node_modules,tests,docs,vendor .
 ```

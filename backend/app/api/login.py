@@ -1,10 +1,22 @@
 import os
-from fastapi import APIRouter, Request, Form
+
+from fastapi import APIRouter, Request, Form, Depends, HTTPException, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 
+from backend.app.schemas.users import UserLogin
+from backend.app.security.jwt_config import config, security
+from backend.app.models.users import User
+from backend.app.db.deps import async_get_db
+from backend.app.security.utils import verify_password
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
+
 router = APIRouter()
-# Adding externaly templates, static dir
+
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(
     BASE_DIR, "..", "..", "..", "frontend"))
@@ -18,8 +30,31 @@ async def login(request: Request):
 
 
 @router.post('/login')
-async def login_post(request: Request, email: str = Form(...), password: str = Form(...)):
-    form = await request.form()
-    print(f'Data from form: {form}')
-    print(f"Email: {email}, password: {password}")
-    return RedirectResponse('/', 303)
+async def login_post(
+    request: Request,
+    creds: UserLogin = Depends(UserLogin.as_form),
+    db: AsyncSession = Depends(async_get_db)
+):
+    query = select(User).where(User.email == creds.email)
+    result = await db.execute(query)
+    user = result.scalar_one_or_none()
+
+    if not user or user.hashed_password is None or not verify_password(
+        plain_password=creds.password,
+        hashed_password=user.hashed_password
+    ):
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error": "Incorrect email or password!"
+        })
+
+    token = security.create_access_token(uid=str(user.id))
+    redirect_response = RedirectResponse("/dashboard", status_code=303)
+    redirect_response.set_cookie(
+        config.JWT_ACCESS_COOKIE_NAME,
+        token,
+        httponly=True,
+        samesite="lax",
+        secure=False
+    )
+    return redirect_response

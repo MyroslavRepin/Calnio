@@ -2,185 +2,161 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>All-in-One Dashboard | GlassSaaS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>All-in-One Dashboard | Calnio</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Кастомные цвета для Tailwind */
+      @layer utilities {
+        .bg-softblue {
+          background-color: #b0c6ce;
+        }
+        .bg-cream {
+          background-color: #e6e1c5;
+        }
+        .text-muted-purple {
+          color: #896978;
+        }
+        .border-cream {
+          border-color: #e6e1c5;
+        }
+        .bg-cream-transparent {
+          background-color: rgba(230, 225, 197, 0.5);
+        }
+        .text-cream-dark {
+          color: #a69f80;
+        }
+        .text-muted-purple-light {
+          color: #a8909d;
+        }
+        .accent-muted-purple {
+          accent-color: #896978;
+        }
+        .hover-muted-purple {
+          transition: background-color 0.3s ease;
+        }
+        .hover-muted-purple:hover {
+          background-color: rgba(137, 105, 120, 0.3);
+        }
+      }
+      /* Glassmorphism */
+      .glass {
+        background: rgba(230, 225, 197, 0.5);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(230, 225, 197, 0.3);
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px rgba(137, 105, 120, 0.15);
+      }
+      ::selection {
+        background-color: #896978;
+        color: #fbfbfb;
+      }
+    </style>
   </head>
-  <body
-    class="bg-gradient-to-tr from-blue-700 via-indigo-700 to-purple-700 min-h-screen text-white"
-  >
+  <body class="bg-softblue min-h-screen text-muted-purple font-sans">
     <div class="flex min-h-screen">
       <!-- Sidebar -->
       <aside
-        class="w-64 bg-white/10 backdrop-blur-md p-6 border-r border-white/20"
+        class="w-64 glass p-6 border-cream border-r flex flex-col justify-between"
       >
-        <h1 class="text-2xl font-bold mb-10">Scheduloo</h1>
-        <nav class="space-y-4 text-white/80">
-          <a href="#dashboard" class="block hover:text-white font-medium"
-            >🏠 Dashboard</a
-          >
-          <a href="#profile" class="block hover:text-white">👤 Profile</a>
-          <a href="#sync" class="block hover:text-white">🧩 Sync</a>
-          <a href="#events" class="block hover:text-white">📅 Events</a>
-          <a href="#settings" class="block hover:text-white">⚙️ Settings</a>
-        </nav>
+        <div>
+          <h1 class="text-3xl font-semibold mb-10 text-muted-purple">Calnio</h1>
+          <nav class="space-y-5 text-muted-purple/90 font-medium">
+            <a href="#dashboard" class="block hover:text-muted-purple-light"
+              >🏠 Dashboard</a
+            >
+            <a href="#profile" class="block hover:text-muted-purple-light"
+              >👤 Profile</a
+            >
+            <a href="#sync" class="block hover:text-muted-purple-light"
+              >🧩 Sync</a
+            >
+            <a href="#events" class="block hover:text-muted-purple-light"
+              >📅 Events</a
+            >
+            <a href="#settings" class="block hover:text-muted-purple-light"
+              >⚙️ Settings</a
+            >
+          </nav>
+        </div>
+
+        <div>
+          <form method="POST" action="/logout">
+            <button
+              type="submit"
+              class="w-full py-2 rounded-lg bg-cream text-muted-purple font-semibold hover:bg-cream-transparent transition"
+            >
+              🔓 Logout
+            </button>
+          </form>
+        </div>
       </aside>
 
       <!-- Main content -->
-      <main class="flex-1 p-10 space-y-16">
+      <main class="flex-1 p-12 space-y-16">
+        {% if success %}
+        <div
+          class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6"
+          role="alert"
+        >
+          <strong class="font-bold">Success!</strong>
+          <span class="block sm:inline">Profile updated succesfuly</span>
+        </div>
+        {% endif %}
         <!-- Dashboard Welcome -->
         <section id="dashboard">
-          <h2 class="text-3xl font-bold mb-2">Welcome back, Myroslav</h2>
-          <p class="text-white/70">
+          <h2 class="text-4xl font-semibold mb-3 text-muted-purple">
+            Welcome back, {{ username }}
+          </h2>
+          <p class="text-muted-purple/70 text-lg">
             Here’s what’s happening in your workspace.
           </p>
         </section>
 
-        <!-- Profile Section -->
-        <section
-          id="profile"
-          class="bg-white/10 backdrop-blur-lg border border-white/20 p-6 rounded-2xl shadow-xl"
-        >
-          <h3 class="text-xl font-semibold mb-4">👤 Profile Settings</h3>
-          <div class="grid md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm mb-1">Full Name</label>
-              <input
-                type="text"
-                placeholder="John Doe"
-                class="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-white/60"
-              />
-            </div>
-            <div>
-              <label class="block text-sm mb-1">Email</label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                class="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-white/60"
-              />
-            </div>
-          </div>
-        </section>
-
-        <!-- Sync Setup -->
-        <section
-          id="sync"
-          class="bg-white/10 backdrop-blur-lg border border-white/20 p-6 rounded-2xl shadow-xl"
-        >
-          <h3 class="text-xl font-semibold mb-4">🧩 Task Sync Setup</h3>
-          <div class="flex gap-4 flex-wrap mb-6">
-            <button
-              class="px-5 py-2 bg-white text-indigo-700 rounded-lg font-medium hover:scale-105"
-            >
-              Connect Google Tasks
-            </button>
-            <button
-              class="px-5 py-2 bg-white text-indigo-700 rounded-lg font-medium hover:scale-105"
-            >
-              Connect Trello
-            </button>
-            <button
-              class="px-5 py-2 bg-white text-indigo-700 rounded-lg font-medium hover:scale-105"
-            >
-              Connect Notion
-            </button>
-          </div>
-
-          <h4 class="text-white font-semibold mb-2">Sync Frequency</h4>
-          <div class="space-y-2">
-            <label class="flex items-center gap-3">
-              <input type="radio" name="sync-frequency" class="accent-white" />
-              Hourly
-            </label>
-            <label class="flex items-center gap-3">
-              <input type="radio" name="sync-frequency" class="accent-white" />
-              Daily
-            </label>
-            <label class="flex items-center gap-3">
-              <input type="radio" name="sync-frequency" class="accent-white" />
-              Manual Only
-            </label>
-          </div>
-        </section>
-
-        <!-- Events -->
-        <section
-          id="events"
-          class="bg-white/10 backdrop-blur-lg border border-white/20 p-6 rounded-2xl shadow-xl"
-        >
-          <h3 class="text-xl font-semibold mb-4">📅 Upcoming Events</h3>
-          <ul class="space-y-4">
-            <li
-              class="flex items-start gap-4 bg-white/10 border border-white/10 p-4 rounded-lg"
-            >
-              <div class="text-3xl">📌</div>
+        <!-- Profile Section with editable form -->
+        <form method="post" action="/update-profile">
+          <section class="glass p-8 border-cream border rounded-2xl shadow-md">
+            <h3 class="text-2xl font-semibold mb-6 text-muted-purple">
+              👤 Profile Settings
+            </h3>
+            <div class="grid md:grid-cols-2 gap-8">
               <div>
-                <p class="font-semibold">Team Sync</p>
-                <p class="text-white/70 text-sm">Tomorrow at 10:00 AM</p>
+                <label class="block mb-2 font-medium text-muted-purple"
+                  >Username</label
+                >
+                <input
+                  type="text"
+                  name="username"
+                  value="{{ username }}"
+                  class="w-full rounded-lg border border-cream px-5 py-3 focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
+                />
               </div>
-            </li>
-            <li
-              class="flex items-start gap-4 bg-white/10 border border-white/10 p-4 rounded-lg"
-            >
-              <div class="text-3xl">🧠</div>
               <div>
-                <p class="font-semibold">AI Workshop</p>
-                <p class="text-white/70 text-sm">Friday, July 6 at 2:00 PM</p>
+                <label class="block mb-2 font-medium text-muted-purple"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  name="email"
+                  value="{{ email }}"
+                  class="w-full rounded-lg border border-cream px-5 py-3 focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
+                />
               </div>
-            </li>
-          </ul>
-        </section>
-
-        <!-- Account Settings -->
-        <section
-          id="settings"
-          class="bg-white/10 backdrop-blur-lg border border-white/20 p-6 rounded-2xl shadow-xl"
-        >
-          <h3 class="text-xl font-semibold mb-4">⚙️ Account Settings</h3>
-
-          <!-- Password -->
-          <div class="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label class="block text-sm mb-1">Current Password</label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                class="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-white/60"
-              />
             </div>
-            <div>
-              <label class="block text-sm mb-1">New Password</label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                class="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-white/60"
-              />
+
+            <div class="text-right mt-6">
+              <button
+                type="submit"
+                class="px-8 py-3 rounded-lg bg-cream text-muted-purple font-semibold hover:bg-cream-transparent transition"
+              >
+                Save Changes
+              </button>
             </div>
-          </div>
+          </section>
+        </form>
 
-          <!-- Notifications -->
-          <h4 class="text-white font-semibold mb-2">Notifications</h4>
-          <label class="flex items-center gap-3 mb-2">
-            <input type="checkbox" class="accent-white" />
-            Email alerts for new tasks
-          </label>
-          <label class="flex items-center gap-3 mb-2">
-            <input type="checkbox" class="accent-white" />
-            Daily digest summary
-          </label>
-          <label class="flex items-center gap-3 mb-2">
-            <input type="checkbox" class="accent-white" />
-            Notify me about team mentions
-          </label>
-
-          <div class="text-right mt-6">
-            <button
-              class="px-6 py-2 bg-white text-indigo-700 rounded-lg font-semibold hover:scale-105 transition"
-            >
-              Save All Settings
-            </button>
-          </div>
-        </section>
+        <!-- ... (остальной твой контент) -->
       </main>
     </div>
   </body>
