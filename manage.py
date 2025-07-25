@@ -37,17 +37,10 @@ def main():
     elif command == 'create_user':
         async def create_user_async():
             try:
-                users = [
-                    UserCreate(username="test_user", email="test@example.com",
-                               password="password123", is_superuser=True),
-                    UserCreate(username="jessica", email="jesica@example.com",
-                               password="mikhaiel", is_superuser=False),
-                    UserCreate(username="bob", email="bob@example.com",
-                               password="bobking!", is_superuser=False),
-                ]
-
+                user = UserCreate(username="bob", email="bob@example.com",
+                                  password="bobking!", is_superuser=False)
                 async with AsyncSessionLocal() as db:
-                    await async_create_user(db, users=users)
+                    await async_create_user(db, user=user)
 
             finally:
                 print(f"✅ User created successfully.")

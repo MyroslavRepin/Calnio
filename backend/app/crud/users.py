@@ -10,6 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.models.users import User
 from backend.app.schemas.users import UserCreate
 from backend.app.db.database import async_engine
+# если у тебя pwd_context там
+from backend.app.security.utils import pwd_context, create_hash
 
 
 async def get_users(db: AsyncSession):
@@ -28,24 +30,37 @@ def async_print_users_table(users):
           "Email", "Is Admin"], tablefmt="psql"))
 
 
-async def async_create_user(db: AsyncSession, users: list[UserCreate]):
-    for user in users:
-        try:
-            async_engine.echo = False
-            hashed_password = sha256(user.password.encode()).hexdigest()
-            db_user = User(
-                email=user.email,
-                username=user.username,
-                hashed_password=hashed_password,
-                is_superuser=user.is_superuser
-            )
-            db.add(db_user)
-            await db.commit()
-            await db.refresh(db_user)
-            return db_user
-        except IntegrityError:
-            await db.rollback()
-            print(f"⚠️ Skipped (duplicate): {user.email}")
+async def async_create_user(db: AsyncSession, user: UserCreate):
+    query = select(User).filter(
+        (User.email == user.email) | (User.username == user.username)
+    )
+    result = await db.execute(query)
+    existing_user = result.scalars().first()
+
+    if existing_user:
+        raise ValueError(
+            f"⚠️ Пользователь с email '{user.email}' или username '{user.username}' уже существует."
+        )
+
+    try:
+        # hashed_password = pwd_context.hash(user.hashed_password)
+        db_user = User(
+            email=user.email,
+            username=user.username,
+            # For real its firts layer of hash. user.hashed_password did not hashed before this step
+            hashed_password=user.hashed_password,
+            is_superuser=user.is_superuser
+        )
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+        return db_user  # возвращаем созданного пользователя
+    except IntegrityError:
+        await db.rollback()
+        raise ValueError(f"⚠️ База данных: email или username уже существует.")
+    except Exception as e:
+        await db.rollback()
+        raise ValueError(f"❌ Ошибка при создании пользователя: {e}")
 
 
 async def async_delete_by_id(db: AsyncSession, user_id):
@@ -61,11 +76,24 @@ async def async_delete_by_id(db: AsyncSession, user_id):
     return False
 
 
-async def async_update_by_id(db: AsyncSession, user_id, new_username):
+async def async_update_by_id(db: AsyncSession, user_id, new_username, new_email: str | None):
     result = await db.execute(select(User).filter(User.id == user_id))
     user = result.scalars().first()
-    if user:
-        user.username = new_username
+    if not new_email:
+        if user:
+            user.username = new_username
 
-        await db.commit()
-        await db.refresh(user)
+            await db.commit()
+            await db.refresh(user)
+    if new_email:
+        if user:
+            user.username = new_username
+            user.email = new_email
+            await db.commit()
+            await db.refresh(user)
+
+
+async def async_get_by_id(db: AsyncSession, user_id: int) -> User | None:
+    result = await db.execute(select(User).filter(User.id == user_id))
+    user = result.scalars().first()
+    return user
