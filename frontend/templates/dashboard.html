@@ -95,181 +95,68 @@
 
       <!-- Main content -->
       <main class="flex-1 p-12 space-y-16">
+        {% if success %}
+        <div
+          class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6"
+          role="alert"
+        >
+          <strong class="font-bold">Success!</strong>
+          <span class="block sm:inline">Profile updated succesfuly</span>
+        </div>
+        {% endif %}
         <!-- Dashboard Welcome -->
         <section id="dashboard">
           <h2 class="text-4xl font-semibold mb-3 text-muted-purple">
-            Welcome back, user
+            Welcome back, {{ username }}
           </h2>
           <p class="text-muted-purple/70 text-lg">
             Here’s what’s happening in your workspace.
           </p>
         </section>
 
-        <!-- Profile Section -->
-        <section class="glass p-8 border-cream border rounded-2xl shadow-md">
-          <h3 class="text-2xl font-semibold mb-6 text-muted-purple">
-            👤 Profile Settings
-          </h3>
-          <div class="grid md:grid-cols-2 gap-8">
-            <div>
-              <label class="block mb-2 font-medium text-muted-purple"
-                >Username</label
-              >
-              <input
-                type="text"
-                placeholder="John Doe"
-                class="w-full rounded-lg border border-cream px-5 py-3 placeholder:text-cream-dark focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
-              />
-            </div>
-            <div>
-              <label class="block mb-2 font-medium text-muted-purple"
-                >Email</label
-              >
-              <input
-                type="email"
-                placeholder="you@example.com"
-                class="w-full rounded-lg border border-cream px-5 py-3 placeholder:text-cream-dark focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
-              />
-            </div>
-          </div>
-        </section>
-
-        <!-- Sync Setup -->
-        <section class="glass p-8 border-cream border rounded-2xl shadow-md">
-          <h3 class="text-2xl font-semibold mb-6 text-muted-purple">
-            🧩 Task Sync Setup
-          </h3>
-          <div class="flex gap-6 flex-wrap mb-8">
-            <button
-              class="px-6 py-3 rounded-lg bg-cream text-muted-purple font-semibold hover:bg-cream-transparent transition"
-            >
-              Connect Google Tasks
-            </button>
-            <button
-              class="px-6 py-3 rounded-lg bg-cream text-muted-purple font-semibold hover:bg-cream-transparent transition"
-            >
-              Connect Trello
-            </button>
-            <button
-              class="px-6 py-3 rounded-lg bg-cream text-muted-purple font-semibold hover:bg-cream-transparent transition"
-            >
-              Connect Notion
-            </button>
-          </div>
-
-          <h4 class="text-xl font-semibold mb-3 text-muted-purple">
-            Sync Frequency
-          </h4>
-          <div class="space-y-3 text-muted-purple">
-            <label class="flex items-center gap-3">
-              <input
-                type="radio"
-                name="sync-frequency"
-                class="accent-muted-purple"
-              />
-              Hourly
-            </label>
-            <label class="flex items-center gap-3">
-              <input
-                type="radio"
-                name="sync-frequency"
-                class="accent-muted-purple"
-              />
-              Daily
-            </label>
-            <label class="flex items-center gap-3">
-              <input
-                type="radio"
-                name="sync-frequency"
-                class="accent-muted-purple"
-              />
-              Manual Only
-            </label>
-          </div>
-        </section>
-
-        <!-- Events -->
-        <section class="glass p-8 border-cream border rounded-2xl shadow-md">
-          <h3 class="text-2xl font-semibold mb-6 text-muted-purple">
-            📅 Upcoming Events
-          </h3>
-          <ul class="space-y-5 text-muted-purple">
-            <li
-              class="flex items-start gap-5 bg-cream-transparent border border-cream rounded-lg p-5"
-            >
-              <div class="text-4xl">📌</div>
+        <!-- Profile Section with editable form -->
+        <form method="post" action="/update-profile">
+          <section class="glass p-8 border-cream border rounded-2xl shadow-md">
+            <h3 class="text-2xl font-semibold mb-6 text-muted-purple">
+              👤 Profile Settings
+            </h3>
+            <div class="grid md:grid-cols-2 gap-8">
               <div>
-                <p class="font-semibold text-lg">Team Sync</p>
-                <p class="text-muted-purple/70 text-sm">Tomorrow at 10:00 AM</p>
+                <label class="block mb-2 font-medium text-muted-purple"
+                  >Username</label
+                >
+                <input
+                  type="text"
+                  name="username"
+                  value="{{ username }}"
+                  class="w-full rounded-lg border border-cream px-5 py-3 focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
+                />
               </div>
-            </li>
-            <li
-              class="flex items-start gap-5 bg-cream-transparent border border-cream rounded-lg p-5"
-            >
-              <div class="text-4xl">🧠</div>
               <div>
-                <p class="font-semibold text-lg">AI Workshop</p>
-                <p class="text-muted-purple/70 text-sm">
-                  Friday, July 6 at 2:00 PM
-                </p>
+                <label class="block mb-2 font-medium text-muted-purple"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  name="email"
+                  value="{{ email }}"
+                  class="w-full rounded-lg border border-cream px-5 py-3 focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
+                />
               </div>
-            </li>
-          </ul>
-        </section>
-
-        <!-- Account Settings -->
-        <section class="glass p-8 border-cream border rounded-2xl shadow-md">
-          <h3 class="text-2xl font-semibold mb-6 text-muted-purple">
-            ⚙️ Account Settings
-          </h3>
-
-          <div class="grid md:grid-cols-2 gap-8 mb-8">
-            <div>
-              <label class="block mb-2 font-medium text-muted-purple"
-                >Current Password</label
-              >
-              <input
-                type="password"
-                placeholder="••••••••"
-                class="w-full rounded-lg border border-cream px-5 py-3 placeholder:text-cream-dark focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
-              />
             </div>
-            <div>
-              <label class="block mb-2 font-medium text-muted-purple"
-                >New Password</label
+
+            <div class="text-right mt-6">
+              <button
+                type="submit"
+                class="px-8 py-3 rounded-lg bg-cream text-muted-purple font-semibold hover:bg-cream-transparent transition"
               >
-              <input
-                type="password"
-                placeholder="••••••••"
-                class="w-full rounded-lg border border-cream px-5 py-3 placeholder:text-cream-dark focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
-              />
+                Save Changes
+              </button>
             </div>
-          </div>
+          </section>
+        </form>
 
-          <h4 class="text-xl font-semibold mb-4 text-muted-purple">
-            Notifications
-          </h4>
-          <label class="flex items-center gap-3 mb-3 text-muted-purple">
-            <input type="checkbox" class="accent-muted-purple" />
-            Email alerts for new tasks
-          </label>
-          <label class="flex items-center gap-3 mb-3 text-muted-purple">
-            <input type="checkbox" class="accent-muted-purple" />
-            Daily digest summary
-          </label>
-          <label class="flex items-center gap-3 mb-3 text-muted-purple">
-            <input type="checkbox" class="accent-muted-purple" />
-            Notify me about team mentions
-          </label>
-
-          <div class="text-right">
-            <button
-              class="px-8 py-3 rounded-lg bg-cream text-muted-purple font-semibold hover:bg-cream-transparent transition"
-            >
-              Save All Settings
-            </button>
-          </div>
-        </section>
+        <!-- ... (остальной твой контент) -->
       </main>
     </div>
   </body>

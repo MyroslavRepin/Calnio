@@ -76,11 +76,24 @@ async def async_delete_by_id(db: AsyncSession, user_id):
     return False
 
 
-async def async_update_by_id(db: AsyncSession, user_id, new_username):
+async def async_update_by_id(db: AsyncSession, user_id, new_username, new_email: str | None):
     result = await db.execute(select(User).filter(User.id == user_id))
     user = result.scalars().first()
-    if user:
-        user.username = new_username
+    if not new_email:
+        if user:
+            user.username = new_username
 
-        await db.commit()
-        await db.refresh(user)
+            await db.commit()
+            await db.refresh(user)
+    if new_email:
+        if user:
+            user.username = new_username
+            user.email = new_email
+            await db.commit()
+            await db.refresh(user)
+
+
+async def async_get_by_id(db: AsyncSession, user_id: int) -> User | None:
+    result = await db.execute(select(User).filter(User.id == user_id))
+    user = result.scalars().first()
+    return user
