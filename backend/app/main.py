@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
-from backend.app.api import login, signup, landing, dashboard, users, logout
+from backend.app.api import login, signup, landing, dashboard, users, logout, refresh
 from backend.app import version
 
 
@@ -27,6 +27,7 @@ app.include_router(dashboard.router)
 app.include_router(version.router)
 app.include_router(users.router)
 app.include_router(logout.router)
+app.include_router(refresh.router)
 
 
 class UserAdmin(ModelView, model=user_models.User):
