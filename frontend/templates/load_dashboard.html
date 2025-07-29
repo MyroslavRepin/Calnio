@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Загрузка...</title>
+  </head>
+  <body>
+    <h1>Пожалуйста, подождите...</h1>
+
+    <script>
+      // Функция для обновления cookies через запрос
+      async function refreshCookies() {
+        try {
+          // Отправляем запрос на сервер для обновления куков
+          const response = await fetch("/refresh", {
+            method: "POST",
+            credentials: "include", // важно, чтобы куки отправлялись и принимались
+          });
+
+          if (response.ok) {
+            // Обновление прошло успешно, переходим на dashboard
+            window.location.href = "/dashboard";
+          } else {
+            // Если ошибка — можно обработать, например, показать сообщение
+            alert(
+              "Не удалось обновить сессию. Пожалуйста, попробуйте войти снова."
+            );
+            window.location.href = "/login"; // или куда нужно
+          }
+        } catch (error) {
+          alert("Ошибка соединения. Проверьте интернет и попробуйте ещё раз.");
+          window.location.href = "/login";
+        }
+      }
+
+      // Запускаем обновление куков сразу при загрузке страницы
+      refreshCookies();
+    </script>
+  </body>
+</html>
