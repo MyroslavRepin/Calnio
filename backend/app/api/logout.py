@@ -24,4 +24,10 @@ async def logout(response: Response):
         samesite="lax",
         secure=False,
     )
+    response.delete_cookie(
+        key=config.JWT_REFRESH_COOKIE_NAME,
+        path="/",
+        samesite="lax",
+        secure=False,
+    )
     return response
