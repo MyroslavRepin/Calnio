@@ -15,6 +15,7 @@ export async function fetchWithAutoRefresh(url, options = {}) {
     });
 
     if (refreshResponse.ok) {
+      window.location.reload();
       console.log("Token refreshed successfully. Retrying request...");
       response = await fetch(url, options);
     } else {

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -51,5 +51,67 @@
         Go to Login
       </a>
     </div>
+  </body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Refreshing Session...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-gray-900 flex items-center justify-center min-h-screen text-white"
+  >
+    <div class="text-center">
+      <!-- Лоадер: пульсирующие точки -->
+      <div class="flex justify-center space-x-2 mb-6">
+        <span
+          class="w-4 h-4 bg-blue-400 rounded-full animate-ping animation-delay-200"
+        ></span>
+        <span
+          class="w-4 h-4 bg-blue-400 rounded-full animate-ping animation-delay-400"
+        ></span>
+        <span
+          class="w-4 h-4 bg-blue-400 rounded-full animate-ping animation-delay-600"
+        ></span>
+      </div>
+
+      <h1 class="text-3xl font-semibold mb-2">Refreshing your session...</h1>
+      <p class="text-blue-300">
+        Please wait a moment while we update your access token.
+      </p>
+    </div>
+
+    <script>
+      // Для плавной анимации пинга добавим кастомный delay (Tailwind не поддерживает по умолчанию)
+      const style = document.createElement("style");
+      style.textContent = `
+      .animation-delay-200 { animation-delay: 0.2s; }
+      .animation-delay-400 { animation-delay: 0.4s; }
+      .animation-delay-600 { animation-delay: 0.6s; }
+    `;
+      document.head.appendChild(style);
+
+      (async () => {
+        try {
+          const res = await fetch("/refresh", {
+            method: "POST",
+            credentials: "include",
+          });
+          if (res.ok) {
+            // Немного задержим переход, чтобы анимация была заметна
+            setTimeout(() => {
+              window.location.href = "/dashboard";
+            }, 800);
+          } else {
+            window.location.href = "/login";
+          }
+        } catch {
+          window.location.href = "/login";
+        }
+      })();
+    </script>
   </body>
 </html>
