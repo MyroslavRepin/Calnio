@@ -1,3 +1,5 @@
+from backend.app.security.jwt_config import security, config
+from fastapi import Request, Response, HTTPException
 from passlib.context import CryptContext
 from fastapi.exceptions import HTTPException
 from fastapi import Request
@@ -29,3 +31,33 @@ async def access_token_required(request: Request):
         return payload
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+async def refresh_access_token(request: Request, response: Response):
+    try:
+        # Проверяем и извлекаем payload из refresh_token cookie
+        refresh_payload = await security.refresh_token_required(request)
+
+        # Создаём новый access токен на основе user_id из payload
+        new_access_token = security.create_access_token(refresh_payload.sub)
+
+        response.delete_cookie(
+            key=config.JWT_ACCESS_COOKIE_NAME,
+            path="/",
+            samesite="lax",
+            secure=False,
+        )
+        response.set_cookie(
+            key=config.JWT_ACCESS_COOKIE_NAME,
+            value=new_access_token,
+            httponly=True,
+            samesite="lax",
+            secure=False,  # In prode should be True (https)
+            path="/",
+        )
+
+        return {"message": "Access token refreshed"}
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=401, detail="Invalid refresh token or expired")
