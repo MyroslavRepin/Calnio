@@ -56,13 +56,15 @@ async def login_post(
         access_token,
         httponly=True,
         samesite="lax",
-        secure=False
+        secure=False,
+        path="/",
     )
     redirect_response.set_cookie(
         config.JWT_REFRESH_COOKIE_NAME,
         refresh_token,
         httponly=True,
         samesite="lax",
-        secure=False
+        secure=False,
+        path="/",
     )
     return redirect_response

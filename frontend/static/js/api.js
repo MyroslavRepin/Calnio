@@ -1,44 +1,27 @@
-// fetchWithRefresh.js
+// static/js/api.js
 
-async function fetchWithRefresh(url, options = {}) {
-  options.credentials = "include"; // чтобы куки автоматически отправлялись
+export async function fetchWithAutoRefresh(url, options = {}) {
+  options.credentials = "include";
+  options.method = options.method || "GET";
 
   let response = await fetch(url, options);
 
   if (response.status === 401) {
-    // access токен истёк, пробуем обновить
+    console.warn("Access token expired. Attempting refresh...");
+
     const refreshResponse = await fetch("/refresh", {
       method: "POST",
       credentials: "include",
     });
 
     if (refreshResponse.ok) {
-      // обновление прошло успешно, повторяем исходный запрос
+      console.log("Token refreshed successfully. Retrying request...");
       response = await fetch(url, options);
     } else {
-      // refresh не удался, нужно логиниться заново
-      throw new Error("Сессия истекла, пожалуйста, войдите заново");
+      console.error("Token refresh failed. Redirecting to login...");
+      window.location.href = "/login";
     }
   }
+
   return response;
 }
-
-// Пример использования:
-
-async function getProtectedData() {
-  try {
-    const response = await fetchWithRefresh("/protected");
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Данные с защищённого роута:", data);
-    } else {
-      console.error("Ошибка при получении данных:", response.status);
-    }
-  } catch (error) {
-    console.error(error.message);
-    // Тут можно сделать редирект на страницу логина или показать сообщение
-  }
-}
-
-// Можно вызвать функцию, например, при загрузке страницы или по кнопке
-getProtectedData();

@@ -2,7 +2,7 @@ import os
 
 from backend.app.db.database import AsyncSessionLocal
 from backend.app.security.jwt_config import security
-from backend.app.security.utils import access_token_required
+from backend.app.security.utils import access_token_required, refresh_access_token
 from backend.app.db.deps import async_get_db
 from backend.app.crud.users import async_get_by_id, async_update_by_id
 
@@ -29,14 +29,13 @@ async def dashboard(
     success: int | None = Query(None),
 ):
     try:
-        #! All correct code if user authorized
-
         # Decode payload and check if expired. Returns dict
         payload = await access_token_required(request)
         user_id = int(payload["sub"])
         print(user_id)
+
     except HTTPException:
-        # ❌ Если токен невалиден или отсутствует — редирект или HTML
+        # Если токен невалиден или отсутствует — редирект или HTML
         return templates.TemplateResponse("unauthorized.html", {"request": request}, status_code=401)
 
     user = await async_get_by_id(db, user_id)
