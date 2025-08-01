@@ -35,7 +35,9 @@ async def login_post(
     creds: UserLogin = Depends(UserLogin.as_form),
     db: AsyncSession = Depends(async_get_db)
 ):
-    query = select(User).where(User.email == creds.email)
+    query = select(User).where(
+        (User.email == creds.login) | (User.username == creds.login))
+
     result = await db.execute(query)
     user = result.scalar_one_or_none()
 

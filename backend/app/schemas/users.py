@@ -14,13 +14,13 @@ class UserCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    login: str
     password: str
 
     @classmethod
     def as_form(
         cls,
-        email: str = Form(...),
+        login: str = Form(...),
         password: str = Form(...)
     ):
-        return cls(email=email, password=password)
+        return cls(login=login, password=password)
