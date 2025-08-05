@@ -3,7 +3,7 @@ import sys
 from dotenv import load_dotenv
 from pathlib import Path
 from backend.app.core.config import settings
-from backend.app.crud.users import async_create_user, get_users, async_print_users_table, async_delete_by_id, async_update_by_id
+from backend.app.crud.users import async_create_user, get_users, async_print_users_table, async_delete_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.schemas.users import UserCreate
 from backend.app.db.database import SessionLocal, AsyncSessionLocal
 from backend.app.db.create_tables import create_tables, async_create_tables
@@ -61,6 +61,15 @@ def main():
             try:
                 async with AsyncSessionLocal() as db:
                     await async_update_by_id(db=db, user_id=6, new_username="bob_king")
+
+            finally:
+                print(f"✅ User updated successfully.")
+        asyncio.run(update_user_async())
+    elif command == 'update_password':
+        async def update_user_async():
+            try:
+                async with AsyncSessionLocal() as db:
+                    await async_update_password_by_id(db=db, user_id=13, new_password="new_password")
 
             finally:
                 print(f"✅ User updated successfully.")
