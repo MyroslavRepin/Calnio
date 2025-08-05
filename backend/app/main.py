@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from backend.app.api import login, signup, landing, dashboard, users, logout, refresh
 from backend.app import version
-from backend.app.middleware.ignore_logging import IgnorePathLoggingMiddleware
+from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 
 
 app = FastAPI()
@@ -38,4 +38,4 @@ class UserAdmin(ModelView, model=user_models.User):
 admin = Admin(app, engine)
 admin.add_view(UserAdmin)
 
-app.add_middleware(IgnorePathLoggingMiddleware)
+app.add_middleware(IgnoreSpecificPathsMiddleware)

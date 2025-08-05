@@ -33,7 +33,7 @@ async def access_token_required(request: Request):
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
-async def refresh_access_token(request: Request, response: Response):
+async def refresh_access_token(request: Request, response: Response) -> dict:
     try:
         # Проверяем и извлекаем payload из refresh_token cookie
         refresh_payload = await security.refresh_token_required(request)
@@ -56,7 +56,7 @@ async def refresh_access_token(request: Request, response: Response):
             path="/",
         )
 
-        return {"message": "Access token refreshed"}
+        return {"sub": refresh_payload.sub}
     except Exception as e:
         print(e)
         raise HTTPException(
