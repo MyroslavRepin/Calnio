@@ -2,9 +2,9 @@ import os
 
 from backend.app.db.database import AsyncSessionLocal
 from backend.app.security.jwt_config import security
-from backend.app.security.utils import access_token_required, refresh_access_token
+from backend.app.security.utils import access_token_required, refresh_access_token, create_hash
 from backend.app.db.deps import async_get_db
-from backend.app.crud.users import async_get_by_id, async_update_by_id
+from backend.app.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -58,7 +58,6 @@ async def dashboard(
         # Decode payload and check if expired. Returns dict
         payload = await access_token_required(request)
         user_id = int(payload["sub"])
-        print(user_id)
 
     except HTTPException:
         # Если токен невалиден или отсутствует — редирект или HTML
@@ -91,6 +90,7 @@ async def update_profile(
     response: Response,
     username: str = Form(...),
     email: str = Form(...),
+    password: str = Form(...),
     db: AsyncSession = Depends(async_get_db)
 ):
     try:
@@ -103,8 +103,6 @@ async def update_profile(
     except HTTPException:
         # Если токен невалиден или отсутствует — редирект или HTML
         try:
-            logging.info("Trying update access token")
-            # тут ты, возможно, вернёшь Response с новой кукой
             payload = await refresh_access_token(request, response)
             user_id = int(payload["sub"])  # важно: user_id тут тоже нужен
 
@@ -117,4 +115,6 @@ async def update_profile(
         raise HTTPException(status_code=404, detail="User not found")
 
     await async_update_by_id(db=db, user_id=user_id, new_username=username, new_email=email)
+
+    await async_update_password_by_id(db=db, user_id=user_id, new_password=password)
     return RedirectResponse(url="/dashboard?success=1", status_code=status.HTTP_302_FOUND)

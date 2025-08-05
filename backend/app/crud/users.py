@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.models.users import User
 from backend.app.schemas.users import UserCreate
 from backend.app.db.database import async_engine
-# если у тебя pwd_context там
 from backend.app.security.utils import pwd_context, create_hash
 
 
@@ -91,6 +90,15 @@ async def async_update_by_id(db: AsyncSession, user_id, new_username, new_email:
             user.email = new_email
             await db.commit()
             await db.refresh(user)
+
+
+async def async_update_password_by_id(db: AsyncSession, user_id, new_password):
+    result = await db.execute(select(User).filter(User.id == user_id))
+    user = result.scalars().first()
+    if user:
+        user.hashed_password = create_hash(new_password)
+        await db.commit()
+        await db.refresh(user)
 
 
 async def async_get_by_id(db: AsyncSession, user_id: int) -> User | None:

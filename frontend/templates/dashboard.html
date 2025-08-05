@@ -96,15 +96,6 @@
 
       <!-- Main content -->
       <main class="flex-1 p-12 space-y-16">
-        <!-- {% if success %}
-        <div
-          class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6"
-          role="alert"
-        >
-          <strong class="font-bold">Success!</strong>
-          <span class="block sm:inline">Profile updated succesfuly</span>
-        </div>
-        {% endif %} -->
         {% if request.query_params.success %}
         <div
           id="success-alert"
@@ -167,6 +158,17 @@
                   type="email"
                   name="email"
                   value="{{ email }}"
+                  class="w-full rounded-lg border border-cream px-5 py-3 focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
+                />
+              </div>
+              <div>
+                <label class="block mb-2 font-medium text-muted-purple"
+                  >Password</label
+                >
+                <input
+                  type="password"
+                  name="password"
+                  value="{{ password }}"
                   class="w-full rounded-lg border border-cream px-5 py-3 focus:outline-none focus:ring-2 focus:ring-muted-purple transition bg-cream"
                 />
               </div>
