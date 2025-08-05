@@ -20,4 +20,5 @@ templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 @router.post("/refresh")
 async def refresh_token(request: Request, response: Response):
     print("Refresh endpoint called")
-    await refresh_access_token(request, response)
+    result = await refresh_access_token(request, response)
+    return result

@@ -8,12 +8,37 @@ from backend.app.crud.users import async_get_by_id, async_update_by_id
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi import APIRouter, Request, Form, Depends, status, Query
+from fastapi import APIRouter, Request, Form, Depends, status, Query, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.exceptions import HTTPException
 
+import logging
+import colorlog
+
 router = APIRouter()
+
+#! LOQ SETUP
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+handler = colorlog.StreamHandler()
+handler.setFormatter(colorlog.ColoredFormatter(
+    "%(log_color)s%(bold)s%(asctime)s %(levelname)-8s %(reset)s%(white)s%(message)s",
+    log_colors={
+        'DEBUG':    'cyan',
+        'INFO':     'green',
+        'WARNING':  'yellow',
+        'ERROR':    'red,bold',
+        'CRITICAL': 'red,bg_white',
+    },
+    secondary_log_colors={},
+    style='%'
+))
+
+logger = colorlog.getLogger()
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(
@@ -25,6 +50,7 @@ templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 @router.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(
     request: Request,
+    response: Response,
     db: AsyncSession = Depends(async_get_db),
     success: int | None = Query(None),
 ):
@@ -36,25 +62,33 @@ async def dashboard(
 
     except HTTPException:
         # Если токен невалиден или отсутствует — редирект или HTML
-        return templates.TemplateResponse("unauthorized.html", {"request": request}, status_code=401)
+        try:
+            logging.info("Trying update access token")
+            payload = await refresh_access_token(request, response)
+            user_id = int(payload["sub"])  # важно: user_id тут тоже нужен
+
+        except HTTPException:
+            return RedirectResponse("/login", 401)
 
     user = await async_get_by_id(db, user_id)
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Передаём имя пользователя в шаблон
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "username": user.username,
-        "email": user.email,
-        "success": success,
-    })
+    html_content = templates.get_template("dashboard.html").render(
+        request=request,
+        username=user.username,
+        email=user.email,
+        success=success,
+    )
+
+    return HTMLResponse(content=html_content, headers=response.headers, status_code=200)
 
 
 @router.post("/update-profile")
 async def update_profile(
     request: Request,
+    response: Response,
     username: str = Form(...),
     email: str = Form(...),
     db: AsyncSession = Depends(async_get_db)
@@ -67,8 +101,15 @@ async def update_profile(
         user_id = int(payload["sub"])
         # print(user_id)
     except HTTPException:
-        # ❌ Если токен невалиден или отсутствует — редирект или HTML
-        return templates.TemplateResponse("unauthorized.html", {"request": request}, status_code=401)
+        # Если токен невалиден или отсутствует — редирект или HTML
+        try:
+            logging.info("Trying update access token")
+            # тут ты, возможно, вернёшь Response с новой кукой
+            payload = await refresh_access_token(request, response)
+            user_id = int(payload["sub"])  # важно: user_id тут тоже нужен
+
+        except HTTPException:
+            return RedirectResponse("/login", 401)
 
     user = await async_get_by_id(db, user_id)
 
