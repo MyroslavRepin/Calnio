@@ -1,5 +1,5 @@
 from backend.app.models import users as user_models
-from backend.app.db.database import SessionLocal, engine
+from backend.app.db.database import AsyncSession, async_engine
 from sqladmin import ModelView
 from sqladmin import Admin
 import os
@@ -35,7 +35,7 @@ class UserAdmin(ModelView, model=user_models.User):
     column_list = [user_models.User.id, user_models.User.email]
 
 
-admin = Admin(app, engine)
+admin = Admin(app, async_engine)
 admin.add_view(UserAdmin)
 
 app.add_middleware(IgnoreSpecificPathsMiddleware)
