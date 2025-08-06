@@ -1,8 +1,9 @@
 from backend.app.db.database import Base
 from sqlalchemy import Boolean, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import Optional
+# from backend.app.models.notion_integration import UserNotionIntegration
 
 
 class User(Base):
@@ -19,3 +20,6 @@ class User(Base):
 
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    notion_integration = relationship(
+        "UserNotionIntegration", back_populates="user", uselist=False)
