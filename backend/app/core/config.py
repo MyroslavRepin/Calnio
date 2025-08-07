@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     env: str = "local"
     database_url_local: str
     database_url_prod: str
+    oauth_client_id: str
+    oauth_client_secret: str
 
     @property
     def database_url(self) -> str:

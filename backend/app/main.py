@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
 from backend.app.api import login, signup, landing, dashboard, users, logout, refresh
+from backend.app.api.oauth import notion_callback
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 
@@ -29,6 +30,7 @@ app.include_router(version.router)
 app.include_router(users.router)
 app.include_router(logout.router)
 app.include_router(refresh.router)
+app.include_router(notion_callback.router)
 
 
 class UserAdmin(ModelView, model=user_models.User):

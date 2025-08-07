@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and adheres to [Semantic Versioning](https://semver.org/)
 
+## v1.4.1 - 2025-08-07
+
+### 🔧 Fixed
+
+- Need to open in web as **localhost** not as **0.0.0.0**
+
+---
+
+## v1.4.0 - 2025-08-07
+
+### 🚀 Added
+
+- Adding Notion integrations to db
+- New model: **UserNotionIntegration**
+
+## v1.2.1 - 2025-08-05
+
+### ⚠ Known Issue
+
+- Cross-Site redirect erases cookies
+
+---
+
 ## v1.30 - 2025-08-05
 
 ### 🚀 Added

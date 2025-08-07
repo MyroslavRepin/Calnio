@@ -38,7 +38,7 @@ def main():
         async def create_user_async():
             try:
                 user = UserCreate(username="bob", email="bob@example.com",
-                                  password="bobking!", is_superuser=False)
+                                  hashed_password="bobking!", is_superuser=False)
                 async with AsyncSessionLocal() as db:
                     await async_create_user(db, user=user)
 
@@ -60,7 +60,7 @@ def main():
         async def update_user_async():
             try:
                 async with AsyncSessionLocal() as db:
-                    await async_update_by_id(db=db, user_id=6, new_username="bob_king")
+                    await async_update_by_id(db=db, user_id=6, new_username="bob_king", new_email="bobking@gmail.com")
 
             finally:
                 print(f"✅ User updated successfully.")
