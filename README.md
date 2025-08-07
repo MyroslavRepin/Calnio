@@ -61,3 +61,10 @@ START_SERVER.bat --reset
 ```cmd
 cloc --include-lang=Python,BourneShell,Markdown,HTML,CSS,Text --exclude-dir=.venv,.git,node_modules,tests,docs,vendor .
 ```
+
+**To run in HTTPS**
+
+```
+  --ssl-certfile localhost+2.pem \
+  --ssl-keyfile localhost+2-key.pem
+```
