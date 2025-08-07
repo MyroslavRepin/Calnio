@@ -1,0 +1,85 @@
+from datetime import datetime
+
+from fastapi import APIRouter, HTTPException, Request, Depends, Response
+from fastapi.responses import RedirectResponse
+import httpx
+import os
+
+from backend.app.db.deps import async_get_db
+from backend.app.db.database import AsyncSession
+from backend.app.crud.notion_integrations import save_or_update_integration
+from backend.app.security.utils import access_token_required, refresh_access_token
+
+import logging
+
+router = APIRouter()
+
+
+@router.get("/oauth/callback")
+async def oauth_callback(
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(async_get_db),
+):
+    print(f"Request: {request.cookies}")
+    try:
+        # 🛡️ Проверка токена
+        payload = await access_token_required(request)
+        user_id = int(payload["sub"])
+    except HTTPException:
+        try:
+            # ♻️ Обновление access токена
+            logging.info("🔁 Trying to refresh access token")
+            payload = await refresh_access_token(request, response)
+            user_id = int(payload["sub"])
+        except HTTPException:
+            logging.warning("❌ Unauthorized — redirect to /login")
+            return RedirectResponse("/login", status_code=401)
+
+    code = request.query_params.get("code")
+
+    if not code:
+        logging.error("⚠️ OAuth code not found in callback URL")
+        raise HTTPException(
+            status_code=400, detail="Code not found in query params")
+
+    token_url = "https://api.notion.com/v1/oauth/token"
+
+    data = {
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": "http://localhost:8000/oauth/callback"
+    }
+
+    OAuth_Client_ID = os.getenv("OAuth_Client_ID")
+    OAuth_Client_Secret = os.getenv("OAuth_Client_Secret")
+
+    if not OAuth_Client_ID or not OAuth_Client_Secret:
+        logging.critical("❗Missing OAuth client credentials")
+        raise HTTPException(
+            status_code=500, detail="OAuth credentials not set in environment")
+
+    auth = (OAuth_Client_ID, OAuth_Client_Secret)
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    async with httpx.AsyncClient() as client:
+        response_data = await client.post(token_url, json=data, auth=auth, headers=headers)
+
+    if response_data.status_code != 200:
+        logging.error(
+            f"🚫 Notion token request failed: {response_data.status_code}")
+        logging.error(f"📝 Response body: {response_data.text}")
+        raise HTTPException(
+            status_code=500, detail="Failed to exchange token with Notion")
+
+    token_data = response_data.json()
+
+    logging.info("🔐 Notion OAuth Token Response:")
+    logging.info(token_data)
+
+    await save_or_update_integration(db, user_id, token_data)
+
+    return RedirectResponse("/dashboard?success=1", status_code=302)

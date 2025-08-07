@@ -53,20 +53,21 @@ async def login_post(
     access_token = security.create_access_token(uid=str(user.id))
     refresh_token = security.create_refresh_token(uid=str(user.id))
     redirect_response = RedirectResponse("/dashboard", status_code=303)
+
     redirect_response.set_cookie(
         config.JWT_ACCESS_COOKIE_NAME,
         access_token,
         httponly=True,
-        samesite="lax",
-        secure=False,
+        samesite="none",
+        secure=True,
         path="/",
     )
     redirect_response.set_cookie(
         config.JWT_REFRESH_COOKIE_NAME,
         refresh_token,
         httponly=True,
-        samesite="lax",
-        secure=False,
+        samesite="none",
+        secure=True,
         path="/",
     )
     return redirect_response

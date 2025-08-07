@@ -44,15 +44,15 @@ async def refresh_access_token(request: Request, response: Response) -> dict:
         response.delete_cookie(
             key=config.JWT_ACCESS_COOKIE_NAME,
             path="/",
-            samesite="lax",
-            secure=False,
+            samesite="none",
+            secure=True,
         )
         response.set_cookie(
             key=config.JWT_ACCESS_COOKIE_NAME,
             value=new_access_token,
             httponly=True,
-            samesite="lax",
-            secure=False,  # In prode should be True (https)
+            samesite="none",
+            secure=True,  # In prode should be True (https)
             path="/",
         )
 
