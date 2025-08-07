@@ -56,6 +56,8 @@ async def dashboard(
 ):
     try:
         # Decode payload and check if expired. Returns dict
+        print("Cookies received:", request.cookies)
+
         payload = await access_token_required(request)
         user_id = int(payload["sub"])
 
