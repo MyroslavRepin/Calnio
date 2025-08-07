@@ -1,9 +1,9 @@
 from backend.app.security.jwt_config import security, config
-from fastapi import Request, Response, HTTPException
+from fastapi import Request, Response, HTTPException, status
 from passlib.context import CryptContext
 from fastapi.exceptions import HTTPException
 from fastapi import Request
-from jose import JWTError, jwt  # библиотека для работы с JWT
+from jose import JWTError, jwt
 from backend.app.security.jwt_config import config
 
 
@@ -19,18 +19,26 @@ def create_hash(plain_password: str) -> str:
 
 
 async def access_token_required(request: Request):
-    token = request.cookies.get(config.JWT_ACCESS_COOKIE_NAME)
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated"
+        )
+    token = auth_header[len("Bearer "):]
 
     try:
         if not config.JWT_SECRET_KEY:
             raise RuntimeError("JWT_SECRET_KEY is not set!")
+
         payload = jwt.decode(token, config.JWT_SECRET_KEY,
                              algorithms=["HS256"])
-        return payload
+        return payload  # payload может содержать user_id в "sub"
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token"
+        )
 
 
 async def refresh_access_token(request: Request, response: Response) -> dict:

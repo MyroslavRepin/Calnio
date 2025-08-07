@@ -1,8 +1,10 @@
+# backend/app/api/login.py
+
 import os
 
 from fastapi import APIRouter, Request, Form, Depends, HTTPException, Response
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 
 from backend.app.schemas.users import UserLogin
 from backend.app.security.jwt_config import config, security
@@ -53,20 +55,7 @@ async def login_post(
     access_token = security.create_access_token(uid=str(user.id))
     refresh_token = security.create_refresh_token(uid=str(user.id))
     redirect_response = RedirectResponse("/dashboard", status_code=303)
-    redirect_response.set_cookie(
-        config.JWT_ACCESS_COOKIE_NAME,
-        access_token,
-        httponly=True,
-        samesite="lax",
-        secure=False,
-        path="/",
-    )
-    redirect_response.set_cookie(
-        config.JWT_REFRESH_COOKIE_NAME,
-        refresh_token,
-        httponly=True,
-        samesite="lax",
-        secure=False,
-        path="/",
-    )
-    return redirect_response
+
+    return JSONResponse({"access_token": access_token,
+                        "refresh_token": refresh_token,
+                         "token_type": "bearer", })

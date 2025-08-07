@@ -54,10 +54,13 @@ async def dashboard(
     db: AsyncSession = Depends(async_get_db),
     success: int | None = Query(None),
 ):
+    print("🛜 Headers received:", request.headers)
+
     try:
         # Decode payload and check if expired. Returns dict
         payload = await access_token_required(request)
         user_id = int(payload["sub"])
+        print("✅ Access granted")
 
     except HTTPException:
         # Если токен невалиден или отсутствует — редирект или HTML
@@ -67,6 +70,7 @@ async def dashboard(
             user_id = int(payload["sub"])  # важно: user_id тут тоже нужен
 
         except HTTPException:
+            print("Can't update tokens")
             return RedirectResponse("/login", 401)
 
     user = await async_get_by_id(db, user_id)
@@ -99,7 +103,6 @@ async def update_profile(
         # Decode payload and check if expired. Returns dict
         payload = await access_token_required(request)
         user_id = int(payload["sub"])
-        # print(user_id)
     except HTTPException:
         # Если токен невалиден или отсутствует — редирект или HTML
         try:
