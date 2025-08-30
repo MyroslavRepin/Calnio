@@ -40,4 +40,4 @@ class UserAdmin(ModelView, model=user_models.User):
 admin = Admin(app, async_engine)
 admin.add_view(UserAdmin)
 
-app.add_middleware(IgnoreSpecificPathsMiddleware)
+# app.add_middleware(IgnoreSpecificPathsMiddleware)
