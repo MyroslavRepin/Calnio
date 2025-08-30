@@ -9,6 +9,7 @@ from backend.app.db.deps import async_get_db
 from backend.app.db.database import AsyncSession
 from backend.app.crud.notion_integrations import save_or_update_integration
 from backend.app.security.utils import access_token_required, refresh_access_token
+from backend.app.core.config import settings
 
 import logging
 
@@ -44,11 +45,13 @@ async def oauth_callback(
             status_code=400, detail="Code not found in query params")
 
     token_url = "https://api.notion.com/v1/oauth/token"
+    notion_redirect_uri = settings.redirect_uri
+    print(f"Notion redirect uri: {notion_redirect_uri}")
 
     data = {
         "grant_type": "authorization_code",
         "code": code,
-        "redirect_uri": "http://localhost:8000/oauth/callback"
+        "redirect_uri": notion_redirect_uri
     }
 
     OAuth_Client_ID = os.getenv("OAuth_Client_ID")
@@ -64,14 +67,19 @@ async def oauth_callback(
     headers = {
         "Content-Type": "application/json"
     }
-
+    print("Sending to Notion:", data)
     async with httpx.AsyncClient() as client:
         response_data = await client.post(token_url, json=data, auth=auth, headers=headers)
+
+    print("POST data sent to Notion:", data)
+    print("Notion response status:", response_data.status_code)
+    print("Notion response body:", response_data.text)
 
     if response_data.status_code != 200:
         logging.error(
             f"🚫 Notion token request failed: {response_data.status_code}")
         logging.error(f"📝 Response body: {response_data.text}")
+        print("Notion response:", response_data.status_code, response_data.text)
         raise HTTPException(
             status_code=500, detail="Failed to exchange token with Notion")
 
