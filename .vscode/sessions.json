@@ -12,7 +12,7 @@
         "icon": "server",
         "color": "terminal.ansiGreen",
         "commands": [
-          "echo ./START_SERVER.sh"
+          "./START_SERVER.sh"
         ]
       },
       {
@@ -20,7 +20,10 @@
         "autoExecuteCommands": true,
         "icon": "git-branch",
         "color": "terminal.ansiBlue",
-        "commands": []
+        "commands": [
+          "git fetch --all",
+          "git status"
+        ]
       },
       {
         "name": "SQL",
@@ -28,7 +31,7 @@
         "icon": "database",
         "color": "terminal.ansiMagenta",
         "commands": [
-          "psql -d scheduloo"
+          "psql -d calnio"
         ]
       },
       {
@@ -37,15 +40,37 @@
         "icon": "python",
         "color": "terminal.ansiRed",
         "commands": [
-          "source .venv/bin/activate"
+          "source .venv/bin/activate",
+          "python --version"
         ]
       },
       {
-        "name": "Ordinary",
+        "name": "Tools",
         "autoExecuteCommands": false,
         "icon": "tools",
         "color": "terminal.ansiYellow",
-        "commands": []
+        "commands": [
+          "htop",
+          "ls -lah"
+        ]
+      },
+      {
+        "name": "Railway",
+        "autoExecuteCommands": false,
+        "icon": "cloud",
+        "color": "terminal.ansiCyan",
+        "commands": [
+          "railway status"
+        ]
+      },
+      {
+        "name": "Railway Logs",
+        "autoExecuteCommands": true,
+        "icon": "list",
+        "color": "terminal.ansiBlue",
+        "commands": [
+          "railway logs"
+        ]
       }
     ]
   }

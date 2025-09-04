@@ -1,0 +1,76 @@
+.beta-btn {
+  width: 224px;
+  height: 35px;
+  border-radius: 100px;
+  background-color: #dbeafe;
+  border: #006dff solid 1px;
+  margin-top: 58px;
+  display: flex; /* делаем флекс-контейнером */
+  justify-content: center; /* по горизонтали */
+  align-items: center;
+}
+.beta-btn p {
+  color: #006dff;
+  font-family: Roboto, sans-serif;
+  font-size: 12px;
+}
+.beta-btn svg {
+  margin-right: 8px;
+}
+.btn-center {
+  display: flex; /* делаем флекс-контейнером */
+  justify-content: center; /* по горизонтали */
+  align-items: center;
+}
+.btn-section {
+  display: flex;
+  justify-content: center; /* центрируем кнопки по горизонтали */
+  align-items: center; /* центрируем по вертикали */
+  gap: 33px;
+  width: 505px;
+  height: 52px; /* округлил до целого для удобства */
+  flex-shrink: 0;
+  margin: 0 auto;
+}
+
+.start-free-tria-btn {
+  display: flex; /* делаем кнопкой флекс-контейнер для текста */
+  justify-content: center; /* центрируем текст по горизонтали */
+  align-items: center; /* центрируем текст по вертикали */
+  width: 236px;
+  height: 52px;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff; /* текст белый */
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 72px;
+}
+.watch-demo-btn {
+  display: flex; /* делаем кнопкой флекс-контейнер для текста */
+  justify-content: center; /* центрируем текст по горизонтали */
+  align-items: center; /* центрируем текст по вертикали */
+  width: 236px;
+  height: 52px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #565656; /* текст белый */
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 72px;
+  border-radius: 12px;
+  border: 2px solid rgba(71, 93, 122, 0.26);
+  background: #fff;
+}
+.available-txt p {
+  color: #06792e;
+  text-align: center;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.contact-us {
+  width: 100px;
+  height: 30px;
+}
