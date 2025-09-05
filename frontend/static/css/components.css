@@ -26,11 +26,12 @@
   display: flex;
   justify-content: center; /* центрируем кнопки по горизонтали */
   align-items: center; /* центрируем по вертикали */
-  gap: 33px;
-  width: 505px;
+  gap: 20px;
+  width: 100%;
+  max-width: 505px;
   height: 52px; /* округлил до целого для удобства */
   flex-shrink: 0;
-  margin: 0 auto;
+  margin: 40px auto 0;
 }
 
 .start-free-tria-btn {
@@ -44,7 +45,14 @@
   color: #fff; /* текст белый */
   font-size: 16px;
   font-weight: 600;
-  margin-top: 72px;
+  margin-top: 0;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-free-tria-btn:hover {
+  background: #1d4ed8;
 }
 .watch-demo-btn {
   display: flex; /* делаем кнопкой флекс-контейнер для текста */
@@ -54,13 +62,18 @@
   height: 52px;
   border-radius: 12px;
   background: #ffffff;
-  color: #565656; /* текст белый */
+  color: #565656;
   font-size: 16px;
   font-weight: 600;
-  margin-top: 72px;
-  border-radius: 12px;
+  margin-top: 0;
   border: 2px solid rgba(71, 93, 122, 0.26);
-  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.watch-demo-btn:hover {
+  background: #f8fafc;
+  border-color: #2563eb;
 }
 .available-txt p {
   color: #06792e;
@@ -73,4 +86,48 @@
 .contact-us {
   width: 100px;
   height: 30px;
+}
+
+/* RESPONSIVE DESIGN - COMPONENTS */
+@media (max-width: 768px) {
+  .beta-btn {
+    width: 200px;
+    height: 32px;
+    margin-top: 40px;
+  }
+
+  .beta-btn p {
+    font-size: 11px;
+  }
+
+  .btn-section {
+    gap: 15px;
+    padding: 0 20px;
+  }
+
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    width: 100%;
+    max-width: 280px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .beta-btn {
+    width: 180px;
+    height: 30px;
+    margin-top: 30px;
+  }
+
+  .beta-btn p {
+    font-size: 10px;
+  }
+
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    width: 100%;
+    height: 48px;
+    font-size: 14px;
+  }
 }

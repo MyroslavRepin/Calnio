@@ -4,43 +4,54 @@ body {
 }
 
 .container {
-  max-width: 1196px;
+  max-width: 1137px;
   margin: 0 auto; /* центрирует блок */
+  padding: 0 20px; /* добавляем отступы для мобильных устройств */
 }
 /* ! SECTIONS */
 .section-header {
   background-color: #eef2ff;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
+  display: flex;
+  align-items: center;
+  padding: 80px 0 60px;
+  box-sizing: border-box;
 }
 .section-2 {
   background-color: #ffffff;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
+  padding: 80px 0 60px;
+  box-sizing: border-box;
 }
 .section-3 {
   background-color: #f9f9f9;
-  padding-top: 46px;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
+  padding: 80px 0 60px;
+  box-sizing: border-box;
 }
 .section-5 {
   background: linear-gradient(180deg, #f5f5f5 0%, #eff6ff 100%);
-  padding-top: 46px;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
+  padding: 80px 0 60px;
+  box-sizing: border-box;
 }
 .section-4 {
   background-color: #ffffff;
-  padding-top: 46px;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
+  padding: 80px 0 60px;
+  box-sizing: border-box;
 }
 .footer {
   background-color: #111c2c;
-  padding-top: 46px;
-  height: 543px;
+  min-height: 543px;
   width: 100%; /* фон растягивается на всю ширину */
+  padding: 80px 0 60px;
+  box-sizing: border-box;
 }
 /* ! ________________________________ */
 .hero-title {
@@ -110,7 +121,8 @@ body {
   border-radius: 13px;
   background: #fff;
   box-shadow: 0 0 24px -6px rgba(147, 147, 147, 0.25);
-  padding: 14px;
+  padding: 24px;
+  box-sizing: border-box;
 }
 .section-4 .hero-title-h2 {
   margin: 0;
@@ -122,10 +134,13 @@ body {
   flex-shrink: 0;
   border-radius: 13px;
   border: 1px solid #dbdbdb;
-
   background: #fff;
   box-shadow: 0 0 24px -6px rgba(147, 147, 147, 0.25);
-  padding: 14px;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .pricing-2 {
   width: 350px;
@@ -133,10 +148,13 @@ body {
   flex-shrink: 0;
   border-radius: 13px;
   border: 1px solid #dbdbdb;
-
   background: #fff;
   box-shadow: 0 0 24px -6px rgba(147, 147, 147, 0.25);
-  padding: 14px;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .pricing-1 h3 {
   text-align: center;
@@ -195,37 +213,39 @@ body {
   width: 237px;
   height: 43px;
   flex-shrink: 0;
-  background-color: #000;
-  border-radius: 15px;
+  background-color: #2563eb;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #fff;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 600;
   line-height: normal;
-  margin: auto;
-  margin-top: 65px;
+  margin: 20px auto 0;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
 .pricing-2 a {
   width: 237px;
   height: 43px;
   flex-shrink: 0;
-  background-color: #000;
-  border-radius: 15px;
+  background-color: #2563eb;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #fff;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 600;
   line-height: normal;
-  margin: auto;
-  margin-top: 11px;
+  margin: 20px auto 0;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
 /* _________________________________________________ */
 .section-5 .hero-title-h2 {
@@ -264,13 +284,15 @@ body {
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  margin: 15px 0 10px 0;
 }
 .element-1 p {
   color: #565656;
   font-size: 17px;
   font-style: normal;
   font-weight: 400;
-  line-height: normal;
+  line-height: 1.5;
+  margin: 0;
 }
 /* ! SECTION 4 */
 .section-4 .element-1 {
@@ -296,9 +318,10 @@ body {
   height: 165px;
   flex-shrink: 0;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
 }
 .img-element {
   display: flex;
@@ -417,4 +440,192 @@ body {
   height: 0; */
   background-color: none;
   color: #ffff;
+}
+
+/* Hover effects for pricing buttons */
+.pricing-1 a:hover,
+.pricing-2 a:hover {
+  background-color: #1d4ed8;
+}
+
+/* Fix list features spacing */
+.list-features {
+  margin: 20px 0;
+}
+
+.list-features .line-1 {
+  margin-bottom: 12px;
+}
+
+/* RESPONSIVE DESIGN - MEDIA QUERIES */
+@media (max-width: 1200px) {
+  .container {
+    max-width: 100%;
+    padding: 0 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+
+  /* Hero section adjustments */
+  .hero-title {
+    font-size: 48px;
+    line-height: 52px;
+    margin-top: 40px;
+  }
+
+  .hero-title-h2 {
+    font-size: 36px;
+    line-height: 42px;
+    margin-top: 40px;
+  }
+
+  .blue-txt {
+    font-size: 48px;
+    line-height: 52px;
+  }
+
+  .substitle {
+    width: 100%;
+    font-size: 20px;
+    margin-top: 0;
+  }
+
+  .substitle-div {
+    margin-top: 30px;
+  }
+
+  /* Button adjustments */
+  .btn-section {
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  /* Grid elements */
+  .grid-elements {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .element-1 {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    min-height: 220px;
+  }
+
+  /* Pricing cards */
+  .pricing-1,
+  .pricing-2 {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    min-height: 450px;
+  }
+
+  /* Section adjustments */
+  .section-header,
+  .section-2,
+  .section-3,
+  .section-4,
+  .section-5 {
+    height: auto;
+    min-height: 100vh;
+    padding: 60px 0;
+  }
+
+  .section-3,
+  .section-4,
+  .section-5 {
+    padding-top: 80px;
+  }
+
+  /* Section 4 specific adjustments */
+  .section-4 .element-1 {
+    width: 100%;
+    max-width: 257px;
+    height: auto;
+    min-height: 150px;
+  }
+
+  /* Footer adjustments */
+  .footer {
+    height: auto;
+    padding: 60px 0;
+  }
+
+  .footer-wrap {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    text-align: center;
+  }
+
+  .collumn-1,
+  .collumn-2 {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .hero-title {
+    font-size: 36px;
+    line-height: 42px;
+  }
+
+  .hero-title-h2 {
+    font-size: 28px;
+    line-height: 34px;
+  }
+
+  .blue-txt {
+    font-size: 36px;
+    line-height: 42px;
+  }
+
+  .substitle {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    width: 100%;
+    font-size: 15px;
+  }
+
+  .element-1 h3 {
+    font-size: 20px;
+  }
+
+  .element-1 p {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .pricing-1 h3,
+  .pricing-2 h3 {
+    font-size: 22px;
+  }
+
+  .pricing-1 p,
+  .pricing-2 p {
+    font-size: 16px;
+  }
 }
