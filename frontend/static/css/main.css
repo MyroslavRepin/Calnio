@@ -2,25 +2,118 @@
 @import url("fonts.css");
 @import url("layout.css");
 @import url("components.css");
-* {
-  text-decoration: none; /* сброс подчеркивания, если это <a> */
-  border: none; /* сброс рамки */
-  cursor: pointer;
-  box-sizing: border-box;
-}
+
 :root {
-  --primary-color: #ebebeb; /* основной */
-  --secondary-color: #22c55e; /* вторичный */
-  --accent-color: #f59e0b; /* акцент */
-  --text-color: #111827; /* текст */
-  --bg-color: #ffffff; /* фон */
+  /* Updated modern color palette */
+  --primary-blue: #2563eb;
+  --primary-blue-hover: #1d4ed8;
+  --primary-blue-light: #dbeafe;
+  --secondary-color: #22c55e;
+  --accent-color: #f59e0b;
+  --text-primary: #111827;
+  --text-secondary: #565656;
+  --text-light: #6b7280;
+  --bg-white: #ffffff;
+  --bg-gray-light: #f9f9f9;
+  --bg-header: #eef2ff;
+  --border-color: #dbdbdb;
+  --shadow: 0 0 24px -6px rgba(147, 147, 147, 0.25);
+  
+  /* Spacing system */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 100px;
+  
+  /* Typography scale */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 48px;
+  --font-size-4xl: 64px;
+  
+  /* Animation */
+  --transition: all 0.3s ease;
+  --transition-fast: all 0.15s ease;
 }
+
+/* Modern CSS Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
   font-family: "Roboto", sans-serif;
   font-style: normal;
   font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-white);
+  overflow-x: hidden;
 }
-body ::selection {
-  background: #ff579f; /* ярко-синий (пример: Tailwind blue-600) */
-  color: #ffffff; /* белый текст */
+
+/* Remove default button styles and add modern reset */
+button {
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Improve link accessibility */
+a {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+
+/* Selection styling */
+::selection {
+  background: var(--primary-blue);
+  color: var(--bg-white);
+}
+
+/* Smooth scrolling for modern browsers */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+/* Improved image handling */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Modern container query support preparation */
+.container {
+  container-type: inline-size;
 }
