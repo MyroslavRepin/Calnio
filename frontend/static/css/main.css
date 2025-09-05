@@ -19,6 +19,18 @@ body {
   font-family: "Roboto", sans-serif;
   font-style: normal;
   font-weight: 400;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+}
+
+/* Ensure images are responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Smooth scrolling for better mobile experience */
+html {
+  scroll-behavior: smooth;
 }
 body ::selection {
   background: #ff579f; /* ярко-синий (пример: Tailwind blue-600) */

@@ -4,7 +4,7 @@
   border-radius: 100px;
   background-color: #dbeafe;
   border: #006dff solid 1px;
-  margin-top: 58px;
+  margin-top: -270px;
   display: flex; /* делаем флекс-контейнером */
   justify-content: center; /* по горизонтали */
   align-items: center;
@@ -31,6 +31,33 @@
   height: 52px; /* округлил до целого для удобства */
   flex-shrink: 0;
   margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+/* Mobile responsive buttons */
+@media (max-width: 768px) {
+  .beta-btn {
+    /* width: 200px; */
+    margin-top: 30px;
+  }
+
+  .btn-section {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .beta-btn {
+    /* width: 180px; */
+    margin-top: 20px;
+  }
+
+  .btn-section {
+    gap: 15px;
+  }
 }
 
 .start-free-tria-btn {
@@ -45,6 +72,7 @@
   font-size: 16px;
   font-weight: 600;
   margin-top: 72px;
+  transition: all 0.3s ease;
 }
 .watch-demo-btn {
   display: flex; /* делаем кнопкой флекс-контейнер для текста */
@@ -59,8 +87,30 @@
   font-weight: 600;
   margin-top: 72px;
   border-radius: 12px;
-  border: 2px solid rgba(71, 93, 122, 0.26);
+  border: 1px solid rgba(71, 93, 122, 0.26);
   background: #fff;
+  transition: all 0.3s ease;
+}
+
+/* Mobile responsive main buttons */
+@media (max-width: 768px) {
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    width: 100%;
+    max-width: 280px;
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 30px;
+    height: 48px;
+    font-size: 15px;
+  }
 }
 .available-txt p {
   color: #06792e;
