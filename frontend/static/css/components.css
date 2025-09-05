@@ -1,21 +1,25 @@
 .beta-btn {
   width: 224px;
   height: 35px;
-  border-radius: 100px;
-  background-color: #dbeafe;
-  border: #006dff solid 1px;
+  border-radius: var(--radius-full);
+  background-color: var(--primary-blue-light);
+  border: 1px solid var(--primary-blue);
   margin-top: 58px;
-  display: flex; /* делаем флекс-контейнером */
-  justify-content: center; /* по горизонтали */
+  display: flex;
+  justify-content: center;
   align-items: center;
+  transition: var(--transition);
 }
+
 .beta-btn p {
-  color: #006dff;
-  font-family: Roboto, sans-serif;
-  font-size: 12px;
+  color: var(--primary-blue);
+  font-family: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
 }
+
 .beta-btn svg {
-  margin-right: 8px;
+  margin-right: var(--spacing-xs);
 }
 .btn-center {
   display: flex; /* делаем флекс-контейнером */
@@ -35,45 +39,52 @@
 }
 
 .start-free-tria-btn {
-  display: flex; /* делаем кнопкой флекс-контейнер для текста */
-  justify-content: center; /* центрируем текст по горизонтали */
-  align-items: center; /* центрируем текст по вертикали */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 236px;
   height: 52px;
-  border-radius: 12px;
-  background: #2563eb;
-  color: #fff; /* текст белый */
-  font-size: 16px;
+  border-radius: var(--radius-md);
+  background: var(--primary-blue);
+  color: var(--bg-white);
+  font-size: var(--font-size-base);
   font-weight: 600;
   margin-top: 0;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--transition);
+  font-family: inherit;
 }
 
 .start-free-tria-btn:hover {
-  background: #1d4ed8;
+  background: var(--primary-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 .watch-demo-btn {
-  display: flex; /* делаем кнопкой флекс-контейнер для текста */
-  justify-content: center; /* центрируем текст по горизонтали */
-  align-items: center; /* центрируем текст по вертикали */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 236px;
   height: 52px;
-  border-radius: 12px;
-  background: #ffffff;
-  color: #565656;
-  font-size: 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-white);
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
   font-weight: 600;
   margin-top: 0;
   border: 2px solid rgba(71, 93, 122, 0.26);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
+  font-family: inherit;
 }
 
 .watch-demo-btn:hover {
   background: #f8fafc;
-  border-color: #2563eb;
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(71, 93, 122, 0.15);
 }
 .available-txt p {
   color: #06792e;
@@ -88,46 +99,101 @@
   height: 30px;
 }
 
+/* Beta button hover effect */
+.beta-btn:hover {
+  background-color: #bfdbfe;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
 /* RESPONSIVE DESIGN - COMPONENTS */
+@media (max-width: 1200px) {
+  .beta-btn {
+    width: 210px;
+    height: 34px;
+  }
+}
+
 @media (max-width: 768px) {
   .beta-btn {
-    width: 200px;
+    width: clamp(180px, 50vw, 200px);
     height: 32px;
-    margin-top: 40px;
+    margin-top: 30px;
   }
 
   .beta-btn p {
-    font-size: 11px;
+    font-size: clamp(10px, 2.5vw, 12px);
   }
 
   .btn-section {
-    gap: 15px;
-    padding: 0 20px;
+    gap: 16px;
+    padding: 0;
+    max-width: 100%;
   }
 
   .start-free-tria-btn,
   .watch-demo-btn {
     width: 100%;
-    max-width: 280px;
-    font-size: 15px;
+    max-width: 320px;
+    height: 52px;
+    font-size: 16px;
+    min-height: 44px;
   }
 }
 
 @media (max-width: 480px) {
   .beta-btn {
-    width: 180px;
+    width: clamp(160px, 45vw, 180px);
     height: 30px;
-    margin-top: 30px;
+    margin-top: 24px;
   }
 
   .beta-btn p {
-    font-size: 10px;
+    font-size: clamp(9px, 2.5vw, 11px);
   }
 
   .start-free-tria-btn,
   .watch-demo-btn {
     width: 100%;
     height: 48px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 375px) {
+  .beta-btn {
+    width: clamp(140px, 40vw, 160px);
+    height: 28px;
+    margin-top: 20px;
+  }
+
+  .beta-btn p {
+    font-size: clamp(8px, 2.5vw, 10px);
+  }
+
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    height: 44px;
     font-size: 14px;
+  }
+}
+
+@media (max-width: 320px) {
+  .beta-btn {
+    width: 130px;
+    height: 26px;
+    margin-top: 16px;
+  }
+
+  .beta-btn p {
+    font-size: 8px;
+  }
+
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    height: 44px;
+    font-size: 13px;
+    border-radius: 10px;
   }
 }
