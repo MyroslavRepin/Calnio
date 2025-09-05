@@ -525,6 +525,8 @@ body {
   color: #000;
   text-align: center;
   font-size: 17px;
+  margin-top: auto;
+  padding-top: inherit;
 }
 .section-4 .element-1-non h3 {
   text-align: center;
@@ -548,8 +550,9 @@ body {
   height: 64px;
   flex-shrink: 0;
   border-radius: 13px;
-  background: url("/frontend/assets/notion_app_logo.png") rgba(211, 211, 211, 0)
-    50% / cover no-repeat;
+  background: url("/assets/notion_app_logo.png") rgba(211, 211, 211, 0) 50% /
+    cover no-repeat;
+  margin-top: auto;
 }
 .available-div {
   display: flex;
@@ -569,8 +572,9 @@ body {
   height: 64px;
   flex-shrink: 0;
   border-radius: 13px;
-  background: url("/frontend/assets/apple_calendar_app_logo.png")
-    rgba(211, 211, 211, 0) 50% / cover no-repeat;
+  background: url("/assets/apple_calendar_app_logo.png") rgba(211, 211, 211, 0)
+    50% / cover no-repeat;
+  margin-top: auto;
 }
 .img-element-3 {
   display: flex;
@@ -579,8 +583,8 @@ body {
   height: 64px;
   flex-shrink: 0;
   border-radius: 13px;
-  background: url("/frontend/assets/apple_reminders_app_logo.png")
-    rgba(211, 211, 211, 0) 50% / cover no-repeat;
+  background: url("/assets/apple_calendar_app_logo.png") rgba(211, 211, 211, 0)
+    50% / cover no-repeat;
 }
 
 /* ! Footer */
@@ -605,7 +609,14 @@ body {
   min-width: 200px;
   max-width: 215px;
 }
-
+.link-list {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.link-list a {
+  margin: 10px 0px;
+}
 /* Mobile responsive footer */
 @media (max-width: 768px) {
   .footer-wrap {
@@ -619,6 +630,9 @@ body {
   .collumn-2 {
     width: 100%;
     max-width: 100%;
+  }
+  .link-list a {
+    margin: 0;
   }
 }
 
@@ -723,6 +737,7 @@ body {
     width: 140px;
     height: 40px;
     font-size: 15px;
+    margin: auto;
   }
 }
 
