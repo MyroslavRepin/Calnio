@@ -6,41 +6,126 @@ body {
 .container {
   max-width: 1196px;
   margin: 0 auto; /* центрирует блок */
+  padding: 0 20px; /* добавляем отступы для мобильных устройств */
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 768px) {
+  /* Improve touch targets */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better spacing for mobile */
+  .element-1 {
+    margin-bottom: 20px;
+  }
+
+  /* Optimize text readability */
+  .substitle {
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Even smaller touch targets for very small screens */
+  button,
+  a {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  /* Tighter spacing for small screens */
+  .element-1 {
+    margin-bottom: 15px;
+  }
 }
 /* ! SECTIONS */
 .section-header {
   background-color: #eef2ff;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
+  display: flex;
+  align-items: center;
 }
 .section-2 {
   background-color: #ffffff;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
+  padding: 60px 0;
 }
 .section-3 {
   background-color: #f9f9f9;
-  padding-top: 46px;
-  height: 100vh;
+  padding: 60px 0;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
 }
 .section-5 {
   background: linear-gradient(180deg, #f5f5f5 0%, #eff6ff 100%);
-  padding-top: 46px;
-  height: 100vh;
+  padding: 60px 0;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
 }
 .section-4 {
   background-color: #ffffff;
-  padding-top: 46px;
-  height: 100vh;
+  padding: 60px 0;
+  min-height: 100vh;
   width: 100%; /* фон растягивается на всю ширину */
 }
 .footer {
   background-color: #111c2c;
-  padding-top: 46px;
-  height: 543px;
+  padding: 60px 0;
+  min-height: 400px;
   width: 100%; /* фон растягивается на всю ширину */
+}
+
+/* Mobile responsive sections */
+@media (max-width: 768px) {
+  .section-header {
+    min-height: auto;
+    padding: 40px 0;
+  }
+  .section-2,
+  .section-3,
+  .section-4,
+  .section-5 {
+    min-height: auto;
+    padding: 40px 0;
+  }
+  .footer {
+    min-height: auto;
+    padding: 40px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-header {
+    padding: 30px 0;
+  }
+  .section-2,
+  .section-3,
+  .section-4,
+  .section-5 {
+    padding: 30px 0;
+  }
+  .footer {
+    padding: 30px 0;
+  }
 }
 /* ! ________________________________ */
 .hero-title {
@@ -50,6 +135,7 @@ body {
   font-weight: 600;
   text-align: center;
   margin-top: 58px;
+  line-height: 1.1;
 }
 
 .hero-title-h2 {
@@ -60,6 +146,7 @@ body {
   text-align: center; /* если нужно по центру */
   margin: 0; /* убираем стандартные отступы */
   margin-top: 58px;
+  line-height: 1.2;
 }
 .section-3 h2 {
   margin-top: 0;
@@ -76,16 +163,63 @@ body {
   line-height: 94px;
 }
 .substitle {
-  width: 781px;
-  height: 115px;
+  max-width: 781px;
   color: #475d7a;
   text-align: center;
   font-family: Roboto, sans-serif;
   font-size: 24px;
   font-style: normal;
   font-weight: 500;
-  line-height: normal;
+  line-height: 1.4;
+  margin: 2rem auto;
   margin-top: -40px;
+}
+
+/* Mobile typography */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 48px;
+    margin-top: 30px;
+  }
+
+  .blue-txt {
+    font-size: 48px;
+    line-height: 1.2;
+  }
+
+  .hero-title-h2 {
+    font-size: 32px;
+    margin-top: 30px;
+  }
+
+  .substitle {
+    font-size: 18px;
+    max-width: 100%;
+    margin-top: -20px;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 36px;
+    margin-top: 20px;
+  }
+
+  .blue-txt {
+    font-size: 36px;
+    line-height: 1.1;
+  }
+
+  .hero-title-h2 {
+    font-size: 28px;
+    margin-top: 20px;
+  }
+
+  .substitle {
+    font-size: 16px;
+    margin-top: -10px;
+  }
 }
 /* .section-2 p {
   margin: 0;
@@ -96,6 +230,19 @@ body {
   margin-top: 72px;
 }
 
+/* Mobile responsive substitle-div */
+@media (max-width: 768px) {
+  .substitle-div {
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .substitle-div {
+    margin-top: 30px;
+  }
+}
+
 /* ! GRID */
 .grid-elements {
   display: flex;
@@ -103,14 +250,43 @@ body {
   justify-content: center;
   gap: 15px;
   margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 .element-1 {
   width: 350px;
-  height: 248px;
+  min-height: 248px;
   border-radius: 13px;
   background: #fff;
   box-shadow: 0 0 24px -6px rgba(147, 147, 147, 0.25);
   padding: 14px;
+  flex: 1;
+  max-width: 350px;
+}
+
+/* Mobile responsive grid */
+@media (max-width: 768px) {
+  .grid-elements {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .element-1 {
+    width: 100%;
+    max-width: 400px;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-elements {
+    gap: 15px;
+  }
+
+  .element-1 {
+    max-width: 100%;
+    padding: 12px;
+  }
 }
 .section-4 .hero-title-h2 {
   margin: 0;
@@ -118,25 +294,45 @@ body {
 /* ! PRICING --------------------- */
 .pricing-1 {
   width: 350px;
-  height: 496px;
+  min-height: 496px;
   flex-shrink: 0;
   border-radius: 13px;
   border: 1px solid #dbdbdb;
-
   background: #fff;
   box-shadow: 0 0 24px -6px rgba(147, 147, 147, 0.25);
   padding: 14px;
+  flex: 1;
+  max-width: 350px;
 }
 .pricing-2 {
   width: 350px;
-  height: 496px;
+  min-height: 496px;
   flex-shrink: 0;
   border-radius: 13px;
   border: 1px solid #dbdbdb;
-
   background: #fff;
   box-shadow: 0 0 24px -6px rgba(147, 147, 147, 0.25);
   padding: 14px;
+  flex: 1;
+  max-width: 350px;
+}
+
+/* Mobile responsive pricing */
+@media (max-width: 768px) {
+  .pricing-1,
+  .pricing-2 {
+    width: 100%;
+    max-width: 400px;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-1,
+  .pricing-2 {
+    max-width: 100%;
+    padding: 12px;
+  }
 }
 .pricing-1 h3 {
   text-align: center;
@@ -208,6 +404,7 @@ body {
   line-height: normal;
   margin: auto;
   margin-top: 65px;
+  transition: all 0.3s ease;
 }
 .pricing-2 a {
   width: 237px;
@@ -226,6 +423,28 @@ body {
   line-height: normal;
   margin: auto;
   margin-top: 11px;
+  transition: all 0.3s ease;
+}
+
+/* Mobile responsive pricing buttons */
+@media (max-width: 768px) {
+  .pricing-1 a,
+  .pricing-2 a {
+    width: 100%;
+    max-width: 250px;
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-1 a,
+  .pricing-2 a {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 30px;
+    height: 40px;
+    font-size: 16px;
+  }
 }
 /* _________________________________________________ */
 .section-5 .hero-title-h2 {
@@ -263,14 +482,36 @@ body {
   font-size: 24px;
   font-style: normal;
   font-weight: 700;
-  line-height: normal;
+  line-height: 1.3;
+  margin-bottom: 10px;
 }
 .element-1 p {
   color: #565656;
   font-size: 17px;
   font-style: normal;
   font-weight: 400;
-  line-height: normal;
+  line-height: 1.4;
+}
+
+/* Mobile responsive element text */
+@media (max-width: 768px) {
+  .element-1 h3 {
+    font-size: 20px;
+  }
+
+  .element-1 p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .element-1 h3 {
+    font-size: 18px;
+  }
+
+  .element-1 p {
+    font-size: 14px;
+  }
 }
 /* ! SECTION 4 */
 .section-4 .element-1 {
@@ -345,20 +586,46 @@ body {
 /* ! Footer */
 .footer-wrap {
   display: flex;
-  width: 1143px;
-  height: 486px;
+  max-width: 1143px;
+  min-height: 486px;
   flex-shrink: 0;
   justify-content: center;
   margin: auto;
   flex-direction: row;
+  flex-wrap: wrap;
+  gap: 40px;
 }
 .collumn-1 {
-  width: 630px;
-  height: 100%;
+  flex: 1;
+  min-width: 300px;
+  max-width: 630px;
 }
 .collumn-2 {
-  width: 215px;
-  height: 100%;
+  flex: 1;
+  min-width: 200px;
+  max-width: 215px;
+}
+
+/* Mobile responsive footer */
+@media (max-width: 768px) {
+  .footer-wrap {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .collumn-1,
+  .collumn-2 {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-wrap {
+    gap: 20px;
+  }
 }
 .footer-wrap h1 {
   color: #fff;
@@ -380,7 +647,7 @@ body {
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: normal;
+  line-height: 1.4;
   margin-top: 65px;
   margin-bottom: 65px;
 }
@@ -389,9 +656,46 @@ body {
   font-size: 20px;
   font-style: normal;
   font-weight: 100;
-  line-height: normal;
+  line-height: 1.4;
   margin-top: 65px;
   margin-bottom: 65px;
+}
+
+/* Mobile responsive footer typography */
+@media (max-width: 768px) {
+  .footer-wrap h1 {
+    font-size: 28px;
+  }
+
+  .footer-wrap h2 {
+    font-size: 22px;
+    margin-bottom: 30px;
+  }
+
+  .footer-wrap .collumn-1 p,
+  .footer-wrap .collumn-2 p {
+    font-size: 16px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-wrap h1 {
+    font-size: 24px;
+  }
+
+  .footer-wrap h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .footer-wrap .collumn-1 p,
+  .footer-wrap .collumn-2 p {
+    font-size: 14px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
 }
 .footer-wrap .collumn-1 a {
   display: flex; /* делаем кнопку flex-контейнером */
@@ -411,6 +715,24 @@ body {
 .footer-wrap .collumn-1 a:hover {
   background-color: #707889; /* синий фон при наведении */
   color: #fff; /* белый текст при наведении */
+}
+
+/* Mobile responsive footer button */
+@media (max-width: 768px) {
+  .footer-wrap .collumn-1 a {
+    width: 140px;
+    height: 40px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-wrap .collumn-1 a {
+    width: 120px;
+    height: 38px;
+    font-size: 14px;
+    margin: auto;
+  }
 }
 .collumn-2 a {
   /* width: 0;
