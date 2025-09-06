@@ -15,6 +15,44 @@
 
   </head>
   <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <!-- Logo -->
+          <div class="logo">
+            <a href="/">
+              <h1>Calnio</h1>
+            </a>
+          </div>
+          
+          <!-- Desktop Navigation -->
+          <nav class="nav-desktop">
+            <a href="/login" class="nav-link">Login</a>
+            <a href="/signup" class="nav-link nav-link-primary">Signup</a>
+          </nav>
+          
+          <!-- Mobile Menu Button -->
+          <button class="burger-menu" id="burger-menu" aria-label="Toggle menu">
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+          </button>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <nav class="nav-mobile" id="nav-mobile">
+          <button class="close-menu-btn" id="close-menu-btn" aria-label="Close menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <a href="/login" class="nav-link-mobile">Login</a>
+          <a href="/signup" class="nav-link-mobile nav-link-mobile-primary">Signup</a>
+        </nav>
+      </div>
+    </header>
+
     <section class="section-header">
       <div class="container">
         <div class="btn-center">
