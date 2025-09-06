@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from backend.app.version import __version__
 
 router = APIRouter()
 # Adding externaly templates, static dir
@@ -19,4 +20,10 @@ templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 
 @router.get("/", response_class=HTMLResponse)
 async def landing(request: Request):
-    return templates.TemplateResponse("landing.html", {"request": request})
+    return templates.TemplateResponse(
+        "landing.html",
+        {
+            "request": request,
+            "version": __version__,  # вот так правильно
+        }
+    )

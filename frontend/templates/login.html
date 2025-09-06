@@ -2,124 +2,75 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login | Calnio</title>
-
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Подключаем шрифты -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@400;600&display=swap"
-      rel="stylesheet"
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-
-    <style>
-      body {
-        font-family: "Montserrat", sans-serif;
-        background: linear-gradient(135deg, #c9b89e, #f4f1ed, #d4c5a3);
-        min-height: 100vh;
-      }
-      h2 {
-        font-family: "DM Serif Display", serif;
-      }
-      /* Glassmorphism */
-      .glass {
-        background: rgba(255 255 255 / 0.2);
-        border-radius: 1.5rem;
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid rgba(255 255 255 / 0.3);
-        box-shadow: 0 8px 32px rgb(117 96 72 / 0.3);
-      }
-      ::selection {
-        background-color: #b89e7dcc;
-        color: white;
-      }
-    </style>
+    <link rel="stylesheet" href="/static/css/login.css" />
+    <title>Login - Calnio</title>
   </head>
-  <body class="flex justify-center items-center p-6">
-    <div class="glass max-w-md w-full p-10">
-      <h2 class="text-center text-4xl mb-8 text-coffee-900">Login</h2>
+  <body>
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h1>Back to your productive life</h1>
+          <p>Choose one of the options to go</p>
+        </div>
 
-      <form method="post" action="/login" class="space-y-7">
-        <div>
-          {% if error %}
-          <div class="text-red-600 text-center mb-4 font-semibold">
-            {{ error }}
+        <div class="login-form">
+          <form class="form-container">
+            <div class="input-group">
+              <input
+                type="email"
+                name="email"
+                placeholder="bob@calnio.com"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <input
+                type="password"
+                name="password"
+                placeholder="********"
+                required
+              />
+            </div>
+          </form>
+
+          <div class="divider-section">
+            <div class="divider-line"></div>
+            <span class="divider-text">Or continue with</span>
+            <div class="divider-line"></div>
           </div>
-          {% endif %}
 
-          <label
-            for="login"
-            class="block text-base font-semibold mb-2 text-coffee-900"
-            >Username or Email:</label
-          >
-          <input
-            id="login"
-            name="login"
-            placeholder="you@example.com"
-            required
-            class="w-full rounded-xl border border-coffee-400 bg-white bg-opacity-50 px-4 py-3 text-coffee-900 placeholder-coffee-600 focus:outline-none focus:ring-2 focus:ring-coffee-700 focus:border-transparent transition"
-          />
+          <div class="social-login">
+            <button
+              type="button"
+              class="social-btn"
+              aria-label="Continue with Google"
+            >
+              <img src="/assets/google_logo.png" alt="Google" />
+            </button>
+            <button
+              type="button"
+              class="social-btn"
+              aria-label="Continue with Apple"
+            >
+              <img src="/assets/apple_logo.png" alt="Apple" />
+            </button>
+            <button
+              type="button"
+              class="social-btn"
+              aria-label="Continue with GitHub"
+            >
+              <img src="/assets/github_logo.png" alt="GitHub" />
+            </button>
+          </div>
+
+          <button type="submit" class="signin-btn">Sign In</button>
+          <a href="/signup">Don't have an account? <b>Sign Up Now</b></a>
         </div>
-
-        <div>
-          <label
-            for="password"
-            class="block text-base font-semibold mb-2 text-coffee-900"
-            >Password:</label
-          >
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="••••••••"
-            required
-            class="w-full rounded-xl border border-coffee-400 bg-white bg-opacity-50 px-4 py-3 text-coffee-900 placeholder-coffee-600 focus:outline-none focus:ring-2 focus:ring-coffee-700 focus:border-transparent transition"
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="w-full rounded-xl bg-coffee-700 py-3 text-white font-semibold hover:bg-coffee-800 transition transform hover:scale-105 active:scale-95 shadow-md"
-        >
-          Sign In
-        </button>
-      </form>
-
-      <p class="text-center text-sm text-coffee-800 mt-6">
-        Don't have an account?
-        <a
-          href="/signup"
-          class="underline font-semibold hover:text-coffee-900 transition"
-        >
-          Sign up
-        </a>
-      </p>
+      </div>
     </div>
-
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              coffee: {
-                50: "#f8f6f0",
-                100: "#f0eadf",
-                200: "#d9cda9",
-                300: "#c4b488",
-                400: "#b29c6a",
-                500: "#a2864e",
-                600: "#8b7342",
-                700: "#715c33",
-                800: "#59492b",
-                900: "#453823",
-              },
-            },
-          },
-        },
-      };
-    </script>
   </body>
 </html>
