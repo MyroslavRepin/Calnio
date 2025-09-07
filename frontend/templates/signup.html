@@ -2,161 +2,104 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sign Up | Calnio</title>
-
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@400;600&display=swap"
-      rel="stylesheet"
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-
-    <style>
-      body {
-        font-family: "Montserrat", sans-serif;
-        background: linear-gradient(135deg, #c9b89e, #f4f1ed, #d4c5a3);
-        min-height: 100vh;
-      }
-      h2 {
-        font-family: "DM Serif Display", serif;
-      }
-      .glass {
-        background: rgba(255 255 255 / 0.2);
-        border-radius: 1.5rem;
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid rgba(255 255 255 / 0.3);
-        box-shadow: 0 8px 32px rgb(117 96 72 / 0.3);
-      }
-      ::selection {
-        background-color: #b89e7dcc;
-        color: white;
-      }
-      .error {
-        color: #b91c1c; /* красный цвет */
-        background-color: #fee2e2; /* светлый красный фон */
-        padding: 8px 12px;
-        border-radius: 6px;
-        margin-bottom: 12px;
-      }
-    </style>
+    <link rel="stylesheet" href="/static/css/login.css" />
+    <title>Sign Up - Calnio</title>
   </head>
-  <body class="flex justify-center items-center p-6">
-    <div class="glass max-w-md w-full p-10">
-      <h2 class="text-center text-4xl mb-6 text-coffee-900">Create Account</h2>
-      <p class="text-center text-base text-coffee-800 mb-8">
-        Start using Calneo today
-      </p>
-      {% if error %}
-      <div
-        class="text-red-500 bg-white/30 border border-red-400/30 rounded-md p-3 text-sm mt-4"
-      >
-        {{ error }}
+  <body>
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h1>Create Account</h1>
+          <p>Start using Calnio today</p>
+        </div>
+
+        <div class="login-form">
+          <form
+            class="form-container"
+            action="/signup"
+            method="post"
+            onsubmit="return validatePasswords()"
+          >
+            <div class="input-group">
+              <input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="John_Doe"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <input
+                id="confirm_password"
+                name="confirm_password"
+                type="password"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <div class="divider-section">
+              <div class="divider-line"></div>
+              <span class="divider-text">Or continue with</span>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="social-login">
+              <button
+                type="button"
+                class="social-btn"
+                aria-label="Continue with Google"
+              >
+                <img src="/assets/google_logo.png" alt="Google" />
+              </button>
+              <button
+                type="button"
+                class="social-btn"
+                aria-label="Continue with Apple"
+              >
+                <img src="/assets/apple_logo.png" alt="Apple" />
+              </button>
+              <button
+                type="button"
+                class="social-btn"
+                aria-label="Continue with GitHub"
+              >
+                <img src="/assets/github_logo.png" alt="GitHub" />
+              </button>
+            </div>
+
+            <button type="submit" class="signin-btn">Create Account</button>
+          </form>
+
+          <a href="/login">Already have an account? <b>Sign In Now</b></a>
+        </div>
       </div>
-      {% endif %}
-
-      <form
-        action="/signup"
-        method="post"
-        class="space-y-6"
-        onsubmit="return validatePasswords()"
-      >
-        <div>
-          <label
-            for="username"
-            class="block text-base font-medium mb-2 text-coffee-900"
-          >
-            Username
-          </label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            placeholder="John_Doe"
-            required
-            class="w-full rounded-xl border border-coffee-400 bg-white bg-opacity-50 px-4 py-3 text-coffee-900 placeholder-coffee-600 focus:outline-none focus:ring-2 focus:ring-coffee-700 focus:border-transparent transition"
-          />
-        </div>
-
-        <div>
-          <label
-            for="email"
-            class="block text-base font-medium mb-2 text-coffee-900"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="you@example.com"
-            required
-            class="w-full rounded-xl border border-coffee-400 bg-white bg-opacity-50 px-4 py-3 text-coffee-900 placeholder-coffee-600 focus:outline-none focus:ring-2 focus:ring-coffee-700 focus:border-transparent transition"
-          />
-        </div>
-
-        <div>
-          <label
-            for="password"
-            class="block text-base font-medium mb-2 text-coffee-900"
-          >
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="••••••••"
-            required
-            class="w-full rounded-xl border border-coffee-400 bg-white bg-opacity-50 px-4 py-3 text-coffee-900 placeholder-coffee-600 focus:outline-none focus:ring-2 focus:ring-coffee-700 focus:border-transparent transition"
-          />
-        </div>
-
-        <div>
-          <label
-            for="confirm_password"
-            class="block text-base font-medium mb-2 text-coffee-900"
-          >
-            Confirm Password
-          </label>
-          <input
-            id="confirm_password"
-            name="confirm_password"
-            type="password"
-            placeholder="••••••••"
-            required
-            class="w-full rounded-xl border border-coffee-400 bg-white bg-opacity-50 px-4 py-3 text-coffee-900 placeholder-coffee-600 focus:outline-none focus:ring-2 focus:ring-coffee-700 focus:border-transparent transition"
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="w-full rounded-xl bg-coffee-700 py-3 text-white font-semibold hover:bg-coffee-800 transition transform hover:scale-105 active:scale-95 shadow-md"
-        >
-          Create Account
-        </button>
-      </form>
-
-      <p class="text-center text-sm text-coffee-800 mt-6">
-        Already have an account?
-        <a
-          href="/login"
-          class="underline font-semibold hover:text-coffee-900 transition"
-        >
-          Log in
-        </a>
-      </p>
-
-      {% if error %}
-      <div
-        class="text-red-500 bg-white/30 border border-red-400/30 rounded-md p-3 text-sm mt-4"
-      >
-        {{ error }}
-      </div>
-      {% endif %}
     </div>
 
     <script>
@@ -164,33 +107,11 @@
         const password = document.getElementById("password").value;
         const confirm = document.getElementById("confirm_password").value;
         if (password !== confirm) {
-          alert("Пароли не совпадают! Пожалуйста, попробуйте ещё раз.");
+          alert("Passwords don't match! Please try again.");
           return false;
         }
         return true;
       }
-
-      // Кастомизация цвета Tailwind
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              coffee: {
-                50: "#f8f6f0",
-                100: "#f0eadf",
-                200: "#d9cda9",
-                300: "#c4b488",
-                400: "#b29c6a",
-                500: "#a2864e",
-                600: "#8b7342",
-                700: "#715c33",
-                800: "#59492b",
-                900: "#453823",
-              },
-            },
-          },
-        },
-      };
     </script>
   </body>
 </html>
