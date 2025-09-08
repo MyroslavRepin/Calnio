@@ -18,11 +18,11 @@
         </div>
 
         <div class="login-form">
-          <form class="form-container">
+          <form class="form-container" action="/login" method="post">
             <div class="input-group">
               <input
-                type="email"
-                name="email"
+                type="text"
+                name="login"
                 placeholder="bob@calnio.com"
                 required
               />
@@ -35,39 +35,37 @@
                 required
               />
             </div>
+            <div class="divider-section">
+              <div class="divider-line"></div>
+              <span class="divider-text">Or continue with</span>
+              <div class="divider-line"></div>
+            </div>
+            <div class="social-login">
+              <button
+                type="button"
+                class="social-btn"
+                aria-label="Continue with Google"
+              >
+                <img src="/assets/google_logo.png" alt="Google" />
+              </button>
+              <button
+                type="button"
+                class="social-btn"
+                aria-label="Continue with Apple"
+              >
+                <img src="/assets/apple_logo.png" alt="Apple" />
+              </button>
+              <button
+                type="button"
+                class="social-btn"
+                aria-label="Continue with GitHub"
+              >
+                <img src="/assets/github_logo.png" alt="GitHub" />
+              </button>
+            </div>
+            <button type="submit" class="signin-btn">Sign In</button>
           </form>
 
-          <div class="divider-section">
-            <div class="divider-line"></div>
-            <span class="divider-text">Or continue with</span>
-            <div class="divider-line"></div>
-          </div>
-
-          <div class="social-login">
-            <button
-              type="button"
-              class="social-btn"
-              aria-label="Continue with Google"
-            >
-              <img src="/assets/google_logo.png" alt="Google" />
-            </button>
-            <button
-              type="button"
-              class="social-btn"
-              aria-label="Continue with Apple"
-            >
-              <img src="/assets/apple_logo.png" alt="Apple" />
-            </button>
-            <button
-              type="button"
-              class="social-btn"
-              aria-label="Continue with GitHub"
-            >
-              <img src="/assets/github_logo.png" alt="GitHub" />
-            </button>
-          </div>
-
-          <button type="submit" class="signin-btn">Sign In</button>
           <a href="/signup">Don't have an account? <b>Sign Up Now</b></a>
         </div>
       </div>

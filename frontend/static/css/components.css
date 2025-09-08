@@ -74,6 +74,11 @@
   margin-top: 72px;
   transition: all 0.3s ease;
 }
+.start-free-tria-btn:hover {
+  transform: translateY(-3px); /* чуть поднять кнопку */
+  box-shadow: 0 8px 15px #2564eb54; /* тень становится сильнее */
+}
+
 .watch-demo-btn {
   display: flex; /* делаем кнопкой флекс-контейнер для текста */
   justify-content: center; /* центрируем текст по горизонтали */
@@ -90,6 +95,10 @@
   border: 1px solid rgba(71, 93, 122, 0.26);
   background: #fff;
   transition: all 0.3s ease;
+}
+.watch-demo-btn:hover {
+  transform: translateY(-3px); /* чуть поднять кнопку */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* тень становится сильнее */
 }
 
 /* Mobile responsive main buttons */
@@ -765,7 +774,7 @@ body.menu-open {
   .mobile-btn-login,
   .mobile-btn-signup {
     font-size: 15px;
-    padding: 10px 20px;
+    /* padding: 10px 20px; */
     min-width: 180px;
   }
 }
@@ -803,7 +812,7 @@ body.menu-open {
   .mobile-btn-login,
   .mobile-btn-signup {
     font-size: 14px;
-    padding: 8px 16px;
+    /* padding: 8px 16px; */
     min-width: 160px;
   }
 }
@@ -837,7 +846,7 @@ body.menu-open {
   .mobile-btn-login,
   .mobile-btn-signup {
     font-size: 13px;
-    padding: 6px 12px;
+    /* padding: 6px 12px; */
     min-width: 140px;
   }
 }
