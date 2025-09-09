@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and adheres to [Semantic Versioning](https://semver.org/)
 
+<!-- ## vX.Y.Z - YYYY-MM-DD
+
+### 🚀 Added
+
+- Short description of new features or integrations
+- New models, endpoints, or functionality
+
+### 🔄 Changed
+
+- Updates or improvements to existing features
+- Backend/frontend behavior changes
+
+### 🔧 Fixed
+
+- Bugs or issues that were resolved
+- Problems with redirects, tokens, or database
+
+### ⚠ Known Issue
+
+- Anything still broken or limitations users should know -->
+
+## v1.6.2 - 2025-09-9
+
+### 🔄 Changed
+
+- Now if user is logged in he will be redirected to dashboard
+
 ## v1.4.1 - 2025-08-07
 
 ### 🔧 Fixed
