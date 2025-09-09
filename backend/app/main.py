@@ -6,6 +6,7 @@ import os
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 
 from backend.app.api import login, signup, landing, dashboard, users, logout, refresh, error_404
 from backend.app.api.oauth import notion_callback
@@ -14,15 +15,31 @@ from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 
 import logging
 
-logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
-logging.getLogger("sqlalchemy.pool").setLevel(logging.WARNING)
+# logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+# logging.getLogger("sqlalchemy.pool").setLevel(logging.WARNING)
 
+
+# Creating Main App
 app = FastAPI()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "frontend"))
-
 templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
+
+# Setting up handler 500 error
+
+
+@app.exception_handler(Exception)
+async def internal_server_error_handler(request, exc):
+    # можно логировать exc для отладки
+    logging.error(f"💥 Internal server error: {exc}")
+    return templates.TemplateResponse(
+        "500.html",
+        {"request": request},
+        status_code=500
+    )
+
+# Setting static / templates files into FastAPI
 app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_DIR,
           "static")), name="static")
 app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR,

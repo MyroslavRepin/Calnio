@@ -23,6 +23,7 @@ async def oauth_callback(
     db: AsyncSession = Depends(async_get_db),
 ):
     print(f"Request: {request.cookies}")
+    # ! Checking for tokens & updating them
     try:
         # 🛡️ Проверка токена
         payload = await access_token_required(request)
@@ -36,6 +37,7 @@ async def oauth_callback(
         except HTTPException:
             logging.warning("❌ Unauthorized — redirect to /login")
             return RedirectResponse("/login", status_code=401)
+    # Getting error message from the query
 
     code = request.query_params.get("code")
 
@@ -89,5 +91,11 @@ async def oauth_callback(
     logging.info(token_data)
 
     await save_or_update_integration(db, user_id, token_data)
+    # Optimize: If user canceled integration -> redirect
+    error = request.query_params.get("error")
+    if error == "access_denied":
+        # пользователь отменил авторизацию
+        logging.critical("User canceled integration")
+        return RedirectResponse(url="/dashboard")
 
     return RedirectResponse("/dashboard?success=1", status_code=302)
