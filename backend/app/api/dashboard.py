@@ -19,8 +19,8 @@ import colorlog
 router = APIRouter()
 
 #! LOQ SETUP
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.INFO,
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
@@ -36,9 +36,9 @@ handler.setFormatter(colorlog.ColoredFormatter(
     style='%'
 ))
 
-logger = colorlog.getLogger()
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+# logger = colorlog.getLogger()
+# logger.addHandler(handler)
+# logger.setLevel(logging.DEBUG)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(
