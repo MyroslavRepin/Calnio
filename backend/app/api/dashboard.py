@@ -96,7 +96,7 @@ async def update_profile(
     db: AsyncSession = Depends(async_get_db)
 ):
     try:
-        #! All correct code if user authorized
+        # All correct code if user authorized
 
         # Decode payload and check if expired. Returns dict
         payload = await access_token_required(request)
