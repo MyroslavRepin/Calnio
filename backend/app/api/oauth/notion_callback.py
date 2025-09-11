@@ -47,7 +47,9 @@ async def oauth_callback(
             status_code=400, detail="Code not found in query params")
 
     token_url = "https://api.notion.com/v1/oauth/token"
-    notion_redirect_uri = settings.redirect_uri
+
+    notion_redirect_uri = settings.notion_redirect_uri
+
     print(f"Notion redirect uri: {notion_redirect_uri}")
 
     data = {
@@ -56,8 +58,10 @@ async def oauth_callback(
         "redirect_uri": notion_redirect_uri
     }
 
-    OAuth_Client_ID = os.getenv("OAuth_Client_ID")
-    OAuth_Client_Secret = os.getenv("OAuth_Client_Secret")
+    # Taking data from settings (ORM)
+
+    OAuth_Client_ID = settings.notion_client_id
+    OAuth_Client_Secret = settings.notion_secert
 
     if not OAuth_Client_ID or not OAuth_Client_Secret:
         logging.critical("❗Missing OAuth client credentials")

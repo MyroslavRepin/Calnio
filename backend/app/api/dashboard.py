@@ -5,6 +5,7 @@ from backend.app.security.jwt_config import security
 from backend.app.security.utils import access_token_required, refresh_access_token, create_hash
 from backend.app.db.deps import async_get_db
 from backend.app.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
+from backend.app.core.config import settings
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -73,6 +74,8 @@ async def dashboard(
 
     user = await async_get_by_id(db, user_id)
 
+    OAuth_url = settings.notion_oauth_url
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -81,6 +84,7 @@ async def dashboard(
         username=user.username,
         email=user.email,
         success=success,
+        OAuth_url=OAuth_url,
     )
 
     return HTMLResponse(content=html_content, headers=response.headers, status_code=200)
