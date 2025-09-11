@@ -34,6 +34,8 @@ class Settings(BaseSettings):
         if self.env == "prod":
             if self.db == "local":
                 return self.database_url_local
+            else:
+                return self.database_url_prod
         else:
             return self.database_url_local
 
