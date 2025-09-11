@@ -26,6 +26,12 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.7.0 - 2025-09-10
+
+### 🔄 Changed
+
+- Now config of environments controls from **.env**
+
 ## v1.6.2 - 2025-09-9
 
 ### 🔄 Changed

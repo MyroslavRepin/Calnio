@@ -35,9 +35,21 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 echo -e "${GREEN}🚀 Launching server...${NC}"
-uvicorn backend.app.main:app \
-  --host 127.0.0.1 \
-  --port 8000 \
-  --log-level info \
-  --reload \
-  --timeout-keep-alive 60
+if [[ "$1" == "--https" ]]; then
+  echo "Running on HTTPS" && 
+  uvicorn backend.app.main:app \
+    --host 127.0.0.1 \
+    --port 8000 \
+    --log-level info \
+    --reload \
+    --timeout-keep-alive 60 \
+    --ssl-certfile localhost+2.pem \
+    --ssl-keyfile localhost+2-key.pem
+else
+  uvicorn backend.app.main:app \
+    --host 127.0.0.1 \
+    --port 8000 \
+    --log-level info \
+    --reload \
+    --timeout-keep-alive 60
+fi
