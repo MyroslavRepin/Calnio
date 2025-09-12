@@ -3,7 +3,6 @@ from sqlalchemy import Boolean, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import Optional
-# from backend.app.models.notion_integration import UserNotionIntegration
 
 
 class User(Base):
@@ -22,4 +21,7 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     notion_integration = relationship(
-        "UserNotionIntegration", back_populates="user", uselist=False)
+        "UserNotionIntegration", back_populates="user", uselist=False, lazy="selectin")
+
+    notion_tasks = relationship(
+        "UserNotionTask", back_populates="user", uselist=False, lazy="selectin")

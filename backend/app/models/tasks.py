@@ -1,0 +1,36 @@
+from backend.app.db.database import Base
+# from backend.app.models.users import User
+
+from datetime import datetime
+from typing import Optional
+from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from backend.app.db.database import Base
+
+
+class UserNotionTask(Base):
+    __tablename__ = "notion_tasks"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    notion_page_id: Mapped[str] = mapped_column(String, unique=True)
+    notion_url: Mapped[str] = mapped_column(String, nullable=False)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    status: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    priority: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    select_option: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    task_date: Mapped[Optional[datetime]] = mapped_column(
+        DateTime, nullable=True)
+    done: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Связь с пользователем
+    user: Mapped["User"] = relationship(back_populates="notion_tasks")

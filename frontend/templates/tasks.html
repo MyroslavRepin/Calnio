@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calnio Dashboard</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: #f5f5f7;
+        color: #1d1d1f;
+        line-height: 1.47059;
+        font-weight: 400;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 40px;
+        border: 1px solid #d2d2d7;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        width: 90%;
+        max-width: 500px;
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 32px;
+        color: #1d1d1f;
+        letter-spacing: -0.003em;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      label {
+        display: block;
+        font-size: 17px;
+        font-weight: 500;
+        color: #1d1d1f;
+        margin-bottom: 8px;
+        letter-spacing: -0.022em;
+      }
+
+      input {
+        width: 100%;
+        padding: 16px 16px;
+        border: 1.5px solid #d2d2d7;
+        border-radius: 12px;
+        font-size: 17px;
+        font-family: inherit;
+        background: #ffffff;
+        transition: border-color 0.15s ease-in-out;
+        -webkit-appearance: none;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #007aff;
+      }
+
+      input::placeholder {
+        color: #86868b;
+      }
+
+      .btn {
+        background: #007aff;
+        color: #ffffff;
+        border: none;
+        padding: 16px 24px;
+        border-radius: 12px;
+        font-size: 17px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.15s ease-in-out;
+        width: 100%;
+        letter-spacing: -0.022em;
+      }
+
+      .btn:hover {
+        background: #0056d6;
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 24px;
+          margin: 20px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add page ID</h1>
+      <form action="/dashboard/pages" method="post">
+        <div class="form-group">
+          <label for="page_id_url">Page ID</label>
+          <input
+            type="text"
+            id="page_id_url"
+            name="page_id_url"
+            placeholder="26ba555872b480faa752d00bb77d7e3c"
+            required
+          />
+        </div>
+        <button type="submit" class="btn">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

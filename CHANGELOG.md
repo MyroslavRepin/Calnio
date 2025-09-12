@@ -26,6 +26,13 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.8. - 2025-09-12
+
+### 🚀 Added
+
+- New model: **UserNotionTask**
+- Adding feature to add task from html form and save to db
+
 ## v1.7.0 - 2025-09-10
 
 ### 🔄 Changed

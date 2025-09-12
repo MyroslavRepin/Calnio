@@ -10,6 +10,7 @@ from fastapi.responses import HTMLResponse
 
 from backend.app.api import login, signup, landing, dashboard, users, logout, refresh, error_404
 from backend.app.api.oauth import notion_callback
+from backend.app.api.integrations.notion import pages
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 
@@ -59,6 +60,7 @@ app.include_router(logout.router)
 app.include_router(refresh.router)
 app.include_router(notion_callback.router)
 app.include_router(error_404.router)
+app.include_router(pages.router)
 
 
 class UserAdmin(ModelView, model=user_models.User):
