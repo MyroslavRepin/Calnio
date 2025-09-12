@@ -1,6 +1,7 @@
-from pydantic import BaseModel
-from typing import Optional
 import pretty_errors
+from typing import Optional
+from pydantic import BaseModel
+from backend.app.core.config import settings
 
 
 class NotionEvent(BaseModel):
@@ -8,7 +9,7 @@ class NotionEvent(BaseModel):
     title: str
     start_time: Optional[str]
     end_time: Optional[str]
-    # status: Optional[str]
+    status: Optional[str]
 
     @classmethod
     def from_notion(cls, data: dict):
@@ -39,26 +40,4 @@ class NotionEvent(BaseModel):
             status=status
         )
 
-
-# воображаемый JSON от Notion
-notion_page = {
-    "id": "e1c12345-6789-4abc-def0-1234567890ab",
-    "properties": {
-        "Name": {
-            "title": [
-                {"type": "text", "text": {"content": "Meeting with John"}}
-            ]
-        },
-        "Date": {
-            "date": {"start": "2025-09-07T14:00:00.000+00:00", "end": "2025-09-07T15:00:00.000+00:00"}
-        },
-        "Status": {
-            "select": {"id": "123", "name": "In Progress", "color": "blue"}
-        }
-    }
-}
-
-event = NotionEvent.from_notion(notion_page)
-print(event.title)       # Meeting with John
-print(event.start_time)  # 2025-09-07T14:00:00.000+00:00
-print(event.status)      # In Progress
+# event = NotionEvent.from_notion(notion_page)

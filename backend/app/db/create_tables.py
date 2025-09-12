@@ -1,12 +1,12 @@
 import asyncio
 from backend.app.db.database import engine, async_engine, Base, AsyncSessionLocal
-from backend.app.models import notion_integration  # импорт модели
+from backend.app import models
 
 
 async def async_create_tables():
     print("Создаю таблицы...")
     async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        # await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     print("Таблицы созданы")
 
