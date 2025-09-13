@@ -1,4 +1,6 @@
 import asyncio
+import datetime
+from typing import Optional
 from sqlalchemy import select
 from tabulate import tabulate
 from hashlib import sha256
@@ -7,6 +9,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.app.models.tasks import UserNotionTask
 from backend.app.models.users import User
 from backend.app.schemas.users import UserCreate
 from backend.app.db.database import async_engine
@@ -105,3 +108,42 @@ async def async_get_by_id(db: AsyncSession, user_id: int) -> User | None:
     result = await db.execute(select(User).filter(User.id == user_id))
     user = result.scalars().first()
     return user
+
+
+async def async_create_task(
+    db: AsyncSession,
+    user_id: int,
+    title: str,
+    notion_url: str,
+    notion_page_id: str,
+    description: Optional[str] = None,
+    task_date: Optional[str] = None,
+    status: Optional[str] = None,
+    done: bool = False,
+    priority: Optional[str] = None,
+    select_option: Optional[str] = None,
+) -> UserNotionTask:
+    """
+    Создаёт задачу в таблице notion_tasks для указанного пользователя.
+    """
+
+    new_task = UserNotionTask(
+        user_id=user_id,
+        title=title,
+        notion_url=notion_url,
+        notion_page_id=notion_page_id,
+        description=description,
+        task_date=task_date,
+        status=status,
+        done=done,
+        priority=priority,
+        select_option=select_option,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+
+    db.add(new_task)
+    await db.commit()
+    # чтобы вернуть объект с id и заполненными полями
+    await db.refresh(new_task)
+    return new_task

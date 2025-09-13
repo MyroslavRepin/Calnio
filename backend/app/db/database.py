@@ -9,9 +9,11 @@ engine = create_engine(settings.database_url)
 
 AsyncSessionLocal = async_sessionmaker(
     bind=async_engine, autoflush=False, autocommit=False)
+
 SessionLocal = sessionmaker(
     bind=engine, autoflush=False, autocommit=False
 )
+
 str_256 = Annotated[str, 256]
 
 

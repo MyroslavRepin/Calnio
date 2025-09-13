@@ -13,7 +13,6 @@ from backend.app.security.utils import verify_password
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-
 router = APIRouter()
 
 
