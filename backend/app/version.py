@@ -4,7 +4,6 @@ router = APIRouter()
 
 __version__ = '1.8.0'
 
-
 @router.get("/version")
 async def get_version():
     return {"version": __version__}
