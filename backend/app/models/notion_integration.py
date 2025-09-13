@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Integer
 from backend.app.db.database import Base
-from backend.app.models.users import User
+# from backend.app.models.users import User
 
 
 class UserNotionIntegration(Base):
