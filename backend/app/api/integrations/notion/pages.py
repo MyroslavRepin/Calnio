@@ -1,6 +1,6 @@
 import logging
 from backend.app.core.config import settings
-from notion_client import Client
+from notion_client import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 import os
 
@@ -13,6 +13,7 @@ from backend.app.crud.users import async_get_by_id
 from backend.app.db.deps import async_get_db
 from backend.app.security.utils import access_token_required, refresh_access_token
 from backend.app.crud.tasks import async_create_task
+from backend.app.tools.notion.utils import get_all_ids, add_tasks_to_bd
 router = APIRouter()
 
 
@@ -29,7 +30,7 @@ async def pages(
     request: Request,
     response: Response,
     db: AsyncSession = Depends(async_get_db),
-    page_id_url: str = Form(...),
+    page_id: str = Form(...),
 
 ):
     try:
@@ -56,54 +57,17 @@ async def pages(
         raise HTTPException(status_code=404, detail="User not found")
 
     integration = user.notion_integration
+
     if not integration:
         raise HTTPException(
             status_code=404, detail="Notion integration not found")
 
     # Creating client for user
-    notion = Client(auth=integration.access_token)
+    notion = AsyncClient(auth=integration.access_token)
 
-    page_id = page_id_url
-    # page = notion.pages.retrieve("26ba555872b480faa752d00bb77d7e3c")
-    page = notion.pages.retrieve(page_id=page_id)
-    # pyright: ignore[reportArgumentType]
-    page_url = page.get("url", f"https://www.notion.so/{page_id}")
-    # pyright: ignore[reportArgumentType]
-    notion_page = NotionTask.from_notion(page)
+    result = await add_tasks_to_bd(db=db, notion=notion, user_id=user_id)
 
-    content = {
-        "title": notion_page.title,
-        "is_done": notion_page.done,
-        "description": notion_page.description,
-        "url": notion_page.notion_page_url
-    }
-
-    await async_create_task(
-        db=db,
-        user_id=user_id,
-        notion_url=notion_page.notion_page_url,
-        notion_page_id=page_id,
-        title=notion_page.title,
-        description=notion_page.description,
-        task_date=notion_page.task_date,
-        status=notion_page.status,
-        select_option=notion_page.select_option,
-        done=notion_page.done,
-        priority=notion_page.priority
-    )
-
-    content = {
-        "title": notion_page.title,
-        "description": notion_page.description,
-        "is_done": notion_page.done,
-        "url": notion_page.notion_page_url,
-        "id": notion_page.notion_page_id
-    }
-    # return templates.TemplateResponse(
-    #     "tasks.html",
-    #     {"request": request, }
-    # )
-    return JSONResponse(content=content)
+    return result
 
 
 @router.get("/dashboard/pages")
