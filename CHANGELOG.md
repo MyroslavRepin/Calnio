@@ -26,6 +26,12 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.9.0 - 2025-09-16
+
+### 🚀 Added
+
+- Adds Function to add all tasks from database
+
 ## v1.8.0 - 2025-09-12
 
 ### 🚀 Added
