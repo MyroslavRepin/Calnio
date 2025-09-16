@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Burger Menu Example - Calnio</title>
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+    <link rel="stylesheet" href="/static/css/components.css" />
+    <script
+      defer
+      src="https://analytics.calnio.com/script.js"
+      data-website-id="4c81d3ea-9951-4d28-b426-129f058ec90e"
+    ></script>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="nav-container">
+      <a href="/" class="nav-brand">Calnio</a>
+
+      <div class="nav-wrapper">
+        <!-- Desktop Navigation -->
+        <div class="nav-desktop">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/features" class="nav-link">Features</a>
+          <a href="/pricing" class="nav-link">Pricing</a>
+          <a href="/about" class="nav-link">About</a>
+          <a href="/contact" class="nav-link">Contact</a>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav-container">
+          <button class="burger-menu" aria-label="Toggle navigation menu">
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Full Screen Overlay Menu -->
+    <div class="menu-overlay">
+      <nav class="mobile-nav">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/features" class="nav-link">Features</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main style="padding: 2rem; min-height: 100vh">
+      <h1>Burger Menu Example</h1>
+      <p>This is an example of the responsive burger menu implementation.</p>
+      <p>On desktop, you'll see the horizontal navigation menu.</p>
+      <p>
+        On mobile/tablet (768px and below), the menu will collapse into a burger
+        button.
+      </p>
+      <p>
+        Click the burger button to see the full-screen overlay menu with smooth
+        animations.
+      </p>
+
+      <h2>Features:</h2>
+      <ul>
+        <li>✅ Responsive design (desktop horizontal, mobile burger)</li>
+        <li>✅ Smooth burger-to-cross animation</li>
+        <li>✅ Full-screen overlay with white background</li>
+        <li>✅ Centered navigation links</li>
+        <li>✅ Staggered link animations</li>
+        <li>✅ Smooth open/close transitions</li>
+        <li>✅ Keyboard accessibility (ESC to close)</li>
+        <li>✅ Click outside to close</li>
+        <li>✅ Prevents body scroll when open</li>
+        <li>✅ Auto-closes on window resize</li>
+      </ul>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="/static/js/burger-menu.js"></script>
+  </body>
+</html>
