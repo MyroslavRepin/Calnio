@@ -6,8 +6,10 @@ from backend.app.security.utils import access_token_required, refresh_access_tok
 from backend.app.db.deps import async_get_db
 from backend.app.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.core.config import settings
+from backend.app.models import UserNotionTask
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from fastapi import APIRouter, Request, Form, Depends, status, Query, Response
 from fastapi.templating import Jinja2Templates
@@ -79,12 +81,30 @@ async def dashboard(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    # Select users tasks via user_id
+    stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
+
+    result = await db.execute(stmt)
+    tasks = result.scalars().all()
+
+    # Making list of data from db
+
+    titles = []
+    descriptions = []
+    priorities = []
+
+    for task in tasks:
+        titles.append(task.title)
+        descriptions.append(task.description)
+        priorities.append(task.priority)
+
     html_content = templates.get_template("dashboard.html").render(
         request=request,
         username=user.username,
         email=user.email,
         success=success,
         OAuth_url=OAuth_url,
+        tasks=tasks
     )
 
     return HTMLResponse(content=html_content, headers=response.headers, status_code=200)
