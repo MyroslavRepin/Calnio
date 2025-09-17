@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-__version__ = '1.9.0'
+__version__ = '1.9.1'
 
 
 @router.get("/version")

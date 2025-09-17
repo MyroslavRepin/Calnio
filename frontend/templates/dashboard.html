@@ -184,6 +184,17 @@
           font-size: 1.25rem;
         }
       }
+
+      /* Task status colors */
+      .status-planning {
+        background-color: #fbbf24;
+      }
+      .status-in-progress {
+        background-color: #3b82f6;
+      }
+      .status-done {
+        background-color: #10b981;
+      }
     </style>
   </head>
   <body class="bg-gray-50 min-h-screen">
@@ -535,99 +546,7 @@
             </form>
           </div>
 
-          <!-- Quick Stats -->
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 lg:mb-8"
-          >
-            <div
-              class="bg-white rounded-xl card-shadow p-4 sm:p-6 card-shadow-hover cursor-pointer"
-            >
-              <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <div
-                  class="w-10 sm:w-12 h-10 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center"
-                >
-                  <svg
-                    class="w-5 sm:w-6 h-5 sm:h-6 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                </div>
-                <span class="text-xs sm:text-sm text-gray-500">Today</span>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-gray-900">12</h3>
-              <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                Tasks Completed
-              </p>
-            </div>
-
-            <div
-              class="bg-white rounded-xl card-shadow p-4 sm:p-6 card-shadow-hover cursor-pointer"
-            >
-              <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <div
-                  class="w-10 sm:w-12 h-10 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center"
-                >
-                  <svg
-                    class="w-5 sm:w-6 h-5 sm:h-6 text-purple-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                </div>
-                <span class="text-xs sm:text-sm text-gray-500">This Week</span>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-gray-900">8</h3>
-              <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                Upcoming Events
-              </p>
-            </div>
-
-            <div
-              class="bg-white rounded-xl card-shadow p-4 sm:p-6 card-shadow-hover cursor-pointer sm:col-span-2 lg:col-span-1"
-            >
-              <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <div
-                  class="w-10 sm:w-12 h-10 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center"
-                >
-                  <svg
-                    class="w-5 sm:w-6 h-5 sm:h-6 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    ></path>
-                  </svg>
-                </div>
-                <span class="text-xs sm:text-sm text-gray-500">Active</span>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-gray-900">3</h3>
-              <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                Synced Services
-              </p>
-            </div>
-          </div>
-
-          <!-- Recent Activity -->
+          <!-- Tasks Section -->
           <div class="bg-white rounded-xl card-shadow p-4 sm:p-6 lg:p-8">
             <div class="flex items-center justify-between mb-4 sm:mb-6">
               <div class="flex items-center">
@@ -637,7 +556,7 @@
                 <h2
                   class="text-lg sm:text-xl font-semibold text-gray-900 text-responsive-xl"
                 >
-                  Recent Activity
+                  Tasks
                 </h2>
               </div>
               <button
@@ -648,104 +567,45 @@
             </div>
 
             <div class="space-y-3 sm:space-y-4">
-              <div
-                class="flex items-start p-3 sm:p-4 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <div
-                  class="w-8 sm:w-10 h-8 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <svg
-                    class="w-4 sm:w-5 h-4 sm:h-5 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                </div>
-                <div class="ml-3 sm:ml-4 flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 truncate">
-                    Task completed
-                  </p>
-                  <p class="text-xs sm:text-sm text-gray-500 truncate">
-                    Updated project documentation
-                  </p>
-                </div>
-                <span class="text-xs text-gray-400 flex-shrink-0 ml-2"
-                  >2h ago</span
-                >
-              </div>
+              {% for task in tasks %}
 
+              <!-- Task Card 1 -->
               <div
-                class="flex items-start p-3 sm:p-4 hover:bg-gray-50 rounded-lg transition-colors"
+                class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <div
-                  class="w-8 sm:w-10 h-8 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <svg
-                    class="w-4 sm:w-5 h-4 sm:h-5 text-purple-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    ></path>
-                  </svg>
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h3 class="font-medium text-gray-900 mb-2">
+                      {{ task.title }}
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-3">
+                      {{ task.description }}
+                    </p>
+                    <div class="flex items-center space-x-4">
+                      <div class="flex items-center">
+                        <span class="text-xs text-gray-500 mr-2"
+                          >Status: {{ task.status }}</span
+                        >
+                      </div>
+                      <div class="flex items-center">
+                        <span class="text-xs text-gray-500 mr-2">Type:</span>
+                        <span class="text-xs text-gray-700">
+                          {{ task.select_option }}
+                        </span>
+                      </div>
+                      <div class="flex items-center">
+                        <span class="text-xs text-gray-500 mr-2"
+                          >Priority:</span
+                        >
+                        <span class="text-xs text-gray-700">
+                          {{ task.priority }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="ml-3 sm:ml-4 flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 truncate">
-                    New event created
-                  </p>
-                  <p class="text-xs sm:text-sm text-gray-500 truncate">
-                    Team meeting scheduled for tomorrow
-                  </p>
-                </div>
-                <span class="text-xs text-gray-400 flex-shrink-0 ml-2"
-                  >5h ago</span
-                >
               </div>
-
-              <div
-                class="flex items-start p-3 sm:p-4 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <div
-                  class="w-8 sm:w-10 h-8 sm:h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <svg
-                    class="w-4 sm:w-5 h-4 sm:h-5 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    ></path>
-                  </svg>
-                </div>
-                <div class="ml-3 sm:ml-4 flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 truncate">
-                    Sync completed
-                  </p>
-                  <p class="text-xs sm:text-sm text-gray-500 truncate">
-                    Google Calendar synced successfully
-                  </p>
-                </div>
-                <span class="text-xs text-gray-400 flex-shrink-0 ml-2"
-                  >1d ago</span
-                >
-              </div>
+              {% endfor %}
             </div>
           </div>
         </div>
