@@ -13,7 +13,7 @@ from backend.app.crud.users import async_get_by_id
 from backend.app.db.deps import async_get_db
 from backend.app.security.utils import access_token_required, refresh_access_token
 from backend.app.crud.tasks import async_create_task
-from backend.app.tools.notion.utils import get_all_ids, add_tasks_to_bd
+from backend.app.tools.notion.utils import get_all_ids, add_tasks_to_bd, delete_pages_by_ids
 router = APIRouter()
 
 
@@ -24,13 +24,11 @@ FRONTEND_DIR = os.path.abspath(os.path.join(
 templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 
 
-# Optimize: Take page_id from form and using it dave to bd, and input success message
-@router.post("/dashboard/pages")
+@router.get("/dashboard/pages")
 async def pages(
     request: Request,
     response: Response,
     db: AsyncSession = Depends(async_get_db),
-    page_id: str = Form(...),
 
 ):
     try:
@@ -61,15 +59,12 @@ async def pages(
     if not integration:
         raise HTTPException(
             status_code=404, detail="Notion integration not found")
-
     # Creating client for user
     notion = AsyncClient(auth=integration.access_token)
 
+    current_notion_pages = await get_all_ids(notion)
+
     result = await add_tasks_to_bd(db=db, notion=notion, user_id=user_id)
+    await delete_pages_by_ids(db=db, notion=notion, user_id=user_id, pages_ids=current_notion_pages)
 
-    return result
-
-
-@router.get("/dashboard/pages")
-async def show_form(request: Request):
-    return templates.TemplateResponse("tasks.html", {"request": request})
+    return RedirectResponse("/dashboard", 302)
