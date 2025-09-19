@@ -6,7 +6,7 @@ from backend.app.security.utils import access_token_required, refresh_access_tok
 from backend.app.db.deps import async_get_db
 from backend.app.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.core.config import settings
-from backend.app.models import UserNotionTask
+from backend.app.models import UserNotionTask, User
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -87,6 +87,11 @@ async def dashboard(
     result = await db.execute(stmt)
     tasks = result.scalars().all()
 
+    # Selecting user
+    stmt = select(User).where(User.id == user_id)
+    result_user = await db.execute(stmt)
+    user_obj = result_user.scalars().first()
+
     # Making list of data from db
 
     titles = []
@@ -104,9 +109,9 @@ async def dashboard(
         email=user.email,
         success=success,
         OAuth_url=OAuth_url,
-        tasks=tasks
+        tasks=tasks,
+        user_obj=user_obj
     )
-
     return HTMLResponse(content=html_content, headers=response.headers, status_code=200)
 
 
