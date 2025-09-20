@@ -1,5 +1,7 @@
 import os
 
+from notion_client import AsyncClient
+
 from backend.app.db.database import AsyncSessionLocal
 from backend.app.security.jwt_config import security
 from backend.app.security.utils import access_token_required, refresh_access_token, create_hash
@@ -18,6 +20,8 @@ from fastapi.exceptions import HTTPException
 
 import logging
 import colorlog
+
+from backend.app.tools.notion.utils import add_tasks_to_bd, delete_pages_by_ids, get_all_ids, update_pages_by_ids
 
 router = APIRouter()
 
@@ -97,6 +101,14 @@ async def dashboard(
     titles = []
     descriptions = []
     priorities = []
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    integration = user.notion_integration
+
+    if not integration:
+        raise HTTPException(
+            status_code=404, detail="Notion integration not found")
 
     for task in tasks:
         titles.append(task.title)

@@ -110,9 +110,11 @@ async def delete_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: in
     tasks = result.scalars().all()
 
     # Собираем ID страниц из БД
-    pages_ids_db = [task.notion_page_id for task in tasks]
+    pages_ids_db = [
+        task.notion_page_id for task in tasks
+    ]
 
-    # FIX: находим страницы, которые есть в БД, но НЕТ в Notion
+    # находим страницы, которые есть в БД, но НЕТ в Notion
     pages_to_delete = list(set(pages_ids_db) - set(pages_ids))
 
     # Удаляем устаревшие задачи
@@ -129,3 +131,55 @@ async def delete_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: in
 
     await db.commit()
     return {"deleted_pages": pages_to_delete}
+
+
+async def update_task(db: AsyncSession, user_id, data: dict, task: UserNotionTask):
+    if task:
+        task.title = data["title"]
+        task.description = data["description"]
+        task.task_date = data["task_date"]
+        task.status = data["status"]
+        task.select_option = data["select_option"]
+        task.done = data["done"]
+        task.priority = data["priority"]
+        db.add(task)
+        db.commit
+    else:
+        return "Task does not exist"
+    return task
+
+
+async def update_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: int, pages_ids: list):
+    # Getting all users pages from db
+    stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
+    result = await db.execute(stmt)
+    tasks = result.scalars().all()
+
+    # Getting pages info from all_ids
+    all_ids = await get_all_ids(notion=notion)
+    added_pages = []
+
+    for page_info in all_ids:
+        page_id = page_info
+        logging.info("Pages in for loop")
+        stmt = select(UserNotionTask).where(
+            UserNotionTask.notion_page_id == page_id)
+        result = await db.execute(statement=stmt)
+        task = result.scalar()
+
+        page = await notion.pages.retrieve(page_id=page_id)
+        notion_page = NotionTask.from_notion(page)
+
+        data = {
+            "notion_page_id": notion_page.notion_page_id,
+            "notion_url": notion_page.notion_page_url,
+            "title": notion_page.title,
+            "description": notion_page.description,
+            "task_date": notion_page.task_date,
+            "status": notion_page.status,
+            "select_option": notion_page.select_option,
+            "done": notion_page.done,
+            "priority": notion_page.priority
+        }
+
+        await update_task(db=db, user_id=user_id, data=data, task=task)
