@@ -21,7 +21,7 @@ from fastapi.exceptions import HTTPException
 import logging
 import colorlog
 
-from backend.app.tools.notion.utils import add_tasks_to_bd, delete_pages_by_ids, get_all_ids, update_pages_by_ids
+from backend.app.crud.tasks import add_tasks_to_db, delete_pages_by_ids, get_all_ids, update_pages_by_ids
 
 router = APIRouter()
 
