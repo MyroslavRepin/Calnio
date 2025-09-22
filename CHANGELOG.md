@@ -26,6 +26,12 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.9.3 - 2025-08-20
+
+### 🔄 Changed
+
+- Moving **CRUD** functions from **utils/** to **CRUD/**
+
 ## v1.9.0 - 2025-09-16
 
 ### 🚀 Added
