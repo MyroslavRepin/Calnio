@@ -9,5 +9,6 @@
       "database": "scheduloo",
       "username": "myroslav"
     }
-  ]
+  ],
+  "python.pythonPath": "/Users/myroslavrepin/Documents/dev/Calnio/.venv/bin/python"
 }

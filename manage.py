@@ -16,7 +16,7 @@ DATABASE_URL = settings.database_url
 def main():
     if len(sys.argv) < 2:
         print(
-            "Использование: python manage.py [check|create|create_user|get_users|delete_user|update_user]")
+            "Использование: python manage.py [check|create|create_user|get_users|delete_user|update_user|migrate|upgrade|downgrade]")
         return
 
     command = sys.argv[1]
@@ -25,6 +25,33 @@ def main():
 
     elif command == "create":
         asyncio.run(async_create_tables())
+
+    elif command == "migrate":
+        # Generate a new migration
+        import subprocess
+        migration_message = sys.argv[2] if len(sys.argv) > 2 else "Auto-generated migration"
+        result = subprocess.run(["alembic", "revision", "--autogenerate", "-m", migration_message],
+                              capture_output=True, text=True)
+        print(result.stdout)
+        if result.stderr:
+            print("Error:", result.stderr)
+
+    elif command == "upgrade":
+        # Apply migrations to database
+        import subprocess
+        result = subprocess.run(["alembic", "upgrade", "head"], capture_output=True, text=True)
+        print(result.stdout)
+        if result.stderr:
+            print("Error:", result.stderr)
+
+    elif command == "downgrade":
+        # Downgrade database by one migration
+        import subprocess
+        target = sys.argv[2] if len(sys.argv) > 2 else "-1"
+        result = subprocess.run(["alembic", "downgrade", target], capture_output=True, text=True)
+        print(result.stdout)
+        if result.stderr:
+            print("Error:", result.stderr)
 
     elif command == "get_users":
         async def async_get_users():
