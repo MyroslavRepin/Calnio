@@ -13,7 +13,7 @@ from backend.app.crud.users import async_get_by_id
 from backend.app.db.deps import async_get_db
 from backend.app.security.utils import access_token_required, refresh_access_token
 from backend.app.crud.tasks import async_create_task
-from backend.app.backround_tasks.notion_sync import get_all_ids, add_tasks_to_db, delete_pages_by_ids, update_pages_by_ids
+from backend.app.backround_tasks.notion_sync import get_all_ids, add_tasks_to_db, notion_sync_background, delete_pages_by_ids, update_pages_by_ids
 router = APIRouter()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -61,11 +61,6 @@ async def pages(
     # Creating a client for user
     notion = AsyncClient(auth=integration.access_token)
 
-    current_notion_pages = await get_all_ids(notion)
-    # Get tasks from notion db and saving to bd (backround task)
-    background_tasks.add_task(add_tasks_to_db, db, notion, user_id)
-    background_tasks.add_task(delete_pages_by_ids, db, notion, user_id, current_notion_pages)
-    background_tasks.add_task(update_pages_by_ids, db, notion, user_id, current_notion_pages)
-
-    # await delete_pages_by_ids(db=db, notion=notion, user_id=user_id, pages_ids=current_notion_pages)
+    # Get tasks from notion db and saving to bd (backround task)    # await delete_pages_by_ids(db=db, notion=notion, user_id=user_id, pages_ids=current_notion_pages)
+    background_tasks.add_task(notion_sync_background, db=db, notion=notion, user_id=user_id)
     return RedirectResponse("/dashboard", 302)
