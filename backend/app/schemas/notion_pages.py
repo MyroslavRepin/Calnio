@@ -13,6 +13,12 @@ class NotionTask(BaseModel):
     priority: Optional[str]
     select_option: Optional[str]
     description: Optional[str]
+    # Updated default values for new columns
+    sync_source: Optional[str] = "notion"
+    last_synced_at: Optional[str] = None
+    caldav_uid: Optional[str] = None
+    has_conflict: Optional[bool] = False
+    last_modified_source: Optional[str] = "notion"
 
     @classmethod
     def from_notion(cls, data: dict):
@@ -55,7 +61,13 @@ class NotionTask(BaseModel):
         notion_page_url = data.get(
             "url", f"https://www.notion.so/{notion_page_id}")
 
-        #! Ignore this error
+        # Use default values for new columns unless provided in data
+        sync_source = data.get("sync_source", "notion")
+        last_synced_at = data.get("last_synced_at", None)
+        caldav_uid = data.get("caldav_uid", None)
+        has_conflict = data.get("has_conflict", False)
+        last_modified_source = data.get("last_modified_source", "notion")
+
         return cls(
             id=data["id"],
             title=title,
@@ -67,4 +79,9 @@ class NotionTask(BaseModel):
             done=done,
             priority=priority,
             select_option=select_option,
+            sync_source=sync_source,
+            last_synced_at=last_synced_at,
+            caldav_uid=caldav_uid,
+            has_conflict=has_conflict,
+            last_modified_source=last_modified_source,
         )
