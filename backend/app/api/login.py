@@ -8,7 +8,7 @@ from backend.app.schemas.users import UserLogin
 from backend.app.security.jwt_config import config, security
 from backend.app.models.users import User
 from backend.app.db.deps import async_get_db
-from backend.app.security.utils import verify_password
+from backend.app.security.utils import verify_password, check_if_user_authorized
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -25,6 +25,9 @@ templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 
 @router.get("/login", response_class=HTMLResponse)
 async def login(request: Request):
+    data = await check_if_user_authorized(request)
+    if data["authorized"]:
+        return RedirectResponse("/dashboard", status_code=302)
     return templates.TemplateResponse("login.html", {"request": request})
 
 
@@ -34,9 +37,10 @@ async def login_post(
     creds: UserLogin = Depends(UserLogin.as_form),
     db: AsyncSession = Depends(async_get_db)
 ):
+    # Получаем пользователя по email/username
     query = select(User).where(
-        (User.email == creds.login) | (User.username == creds.login))
-
+        (User.email == creds.login) | (User.username == creds.login)
+    )
     result = await db.execute(query)
     user = result.scalar_one_or_none()
 
@@ -49,10 +53,12 @@ async def login_post(
             "error": "Incorrect email or password!"
         })
 
+    # Создаём токены
     access_token = security.create_access_token(uid=str(user.id))
     refresh_token = security.create_refresh_token(uid=str(user.id))
     redirect_response = RedirectResponse("/dashboard", status_code=303)
 
+    # Ставим куки
     redirect_response.set_cookie(
         config.JWT_ACCESS_COOKIE_NAME,
         access_token,

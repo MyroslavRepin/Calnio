@@ -6,14 +6,13 @@ import os
 
 from fastapi import APIRouter, Request, Form, Depends, HTTPException, Response, BackgroundTasks
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 
 from backend.app.schemas.notion_pages import NotionTask
 from backend.app.crud.users import async_get_by_id
 from backend.app.db.deps import async_get_db
-from backend.app.security.utils import access_token_required, refresh_access_token
-from backend.app.crud.tasks import async_create_task
-from backend.app.backround_tasks.notion_sync import get_all_ids, add_tasks_to_db, notion_sync_background, delete_pages_by_ids, update_pages_by_ids
+from backend.app.security.utils import check_if_user_authorized
+from backend.app.backround_tasks.notion_sync import notion_sync_background
 router = APIRouter()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -30,23 +29,10 @@ async def pages(
     db: AsyncSession = Depends(async_get_db),
     background_tasks: BackgroundTasks = BackgroundTasks,
 ):
-    try:
-        # Decode payload and check if expired. Returns dict
-        print("Cookies received")
-
-        payload = await access_token_required(request)
-        user_id = int(payload["sub"])
-
-    except HTTPException:
-        # Если токен невалиден или отсутствует — редирект или HTML
-        try:
-            logging.info("Trying update access token")
-            payload = await refresh_access_token(request, response)
-            user_id = int(payload["sub"])  # важно: user_id тут тоже нужен
-
-        except HTTPException:
-            return RedirectResponse("/login", 401)
-
+    data = await check_if_user_authorized(request)
+    user_id = data["user_id"]
+    if not data["authorized"]:
+        return RedirectResponse("/login", status_code=302)
     user = await async_get_by_id(db, user_id)
 
     # Checking if user is not None
@@ -61,6 +47,6 @@ async def pages(
     # Creating a client for user
     notion = AsyncClient(auth=integration.access_token)
 
-    # Get tasks from notion db and saving to bd (backround task)    # await delete_pages_by_ids(db=db, notion=notion, user_id=user_id, pages_ids=current_notion_pages)
+    # Get tasks from notion db and saving to bd (backround task)
     background_tasks.add_task(notion_sync_background, db=db, notion=notion, user_id=user_id)
     return RedirectResponse("/dashboard", 302)
