@@ -5,7 +5,7 @@ from fastapi.exceptions import HTTPException
 from fastapi import Request
 from jose import JWTError, jwt  # библиотека для работы с JWT
 from backend.app.security.jwt_config import config
-
+from fastapi.responses import JSONResponse, RedirectResponse
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -61,3 +61,18 @@ async def refresh_access_token(request: Request, response: Response) -> dict:
         print(e)
         raise HTTPException(
             status_code=401, detail="Invalid refresh token or expired")
+
+async def check_if_user_authorized(request: Request) -> dict:
+    try:
+        payload = await access_token_required(request)
+        user_id = int(payload["sub"])
+        return {"authorized": True, "user_id": user_id, "payload": payload}
+
+    except HTTPException:
+        try:
+            payload = await refresh_access_token(request, Response())
+            user_id = int(payload["sub"])
+            return {"authorized": True, "user_id": user_id, "payload": payload}
+
+        except HTTPException:
+            return {"authorized": False, "user_id": None, "payload": None}
