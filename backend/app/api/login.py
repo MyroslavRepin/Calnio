@@ -28,7 +28,9 @@ async def login(request: Request):
     data = await check_if_user_authorized(request)
     if data["authorized"]:
         return RedirectResponse("/dashboard", status_code=302)
-    return templates.TemplateResponse("login.html", {"request": request})
+    # Check for error in query params (for GET requests after redirect)
+    error = request.query_params.get("error")
+    return templates.TemplateResponse("login.html", {"request": request, "error": error})
 
 
 @router.post('/login')
@@ -37,21 +39,21 @@ async def login_post(
     creds: UserLogin = Depends(UserLogin.as_form),
     db: AsyncSession = Depends(async_get_db)
 ):
-    # Получаем пользователя по email/username
     query = select(User).where(
-        (User.email == creds.login) | (User.username == creds.login)
-    )
+        (User.email == creds.login) | (User.username == creds.login))
     result = await db.execute(query)
     user = result.scalar_one_or_none()
+
+    data = await check_if_user_authorized(request)
+    if data["authorized"]:
+        return RedirectResponse("/dashboard", status_code=302)
 
     if not user or user.hashed_password is None or not verify_password(
         plain_password=creds.password,
         hashed_password=user.hashed_password
     ):
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "error": "Incorrect email or password!"
-        })
+        # Pass error as query param for GET (so refresh doesn't resubmit form)
+        return RedirectResponse("/login?error=Incorrect+email+or+password!", status_code=303)
 
     # Создаём токены
     access_token = security.create_access_token(uid=str(user.id))

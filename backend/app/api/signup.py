@@ -27,7 +27,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @router.get("/signup", response_class=HTMLResponse)
 async def signup(request: Request):
-    return templates.TemplateResponse("signup.html", {"request": request})
+    error = request.query_params.get("error")
+    return templates.TemplateResponse("signup.html", {"request": request, "error": error})
 
 
 @router.post('/signup')
@@ -40,37 +41,16 @@ async def signup_post(
     db: AsyncSession = Depends(async_get_db)
 ):
     if password != confirm_password:
-        return templates.TemplateResponse("signup.html", {
-            "request": request,
-            "error": "Passwords does not match!",
-            "username": username,
-            "email": email
-        })
-    errors = {}
+        return RedirectResponse("/signup?error=Passwords+do+not+match!&username=" + username + "&email=" + email, status_code=303)
     try:
-        # Trying create error
-
-        # Creating user obj
         user = UserCreate(
             username=username,
             email=email,
             hashed_password=create_hash(password)
         )
-        await async_create_user(db=db, user=user)  # Running function
-
-        # Redirecting to login if succes
+        await async_create_user(db=db, user=user)
         return RedirectResponse('/login', status_code=303)
-
-    # If errors
+    except IntegrityError:
+        return RedirectResponse("/signup?error=Email+or+username+already+exists!&username=" + username + "&email=" + email, status_code=303)
     except ValueError as e:
-        print(e)
-        return templates.TemplateResponse(
-            "signup.html",
-            {
-                "request": request,
-                "error": str(e),
-                "username": username,
-                "email": email
-            },
-            status_code=200
-        )
+        return RedirectResponse(f"/signup?error={str(e)}&username={username}&email={email}", status_code=303)
