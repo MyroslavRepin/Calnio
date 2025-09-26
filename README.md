@@ -182,3 +182,69 @@ python backend/app/db/recreate_tables.py
 alembic revision -m "Custom migration"
 # Then edit the generated file manually
 ```
+
+# Scheduling and Background Synchronization
+
+Calnio includes an automatic background synchronization system that periodically syncs your tasks with Notion. This system uses APScheduler to manage scheduled jobs and allows users to configure their synchronization intervals.
+
+## Scheduling Features
+
+### Configurable Sync Intervals
+- Users can set their preferred synchronization interval between 5 minutes and 24 hours (1440 minutes)
+- Default interval is 30 minutes
+- Each user has their own independent sync schedule
+- Sync intervals can be updated through the dashboard settings
+
+### Background Job Management
+- Automatic initialization of sync jobs when users connect their Notion integration
+- Jobs are automatically updated when users change their sync interval
+- Proper cleanup when the application shuts down
+- Thread-safe job execution with async/await support
+
+### User Interface
+The dashboard includes a "Sync Interval" field where users can:
+- View their current sync interval
+- Update the interval (with validation)
+- See helpful text about the allowed range (5 minutes to 24 hours)
+
+## How It Works
+
+1. **Application Startup**: The scheduler starts and initializes sync jobs for all existing users with Notion integrations
+2. **User Configuration**: Users can modify their sync interval through the dashboard profile settings
+3. **Automatic Syncing**: Background jobs run at each user's configured interval to sync their Notion pages
+4. **Job Management**: The system automatically adds/removes/updates jobs based on user actions
+
+## Technical Implementation
+
+### Components
+- **SyncScheduler**: Main scheduler service managing all background sync jobs
+- **APScheduler**: Background scheduler library handling job execution
+- **Database Migration**: Added `sync_interval` column to users table
+- **User Interface**: Dashboard form with sync interval configuration
+
+### Configuration
+```python
+# Default sync interval (30 minutes)
+sync_interval: Mapped[int] = mapped_column(Integer, default=30)
+
+# Validation range: 5 minutes to 24 hours
+if sync_interval < 5 or sync_interval > 1440:
+    sync_interval = 30  # Reset to default if invalid
+```
+
+### Job Execution
+Each sync job:
+1. Connects to the user's Notion workspace using their access token
+2. Retrieves all accessible pages
+3. Creates or updates tasks in the local database
+4. Handles errors gracefully and logs important events
+
+## Monitoring and Logs
+
+The application logs important scheduling events:
+- Scheduler startup/shutdown
+- Job additions/removals/updates
+- Sync job execution results
+- Error handling and warnings
+
+Check the application logs to monitor sync job activity and troubleshoot any issues.
