@@ -1,5 +1,5 @@
 from backend.app.db.database import Base
-from sqlalchemy import Boolean, DateTime
+from sqlalchemy import Boolean, DateTime, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import Optional
@@ -19,6 +19,9 @@ class User(Base):
 
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    
+    # Sync interval in minutes (default to 30 minutes)
+    sync_interval: Mapped[int] = mapped_column(Integer, default=30)
 
     notion_integration = relationship(
         "UserNotionIntegration", back_populates="user", uselist=False, lazy="selectin")

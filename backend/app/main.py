@@ -7,12 +7,14 @@ from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+import atexit
 
 from backend.app.api import login, signup, landing, dashboard, users, logout, refresh, error_404
 from backend.app.api.oauth import notion_callback
 from backend.app.api.integrations.notion import pages
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
+from backend.app.services.scheduler import sync_scheduler
 
 import logging
 
@@ -69,3 +71,45 @@ class UserAdmin(ModelView, model=user_models.User):
 
 admin = Admin(app, async_engine)
 admin.add_view(UserAdmin)
+
+
+# Initialize scheduler on startup
+@app.on_event("startup")
+async def startup_event():
+    """Initialize the scheduler and set up existing user sync jobs."""
+    sync_scheduler.start()
+    
+    # Initialize sync jobs for existing users with notion integrations
+    from backend.app.db.database import AsyncSessionLocal
+    from backend.app.models.users import User
+    from sqlalchemy import select
+    
+    async with AsyncSessionLocal() as db:
+        try:
+            # Get all active users with notion integrations
+            stmt = select(User).where(User.is_active == True)
+            result = await db.execute(stmt)
+            users = result.scalars().all()
+            
+            for user in users:
+                if user.notion_integration and user.notion_integration.access_token:
+                    sync_scheduler.add_user_sync_job(user.id, user.sync_interval)
+                    
+            logging.info(f"Initialized sync jobs for {len([u for u in users if u.notion_integration and u.notion_integration.access_token])} users")
+            
+        except Exception as e:
+            logging.error(f"Failed to initialize user sync jobs: {e}")
+    
+    logging.info("Application startup completed with scheduler initialized")
+
+
+# Cleanup scheduler on shutdown
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup scheduler on application shutdown."""
+    sync_scheduler.shutdown()
+    logging.info("Application shutdown completed")
+
+
+# Also ensure scheduler shuts down on process termination
+atexit.register(sync_scheduler.shutdown)

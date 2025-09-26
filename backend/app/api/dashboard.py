@@ -102,6 +102,7 @@ async def update_profile(
     username: str = Form(...),
     email: str = Form(...),
     password: str = Form(...),
+    sync_interval: int = Form(default=30),
     db: AsyncSession = Depends(async_get_db)
 ):
     try:
@@ -125,7 +126,22 @@ async def update_profile(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    # Validate sync_interval (must be between 5 and 1440 minutes - 5 min to 24 hours)
+    if sync_interval < 5 or sync_interval > 1440:
+        sync_interval = 30  # Default to 30 minutes if invalid
+
     await async_update_by_id(db=db, user_id=user_id, new_username=username, new_email=email)
 
     await async_update_password_by_id(db=db, user_id=user_id, new_password=password)
+    
+    # Update sync_interval
+    user.sync_interval = sync_interval
+    db.add(user)
+    await db.commit()
+    
+    # Update the scheduler job with new interval
+    from backend.app.services.scheduler import sync_scheduler
+    if user.notion_integration and user.notion_integration.access_token:
+        sync_scheduler.add_user_sync_job(user_id, sync_interval)
+    
     return RedirectResponse(url="/dashboard?success=1", status_code=status.HTTP_302_FOUND)
