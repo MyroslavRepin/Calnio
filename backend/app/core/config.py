@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from pathlib import Path
+import logging
 
 # Загрузить .env перед тем, как объявлять настройки
 dotenv_path = Path(__file__).resolve().parents[3] / ".env"
@@ -28,6 +29,10 @@ class Settings(BaseSettings):
 
     oauth_url_prod: str
     oauth_url_local: str
+
+    # Logging config
+    log_level: str = "INFO"
+    log_format: str = "%(asctime)s %(levelname)s %(message)s"
 
     @property
     def database_url(self):
@@ -87,3 +92,8 @@ class Settings(BaseSettings):
 
 
 settings = Settings()  # pyright: ignore[reportCallIssue]
+
+
+def configure_logging():
+    level = getattr(logging, Settings().log_level.upper(), logging.INFO)
+    logging.basicConfig(level=level, format=Settings().log_format)

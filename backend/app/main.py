@@ -13,12 +13,10 @@ from backend.app.api.oauth import notion_callback
 from backend.app.api.integrations.notion import pages
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
+from backend.app.core.config import configure_logging
 
-import logging
-
-# logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
-# logging.getLogger("sqlalchemy.pool").setLevel(logging.WARNING)
-
+# Remove direct logging.basicConfig and use config
+configure_logging()
 
 # Creating Main App
 app = FastAPI()
