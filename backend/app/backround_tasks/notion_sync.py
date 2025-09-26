@@ -13,12 +13,6 @@ from backend.app.models.users import User
 from backend.app.schemas.users import UserCreate
 from backend.app.tools.notion.utils import get_all_ids, to_utc_datetime
 
-# Set up debug logging
-def setup_debug_logging():
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
-
-setup_debug_logging()
-
 async def get_all_ids(notion):
     logging.debug("Entering get_all_ids")
     from backend.app.crud.tasks import async_create_task
@@ -119,7 +113,7 @@ async def async_create_task(
     return new_task
 
 async def add_tasks_to_db(db: AsyncSession, notion: AsyncClient, user_id):
-    logging.debug(f"Entering add_tasks_to_db for user_id={user_id}")
+    logging.info(f"[Background] add_tasks_to_db started for user_id={user_id}")
     all_ids = await get_all_ids(notion=notion)
     logging.debug(f"All Notion page IDs: {all_ids}")
     added_pages = []
@@ -150,11 +144,11 @@ async def add_tasks_to_db(db: AsyncSession, notion: AsyncClient, user_id):
             "status": "added"
         })
         logging.debug(f"Added page to result: {added_pages[-1]}")
-    logging.debug(f"Returning from add_tasks_to_db: {added_pages}")
+    logging.info(f"[Background] add_tasks_to_db finished for user_id={user_id}")
     return added_pages
 
 async def delete_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: int, pages_ids: list):
-    logging.debug(f"Entering delete_pages_by_ids for user_id={user_id}")
+    logging.info(f"[Background] delete_pages_by_ids started for user_id={user_id}")
     stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
     result = await db.execute(stmt)
     tasks = result.scalars().all()
@@ -172,7 +166,7 @@ async def delete_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: in
             await db.delete(task)
             logging.info(f"Deleted task with notion_page_id: {page_id}")
     await db.commit()
-    logging.debug(f"Deleted pages committed: {pages_to_delete}")
+    logging.info(f"[Background] delete_pages_by_ids finished for user_id={user_id}")
     return {"deleted_pages": pages_to_delete}
 
 async def update_task(db: AsyncSession, user_id, data: dict, task: UserNotionTask):
@@ -195,7 +189,7 @@ async def update_task(db: AsyncSession, user_id, data: dict, task: UserNotionTas
     return task
 
 async def update_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: int, pages_ids: list):
-    logging.debug(f"Entering update_pages_by_ids for user_id={user_id}")
+    logging.info(f"[Background] update_pages_by_ids started for user_id={user_id}")
     stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
     result = await db.execute(stmt)
     tasks = result.scalars().all()
@@ -225,12 +219,15 @@ async def update_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: in
         }
         await update_task(db=db, user_id=user_id, data=data, task=task)
         logging.debug(f"Updated page_id: {page_id}")
+    logging.info(f"[Background] update_pages_by_ids finished for user_id={user_id}")
 
 async def notion_sync_background(db, notion, user_id):
+    logging.info(f"[Background] notion_sync_background started for user_id={user_id}")
     added = await add_tasks_to_db(db, notion, user_id)
     current_notion_pages = await get_all_ids(notion)
     deleted = await delete_pages_by_ids(db, notion, user_id, current_notion_pages)
     updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages)
+    logging.info(f"[Background] notion_sync_background finished for user_id={user_id}")
     return {
         "added": added,
         "deleted": deleted,
