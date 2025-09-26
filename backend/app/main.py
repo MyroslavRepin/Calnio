@@ -8,11 +8,12 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-from backend.app.api import login, signup, landing, dashboard, users, logout, refresh, error_404
+from backend.app.api import login, signup, landing, dashboard, users, logout, refresh, error_404, config
 from backend.app.api.oauth import notion_callback
 from backend.app.api.integrations.notion import pages
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
+from backend.app.services.scheduler import sync_scheduler
 
 import logging
 
@@ -40,6 +41,27 @@ async def internal_server_error_handler(request, exc):
         status_code=500
     )
 
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize scheduler on startup"""
+    try:
+        await sync_scheduler.start()
+        logging.info("✅ Sync scheduler initialized successfully")
+    except Exception as e:
+        logging.error(f"❌ Failed to initialize sync scheduler: {e}")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup scheduler on shutdown"""
+    try:
+        await sync_scheduler.stop()
+        logging.info("✅ Sync scheduler stopped successfully")
+    except Exception as e:
+        logging.error(f"❌ Error stopping sync scheduler: {e}")
+
+
 # Setting static / templates files into FastAPI
 app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_DIR,
           "static")), name="static")
@@ -61,6 +83,7 @@ app.include_router(refresh.router)
 app.include_router(notion_callback.router)
 app.include_router(error_404.router)
 app.include_router(pages.router)
+app.include_router(config.router)
 
 
 class UserAdmin(ModelView, model=user_models.User):
