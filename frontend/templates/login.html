@@ -23,6 +23,11 @@
         </div>
 
         <div class="login-form">
+          {% if error %}
+          <div class="login-error">
+            {{ error }}
+          </div>
+          {% endif %}
           <form class="form-container" action="/login" method="post">
             <div class="input-group">
               <input

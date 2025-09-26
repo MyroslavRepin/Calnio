@@ -6,8 +6,7 @@ from backend.app.core.config import settings
 from backend.app.crud.users import async_create_user, get_users, async_print_users_table, async_delete_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.schemas.users import UserCreate
 from backend.app.db.database import SessionLocal, AsyncSessionLocal
-from backend.app.db.create_tables import create_tables, async_create_tables
-from backend.app.db.check_db import check_connection
+from backend.app.db.utils import async_check_connection, async_create_tables
 
 dotenv_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path)
@@ -17,15 +16,42 @@ DATABASE_URL = settings.database_url
 def main():
     if len(sys.argv) < 2:
         print(
-            "Использование: python manage.py [check|create|create_user|get_users|delete_user|update_user]")
+            "Использование: python manage.py [check|create|create_user|get_users|delete_user|update_user|migrate|upgrade|downgrade]")
         return
 
     command = sys.argv[1]
     if command == "check":
-        check_connection(DATABASE_URL)
+        asyncio.run(async_check_connection())
 
     elif command == "create":
         asyncio.run(async_create_tables())
+
+    elif command == "migrate":
+        # Generate a new migration
+        import subprocess
+        migration_message = sys.argv[2] if len(sys.argv) > 2 else "Auto-generated migration"
+        result = subprocess.run(["alembic", "revision", "--autogenerate", "-m", migration_message],
+                              capture_output=True, text=True)
+        print(result.stdout)
+        if result.stderr:
+            print("Error:", result.stderr)
+
+    elif command == "upgrade":
+        # Apply migrations to database
+        import subprocess
+        result = subprocess.run(["alembic", "upgrade", "head"], capture_output=True, text=True)
+        print(result.stdout)
+        if result.stderr:
+            print("Error:", result.stderr)
+
+    elif command == "downgrade":
+        # Downgrade database by one migration
+        import subprocess
+        target = sys.argv[2] if len(sys.argv) > 2 else "-1"
+        result = subprocess.run(["alembic", "downgrade", target], capture_output=True, text=True)
+        print(result.stdout)
+        if result.stderr:
+            print("Error:", result.stderr)
 
     elif command == "get_users":
         async def async_get_users():

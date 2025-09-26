@@ -13,6 +13,11 @@ if [[ "$1" == "--reset" ]]; then
   rm -rf .venv
 fi
 
+if [[ "$1" == "--create_tables" ]]; then
+  source .venv/bin/activate
+  python3 manage.py create
+fi
+
 if [ ! -d ".venv" ]; then
   echo -e "${YELLOW}🛠️  .venv not found, creating...${NC}"
   python3 -m venv .venv

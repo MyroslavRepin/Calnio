@@ -216,6 +216,21 @@ html {
   transform: translateY(0);
 }
 
+/* Error message styling */
+.login-error {
+  color: #fff;
+  background: #e74c3c;
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 18px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.08);
+  letter-spacing: 0.01em;
+  max-width: 100%;
+}
+
 /* Tablet responsive (768px and below) */
 @media (max-width: 768px) {
   body {
