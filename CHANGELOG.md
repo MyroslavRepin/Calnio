@@ -26,6 +26,17 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.9.4 - 2025-09-18
+
+### 🚀 Added
+
+- Added `background_tasks` module for async task processing
+
+### 🔄 Changed
+
+- Refactored and moved task update, create, and delete functions to `background_tasks/notion_sync.py`
+- Applied Alembic migrations
+
 ## v1.9.3 - 2025-08-20
 
 ### 🔄 Changed

@@ -4,7 +4,8 @@ from notion_client import AsyncClient
 
 from backend.app.db.database import AsyncSessionLocal
 from backend.app.security.jwt_config import security
-from backend.app.security.utils import access_token_required, refresh_access_token, create_hash
+from backend.app.security.utils import access_token_required, refresh_access_token, create_hash, \
+    check_if_user_authorized
 from backend.app.db.deps import async_get_db
 from backend.app.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.core.config import settings
@@ -25,28 +26,6 @@ from backend.app.crud.tasks import add_tasks_to_db, delete_pages_by_ids, get_all
 
 router = APIRouter()
 
-#! LOQ SETUP
-# logging.basicConfig(level=logging.INFO,
-#                     format='%(asctime)s - %(levelname)s - %(message)s')
-
-handler = colorlog.StreamHandler()
-handler.setFormatter(colorlog.ColoredFormatter(
-    "%(log_color)s%(bold)s%(asctime)s %(levelname)-8s %(reset)s%(white)s%(message)s",
-    log_colors={
-        'DEBUG':    'cyan',
-        'INFO':     'green',
-        'WARNING':  'yellow',
-        'ERROR':    'red,bold',
-        'CRITICAL': 'red,bg_white',
-    },
-    secondary_log_colors={},
-    style='%'
-))
-
-# logger = colorlog.getLogger()
-# logger.addHandler(handler)
-# logger.setLevel(logging.DEBUG)
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(
     BASE_DIR, "..", "..", "..", "frontend"))
@@ -61,23 +40,12 @@ async def dashboard(
     db: AsyncSession = Depends(async_get_db),
     success: int | None = Query(None),
 ):
-    try:
-        # Decode payload and check if expired. Returns dict
-        print("Cookies received:", request.cookies)
+    data = await check_if_user_authorized(request)
 
-        payload = await access_token_required(request)
-        user_id = int(payload["sub"])
+    if not data["authorized"]:
+        return RedirectResponse("/login", status_code=302)
 
-    except HTTPException:
-        # Если токен невалиден или отсутствует — редирект или HTML
-        try:
-            logging.info("Trying update access token")
-            payload = await refresh_access_token(request, response)
-            user_id = int(payload["sub"])  # важно: user_id тут тоже нужен
-
-        except HTTPException:
-            return RedirectResponse("/login", 401)
-
+    user_id = data["user_id"]
     user = await async_get_by_id(db, user_id)
 
     OAuth_url = settings.notion_oauth_url
