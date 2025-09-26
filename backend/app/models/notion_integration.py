@@ -26,6 +26,9 @@ class UserNotionIntegration(Base):
     duplicated_template_id: Mapped[Optional[str]
                                    ] = mapped_column(nullable=True)
 
+    # Sync configuration
+    sync_interval: Mapped[int] = mapped_column(Integer, nullable=False, default=30)  # minutes
+
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 

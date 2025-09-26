@@ -90,7 +90,8 @@ async def dashboard(
         success=success,
         OAuth_url=OAuth_url,
         tasks=tasks,
-        user_obj=user_obj
+        user_obj=user_obj,
+        sync_interval=integration.sync_interval
     )
     return HTMLResponse(content=html_content, headers=response.headers, status_code=200)
 

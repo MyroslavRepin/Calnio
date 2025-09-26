@@ -46,3 +46,4 @@ python-dotenv==1.1.1
 colorlog
 httpx
 notion_client
+APScheduler==3.10.4
