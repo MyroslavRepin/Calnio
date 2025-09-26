@@ -10,13 +10,14 @@ h11==0.16.0
 uvicorn==0.35.0
 python-multipart==0.0.20
 
-# Database
+# Database and Migrations
 asyncpg==0.30.0
 psycopg==3.2.9
 psycopg2-binary==2.9.10
 greenlet==3.2.3
 SQLAlchemy==2.0.41
 sqladmin==0.21.0
+alembic==1.16.5
 
 # FastAPI + Starlette
 fastapi==0.115.14
@@ -24,6 +25,9 @@ starlette==0.46.2
 pydantic==2.11.7
 pydantic-core==2.33.2
 pydantic-settings==2.10.1
+
+# Scheduling
+APScheduler==3.10.4
 
 # Auth and security
 authx==1.4.3

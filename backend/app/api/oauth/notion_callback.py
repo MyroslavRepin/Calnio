@@ -95,6 +95,16 @@ async def oauth_callback(
     logging.info(token_data)
 
     await save_or_update_integration(db, user_id, token_data)
+    
+    # Initialize sync job for the user after successful integration
+    from backend.app.services.scheduler import sync_scheduler
+    from backend.app.crud.users import async_get_by_id
+    
+    user = await async_get_by_id(db, user_id)
+    if user and user.sync_interval:
+        sync_scheduler.add_user_sync_job(user_id, user.sync_interval)
+        logging.info(f"Started sync job for user {user_id} with interval {user.sync_interval} minutes")
+    
     # Optimize: If user canceled integration -> redirect
     error = request.query_params.get("error")
     if error == "access_denied":
