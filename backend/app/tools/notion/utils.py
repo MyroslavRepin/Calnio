@@ -1,19 +1,12 @@
-from backend.app.core.config import settings
-from backend.app.models.tasks import UserNotionTask
-from backend.app.schemas.notion_pages import NotionTask
-from backend.app.core.config import settings
-
-from notion_client import AsyncClient
 import logging
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from datetime import datetime, timezone
+from dateutil import parser
+
+from notion_client import AsyncClient
 
 
-async def get_all_ids(notion):
-    from backend.app.crud.tasks import async_create_task
-
+async def get_all_ids(notion: AsyncClient):
     result = await notion.search()
     database_ids = [
         obj["id"]
@@ -46,18 +39,21 @@ def to_utc_datetime(dt):
     """
     if dt is None:
         return None
+
+    # Parse string to datetime
     if isinstance(dt, str):
-        # Parse string to datetime
         try:
-            parsed = datetime.fromisoformat(dt)
+            parsed = parser.isoparse(dt)
         except Exception:
             return None
     elif isinstance(dt, datetime):
         parsed = dt
     else:
         return None
+
     # If naive, assume UTC
     if parsed.tzinfo is None:
         return parsed.replace(tzinfo=timezone.utc)
-    # Convert to UTC
+
+    # Convert aware datetime to UTC
     return parsed.astimezone(timezone.utc)

@@ -1,3 +1,5 @@
+import logging
+
 from backend.app.models import users as user_models
 from backend.app.db.database import AsyncSession, async_engine
 from sqladmin import ModelView
@@ -16,7 +18,11 @@ from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from backend.app.core.config import configure_logging
 
 # Remove direct logging.basicConfig and use config
-configure_logging()
+
+logging.basicConfig(
+    level=logging.DEBUG,  # or INFO
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
 
 # Creating Main App
 app = FastAPI()

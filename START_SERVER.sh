@@ -45,7 +45,7 @@ if [[ "$1" == "--https" ]]; then
   uvicorn backend.app.main:app \
     --host 127.0.0.1 \
     --port 8000 \
-    --log-level info \
+    --log-level debug \
     --reload \
     --timeout-keep-alive 60 \
     --ssl-certfile localhost+2.pem \
