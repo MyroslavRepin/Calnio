@@ -1,13 +1,8 @@
 import os
 
-from notion_client import AsyncClient
-
-from backend.app.db.database import AsyncSessionLocal
-from backend.app.security.jwt_config import security
-from backend.app.security.utils import access_token_required, refresh_access_token, create_hash, \
-    check_if_user_authorized
+from backend.app.security.utils import access_token_required, refresh_access_token, check_if_user_authorized
 from backend.app.db.deps import async_get_db
-from backend.app.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
+from backend.app.services.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.core.config import settings
 from backend.app.models import UserNotionTask, User
 
@@ -18,11 +13,6 @@ from fastapi import APIRouter, Request, Form, Depends, status, Query, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.exceptions import HTTPException
-
-import logging
-import colorlog
-
-from backend.app.crud.tasks import add_tasks_to_db, delete_pages_by_ids, get_all_ids, update_pages_by_ids
 
 router = APIRouter()
 
