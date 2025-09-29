@@ -26,6 +26,41 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.91.0 - 2025-09-29
+
+### 🚀 Added
+
+- Enhanced user authentication with authorization check in login flow
+- Added centralized logging configuration in config.py
+- Added end_date field to Notion tasks for better task management
+- Added async connection check and table creation for database management
+- Added Alembic migration commands for schema management
+- Added directory tree generation script with Git pre-commit hook
+- Added user information display on dashboard
+
+### 🔄 Changed
+
+- Refactored project structure for better organization
+- Renamed task_date to start_date in Notion tasks
+- Unified background task execution into `notion_sync_background`
+- Moved CRUD operations to services directory
+- Refactored token handling and user authentication flow
+- Updated Notion integration with improved page handling
+- Streamlined task handling in API endpoints
+- Enhanced database management with better async handling
+
+### 🔧 Fixed
+
+- Fixed date type error in database operations
+- Fixed logging setup by removing direct configuration from main.py
+- Fixed task management with proper background processing
+- Fixed Notion task synchronization issues
+
+### 🗑️ Removed
+
+- Removed direct logging configuration from main.py
+- Removed deprecated database scripts
+
 ## v1.9.4 - 2025-09-18
 
 ### 🚀 Added

@@ -1,13 +1,10 @@
-from datetime import datetime
-
 from fastapi import APIRouter, HTTPException, Request, Depends, Response
 from fastapi.responses import RedirectResponse
 import httpx
-import os
 
 from backend.app.db.deps import async_get_db
 from backend.app.db.database import AsyncSession
-from backend.app.crud.notion_integrations import save_or_update_integration
+from backend.app.services.notion_integrations import save_or_update_integration
 from backend.app.security.utils import access_token_required, refresh_access_token
 from backend.app.core.config import settings
 

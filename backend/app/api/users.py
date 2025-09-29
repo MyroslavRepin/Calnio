@@ -1,14 +1,11 @@
 import os
-from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.db.deps import get_db, async_get_db
-from backend.app.crud.users import get_users
+from backend.app.db.deps import async_get_db
+from backend.app.services.crud.users import get_users
 
 router = APIRouter()
 # Adding externaly templates, static dir
