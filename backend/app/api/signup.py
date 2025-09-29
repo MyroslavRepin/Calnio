@@ -5,9 +5,8 @@ from fastapi import APIRouter, Depends, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from backend.app.db.database import AsyncSessionLocal, async_engine
 from backend.app.db.deps import async_get_db
-from backend.app.crud.users import async_create_user
+from backend.app.services.crud.users import async_create_user
 from backend.app.schemas.users import UserCreate
 from backend.app.security.utils import create_hash
 

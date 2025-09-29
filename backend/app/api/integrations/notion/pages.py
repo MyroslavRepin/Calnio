@@ -1,18 +1,16 @@
-import logging
-from backend.app.core.config import settings
 from notion_client import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 import os
+import logging
 
-from fastapi import APIRouter, Request, Form, Depends, HTTPException, Response, BackgroundTasks
+from fastapi import APIRouter, Request, Depends, HTTPException, Response, BackgroundTasks
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 
-from backend.app.schemas.notion_pages import NotionTask
-from backend.app.crud.users import async_get_by_id
+from backend.app.services.crud.users import async_get_by_id
 from backend.app.db.deps import async_get_db
 from backend.app.security.utils import check_if_user_authorized
-from backend.app.backround_tasks.notion_sync import notion_sync_background
+from backend.app.services.notion_sync import notion_sync_background
 router = APIRouter()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -42,11 +40,20 @@ async def pages(
     integration = user.notion_integration
 
     if not integration:
+        logging.error(f"User {user_id} does not have a Notion integration.")
         raise HTTPException(
             status_code=404, detail="Notion integration not found")
+
     # Creating a client for user
     notion = AsyncClient(auth=integration.access_token)
 
-    # Get tasks from notion db and saving to bd (backround task)
+    # # Debug logging to ensure notion client is valid
+    # if not hasattr(notion, "search"):
+    #     logging.error(f"Invalid Notion client created for user {user_id}.")
+    #     raise HTTPException(
+    #         status_code=500, detail="Failed to create Notion client.")
+
+    # Get tasks from notion db and saving to bd (background task)
+    logging.debug(f"notion type={type(notion)}, user_id={user_id}")
     background_tasks.add_task(notion_sync_background, db=db, notion=notion, user_id=user_id)
     return RedirectResponse("/dashboard", 302)

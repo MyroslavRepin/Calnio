@@ -1,46 +1,14 @@
-from backend.app.core.config import settings
-from backend.app.models.tasks import UserNotionTask
-from backend.app.schemas.notion_pages import NotionTask
-from notion_client import AsyncClient
 import logging
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-import asyncio
 from datetime import datetime
 import uuid
+from notion_client import AsyncClient
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.models.users import User
-from backend.app.schemas.users import UserCreate
+from backend.app.models.tasks import UserNotionTask
+from backend.app.schemas.notion_pages import NotionTask
 from backend.app.tools.notion.utils import get_all_ids, to_utc_datetime
 
-async def get_all_ids(notion):
-    logging.debug("Entering get_all_ids")
-    from backend.app.crud.tasks import async_create_task
-    result = await notion.search()
-    logging.debug(f"Notion search result: {result}")
-    database_ids = [
-        obj["id"]
-        for obj in result["results"]
-        if obj["object"] == "database"
-    ]
-    logging.debug(f"Found database_ids: {database_ids}")
-    page_ids = []
-    for db_id in database_ids:
-        logging.debug(f"Querying database_id: {db_id}")
-        query_result = await notion.databases.query(database_id=db_id)
-        logging.debug(f"Query result for {db_id}: {query_result}")
-        for row in query_result.get("results", []):
-            if row["object"] == "page":
-                page_id = row["id"]
-                try:
-                    page_test = await notion.pages.retrieve(page_id=page_id)
-                    if page_test.get("url"):
-                        page_ids.append(page_id)
-                        logging.debug(f"Added page_id: {page_id}")
-                except Exception as e:
-                    logging.warning(f"Page {page_id} could not be retrieved: {e}")
-    logging.debug(f"Returning page_ids: {page_ids}")
-    return page_ids
 
 async def async_create_task(
     db: AsyncSession,
@@ -48,34 +16,40 @@ async def async_create_task(
     title: str,
     notion_page_id: str,
     notion_url: str,
+    #
+    sync_source: str,
+    last_synced_at: datetime = None,
+    caldav_uid: str = None,
+    has_conflict: bool = False,
+    last_modified_source: str = "notion",
+    #
     description: str | None = None,
-    start_date: str | None = None,
-    end_date: str | None = None,  # new field
+    start_date: str | None = None,  # приходит строкой из формы или NotionTask
+    end_date: str | None = None,    # new field
     status: str | None = None,
     done: bool = False,
     priority: str | None = None,
-    select_option: str | None = None,
+    select_option: str | None = None
 ) -> UserNotionTask:
-    logging.debug(f"Entering async_create_task for user_id={user_id}, notion_page_id={notion_page_id}")
+    # Проверяем, есть ли уже задача с таким page_id
     stmt = select(UserNotionTask).where(
         UserNotionTask.user_id == user_id,
         UserNotionTask.notion_page_id == notion_page_id
     )
     result = await db.execute(stmt)
     existing_task = result.scalar_one_or_none()
+
+    # Конвертируем start_date и end_date в datetime, если есть
     start_date_dt = to_utc_datetime(start_date)
     end_date_dt = to_utc_datetime(end_date)
+
     if existing_task:
-        logging.debug(f"Updating existing task {existing_task.id}")
+        # обновляем существующую запись
         existing_task.title = title
         existing_task.notion_url = notion_url
         existing_task.description = description
         existing_task.start_date = start_date_dt
         existing_task.end_date = end_date_dt
-        existing_task.status = status
-        existing_task.done = done
-        existing_task.priority = priority
-        existing_task.select_option = select_option
         # Always set default values for required fields
         existing_task.sync_source = "notion"
         existing_task.last_synced_at = to_utc_datetime(datetime.utcnow())
@@ -84,8 +58,9 @@ async def async_create_task(
         existing_task.last_modified_source = "notion"
         await db.commit()
         await db.refresh(existing_task)
-        logging.debug(f"Updated task {existing_task.id}")
         return existing_task
+
+    # создаём новую задачу
     new_task = UserNotionTask(
         id=str(uuid.uuid4()),
         user_id=user_id,
@@ -106,24 +81,33 @@ async def async_create_task(
         has_conflict=False,
         last_modified_source="notion"
     )
+
     db.add(new_task)
     await db.commit()
     await db.refresh(new_task)
-    logging.debug(f"Created new task {new_task.id}")
     return new_task
 
-async def add_tasks_to_db(db: AsyncSession, notion: AsyncClient, user_id):
-    logging.info(f"[Background] add_tasks_to_db started for user_id={user_id}")
+
+async def add_tasks_to_db(
+    db: AsyncSession,
+    user_id: int,
+    notion: AsyncClient,
+    sync_source: str = "notion",
+    last_synced_at: datetime = None,
+    caldav_uid: str = None,
+    has_conflict: bool = False,
+    last_modified_source: str = "notion"
+) -> list:
     all_ids = await get_all_ids(notion=notion)
-    logging.debug(f"All Notion page IDs: {all_ids}")
     added_pages = []
+
     for page_info in all_ids:
         page_id = page_info
-        logging.debug(f"Processing page_id: {page_id}")
+        print(page_id)
         page = await notion.pages.retrieve(page_id=page_id)
-        logging.debug(f"Retrieved page: {page}")
         notion_page = NotionTask.from_notion(page)
-        logging.debug(f"Parsed NotionTask: {notion_page}")
+        start_date_utc = to_utc_datetime(notion_page.start_date)
+        end_date_utc = to_utc_datetime(notion_page.end_date)
         await async_create_task(
             db=db,
             user_id=user_id,
@@ -131,71 +115,96 @@ async def add_tasks_to_db(db: AsyncSession, notion: AsyncClient, user_id):
             notion_page_id=page_id,
             title=notion_page.title,
             description=notion_page.description,
-            start_date=notion_page.start_date,
-            end_date=notion_page.end_date,
+            start_date=start_date_utc,
+            end_date=end_date_utc,
             status=notion_page.status,
             select_option=notion_page.select_option,
             done=notion_page.done,
-            priority=notion_page.priority
+            priority=notion_page.priority,
+            sync_source=sync_source,
+            last_synced_at=last_synced_at,
+            caldav_uid=caldav_uid,
+            has_conflict=has_conflict,
+            last_modified_source=last_modified_source
         )
         added_pages.append({
             "page_id": page_id,
             "title": notion_page.title,
             "status": "added"
         })
-        logging.debug(f"Added page to result: {added_pages[-1]}")
-    logging.info(f"[Background] add_tasks_to_db finished for user_id={user_id}")
     return added_pages
 
-async def delete_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: int, pages_ids: list):
-    logging.info(f"[Background] delete_pages_by_ids started for user_id={user_id}")
+
+async def delete_pages_by_ids(
+        db: AsyncSession,
+        notion: AsyncClient,
+        user_id: int,
+        pages_ids: list):
+    # Получаем все задачи пользователя из БД
     stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
     result = await db.execute(stmt)
     tasks = result.scalars().all()
-    pages_ids_db = [task.notion_page_id for task in tasks]
+
+    # Собираем ID страниц из БД
+    pages_ids_db = [
+        task.notion_page_id for task in tasks
+    ]
+
+    # находим страницы, которые есть в БД, но НЕТ в Notion
     pages_to_delete = list(set(pages_ids_db) - set(pages_ids))
-    logging.debug(f"Pages to delete: {pages_to_delete}")
+
+    # Удаляем устаревшие задачи
     for page_id in pages_to_delete:
         stmt = select(UserNotionTask).where(
             UserNotionTask.notion_page_id == page_id,
-            UserNotionTask.user_id == user_id
+            UserNotionTask.user_id == user_id  # Добавляем проверку пользователя
         )
         result = await db.execute(stmt)
         task = result.scalar()
         if task:
             await db.delete(task)
             logging.info(f"Deleted task with notion_page_id: {page_id}")
+
     await db.commit()
-    logging.info(f"[Background] delete_pages_by_ids finished for user_id={user_id}")
     return {"deleted_pages": pages_to_delete}
 
-async def update_task(db: AsyncSession, user_id, data: dict, task: UserNotionTask):
-    logging.debug(f"Entering update_task for user_id={user_id}, task_id={getattr(task, 'id', None)}")
+
+async def update_task(
+        db: AsyncSession,
+        user_id,
+        data: dict,
+        task: UserNotionTask):
     if task:
         task.title = data["title"]
         task.description = data["description"]
-        task.start_date = data["start_date"]
-        task.end_date = data["end_date"]
+        task.start_date = to_utc_datetime(data["start_date"])
+        task.end_date = to_utc_datetime(data["end_date"])
         task.status = data["status"]
         task.select_option = data["select_option"]
         task.done = data["done"]
         task.priority = data["priority"]
         db.add(task)
-        db.commit
-        logging.debug(f"Updated task {task.id}")
+        await db.commit()
+        await db.refresh(task)
     else:
-        logging.warning("Task does not exist")
         return "Task does not exist"
     return task
 
-async def update_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: int, pages_ids: list):
-    logging.info(f"[Background] update_pages_by_ids started for user_id={user_id}")
+
+async def update_pages_by_ids(
+        db: AsyncSession,
+        notion: AsyncClient,
+        user_id: int,
+        pages_ids: list):
+    # Getting all users pages from db
     stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
     result = await db.execute(stmt)
     tasks = result.scalars().all()
+
+    # Getting pages info from all_ids
     all_ids = await get_all_ids(notion=notion)
-    logging.debug(f"All Notion page IDs for update: {all_ids}")
     added_pages = []
+
     for page_info in all_ids:
         page_id = page_info
         logging.info("Pages in for loop")
@@ -203,33 +212,22 @@ async def update_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: in
             UserNotionTask.notion_page_id == page_id)
         result = await db.execute(statement=stmt)
         task = result.scalar()
+
         page = await notion.pages.retrieve(page_id=page_id)
         notion_page = NotionTask.from_notion(page)
+
+        # Always change date to utc (to_utc_datetime)
         data = {
             "notion_page_id": notion_page.notion_page_id,
             "notion_url": notion_page.notion_page_url,
             "title": notion_page.title,
             "description": notion_page.description,
-            "start_date": notion_page.start_date,
-            "end_date": notion_page.end_date,
+            "start_date": to_utc_datetime(notion_page.start_date),
+            "end_date": to_utc_datetime(notion_page.end_date),
             "status": notion_page.status,
             "select_option": notion_page.select_option,
             "done": notion_page.done,
             "priority": notion_page.priority
         }
-        await update_task(db=db, user_id=user_id, data=data, task=task)
-        logging.debug(f"Updated page_id: {page_id}")
-    logging.info(f"[Background] update_pages_by_ids finished for user_id={user_id}")
 
-async def notion_sync_background(db, notion, user_id):
-    logging.info(f"[Background] notion_sync_background started for user_id={user_id}")
-    added = await add_tasks_to_db(db, notion, user_id)
-    current_notion_pages = await get_all_ids(notion)
-    deleted = await delete_pages_by_ids(db, notion, user_id, current_notion_pages)
-    updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages)
-    logging.info(f"[Background] notion_sync_background finished for user_id={user_id}")
-    return {
-        "added": added,
-        "deleted": deleted,
-        "updated": updated
-    }
+        await update_task(db=db, user_id=user_id, data=data, task=task)
