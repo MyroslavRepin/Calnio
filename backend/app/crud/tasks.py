@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.models.tasks import UserNotionTask
 from backend.app.schemas.notion_pages import NotionTask
-from backend.app.tools.notion.utils import get_all_ids
+from backend.app.tools.notion.utils import get_all_ids, to_utc_datetime
 
 
 async def async_create_task(
@@ -24,7 +24,8 @@ async def async_create_task(
     last_modified_source: str = "notion",
     #
     description: str | None = None,
-    task_date: str | None = None,  # приходит строкой из формы или NotionTask
+    start_date: str | None = None,  # приходит строкой из формы или NotionTask
+    end_date: str | None = None,    # new field
     status: str | None = None,
     done: bool = False,
     priority: str | None = None,
@@ -38,24 +39,20 @@ async def async_create_task(
     result = await db.execute(stmt)
     existing_task = result.scalar_one_or_none()
 
-    # Конвертируем task_date в datetime, если есть
-    task_date_dt = None
-    if task_date:
-        task_date_dt = datetime.fromisoformat(task_date)
+    # Конвертируем start_date и end_date в datetime, если есть
+    start_date_dt = to_utc_datetime(start_date)
+    end_date_dt = to_utc_datetime(end_date)
 
     if existing_task:
         # обновляем существующую запись
         existing_task.title = title
         existing_task.notion_url = notion_url
         existing_task.description = description
-        existing_task.task_date = task_date_dt
-        existing_task.status = status
-        existing_task.done = done
-        existing_task.priority = priority
-        existing_task.select_option = select_option
+        existing_task.start_date = start_date_dt
+        existing_task.end_date = end_date_dt
         # Always set default values for required fields
         existing_task.sync_source = "notion"
-        existing_task.last_synced_at = datetime.utcnow()
+        existing_task.last_synced_at = to_utc_datetime(datetime.utcnow())
         existing_task.caldav_uid = "not supported yet"
         existing_task.has_conflict = False
         existing_task.last_modified_source = "notion"
@@ -71,14 +68,15 @@ async def async_create_task(
         notion_url=notion_url,
         title=title,
         description=description,
-        task_date=task_date_dt,
+        start_date=start_date_dt,
+        end_date=end_date_dt,
         status=status,
         done=done,
         priority=priority,
         select_option=select_option,
         # Always set default values for required fields
         sync_source="notion",
-        last_synced_at=datetime.utcnow(),
+        last_synced_at=to_utc_datetime(datetime.utcnow()),
         caldav_uid="not supported yet",
         has_conflict=False,
         last_modified_source="notion"
@@ -115,7 +113,8 @@ async def add_tasks_to_db(
             notion_page_id=page_id,
             title=notion_page.title,
             description=notion_page.description,
-            task_date=notion_page.task_date,
+            start_date=notion_page.start_date,
+            end_date=notion_page.end_date,
             status=notion_page.status,
             select_option=notion_page.select_option,
             done=notion_page.done,
@@ -168,13 +167,15 @@ async def update_task(db: AsyncSession, user_id, data: dict, task: UserNotionTas
     if task:
         task.title = data["title"]
         task.description = data["description"]
-        task.task_date = data["task_date"]
+        task.start_date = data["start_date"]
+        task.end_date = data["end_date"]
         task.status = data["status"]
         task.select_option = data["select_option"]
         task.done = data["done"]
         task.priority = data["priority"]
         db.add(task)
-        db.commit
+        await db.commit()
+        await db.refresh(task)
     else:
         return "Task does not exist"
     return task
@@ -206,7 +207,8 @@ async def update_pages_by_ids(db: AsyncSession, notion: AsyncClient, user_id: in
             "notion_url": notion_page.notion_page_url,
             "title": notion_page.title,
             "description": notion_page.description,
-            "task_date": notion_page.task_date,
+            "start_date": notion_page.start_date,
+            "end_date": notion_page.end_date,
             "status": notion_page.status,
             "select_option": notion_page.select_option,
             "done": notion_page.done,

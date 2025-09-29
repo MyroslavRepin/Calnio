@@ -8,6 +8,7 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from datetime import datetime, timezone
 
 
 async def get_all_ids(notion):
@@ -35,3 +36,28 @@ async def get_all_ids(notion):
                         f"Page {page_id} could not be retrieved: {e}")
 
     return page_ids
+
+
+def to_utc_datetime(dt):
+    """
+    Convert a date string or datetime object to a UTC-aware datetime (timestamptz compatible).
+    Accepts ISO 8601 strings or datetime objects (naive or aware).
+    Returns a timezone-aware datetime in UTC.
+    """
+    if dt is None:
+        return None
+    if isinstance(dt, str):
+        # Parse string to datetime
+        try:
+            parsed = datetime.fromisoformat(dt)
+        except Exception:
+            return None
+    elif isinstance(dt, datetime):
+        parsed = dt
+    else:
+        return None
+    # If naive, assume UTC
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    # Convert to UTC
+    return parsed.astimezone(timezone.utc)
