@@ -7,7 +7,8 @@ class NotionTask(BaseModel):
     title: str
     notion_page_id: str
     notion_page_url: str
-    task_date: Optional[str]
+    start_date: Optional[str]
+    end_date: Optional[str]  # New field
     status: Optional[str]
     done: bool
     priority: Optional[str]
@@ -35,9 +36,11 @@ class NotionTask(BaseModel):
             description = props["Description"]["rich_text"][0]["plain_text"]
 
         # Task Date
-        task_date = None
+        start_date = None
+        end_date = None
         if props["Task Date"]["date"]:
-            task_date = props["Task Date"]["date"].get("start")
+            start_date = props["Task Date"]["date"].get("start")
+            end_date = props["Task Date"]["date"].get("end")
 
         # Status
         status = None
@@ -74,7 +77,8 @@ class NotionTask(BaseModel):
             notion_page_id=notion_page_id,
             notion_page_url=notion_page_url,
             description=description,
-            task_date=task_date,
+            start_date=start_date,
+            end_date=end_date,
             status=status,
             done=done,
             priority=priority,
