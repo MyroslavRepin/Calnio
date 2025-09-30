@@ -8,7 +8,7 @@ from backend.app.tools.notion.utils import get_all_ids
 
 
 async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id: int):
-    logging.info(f"[Background] notion_sync_background started for user_id={user_id}")
+    print(f"[Background] notion_sync_background started for user_id={user_id}")
 
     added = await add_tasks_to_db(db, notion=notion, user_id=user_id)
 
