@@ -16,6 +16,9 @@ from backend.app.api.integrations.notion import pages
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from backend.app.core.config import configure_logging
+from backend.app.services.schedulor import sync_service, start_scheduler, shutdown_scheduler
+from backend.app.db.deps import async_get_db
+import asyncio
 
 # Remove direct logging.basicConfig and use config
 
@@ -73,3 +76,13 @@ class UserAdmin(ModelView, model=user_models.User):
 
 admin = Admin(app, async_engine)
 admin.add_view(UserAdmin)
+
+# APScheduler starting
+@app.on_event("startup")
+def on_startup():
+    # Register jobs here, e.g. interval job every 30 seconds
+    start_scheduler()
+
+@app.on_event("shutdown")
+def on_shutdown():
+    shutdown_scheduler()
