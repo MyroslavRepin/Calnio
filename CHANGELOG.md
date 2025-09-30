@@ -26,6 +26,12 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.92.1 - 2025-09-30
+
+### 🔧 Fixed
+
+- Fixed and created new `async_get_db_cm` context manager for improved database session handling in APScheduler jobs.
+
 ## v1.92.0 - 2025-09-30
 
 ### 🚀 Added

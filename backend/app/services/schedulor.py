@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from backend.app.core.config import settings
-from backend.app.db.deps import async_get_db
+from backend.app.db.deps import async_get_db, async_get_db_cm
 from backend.app.models import User
 from backend.app.services.crud.tasks import async_create_task
 from backend.app.services.notion_client import get_notion_client
@@ -15,7 +15,7 @@ from backend.app.services.notion_sync import notion_sync_background
 scheduler = AsyncIOScheduler()
 
 async def sync_service():
-    async with async_get_db() as db:
+    async with async_get_db_cm() as db:
         stmt = select(User).options(selectinload(User.notion_integration)).where(User.id == 7)
         result = await db.execute(stmt)
         users = result.scalars().all()
