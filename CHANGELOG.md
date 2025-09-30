@@ -26,6 +26,26 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.92.0 - 2025-09-30
+
+### 🚀 Added
+
+- Introduced a new scheduling system using AsyncIOScheduler to periodically synchronize Notion data for users.
+- Added `schedulor.py` for job scheduling and lifecycle management (startup/shutdown hooks in `main.py`).
+- Added `apscheduler_test.py` script for demonstrating and testing scheduled tasks.
+- Created `notion_client.py` to encapsulate Notion client creation and usage.
+
+### 🔄 Changed
+
+- Refactored Notion client instantiation to use the new helper from `notion_client.py` across the codebase.
+- Improved database dependency management by refactoring `async_get_db` with `@asynccontextmanager` for cleaner resource handling.
+- Updated project structure and documentation (`DIRECTORY_STRUCTURE.md`) to reflect new migration, service, and script files.
+- Replaced a logging statement with a print statement in `notion_sync_background` for better visibility during background sync.
+
+### 🔧 Fixed
+
+- Minor improvements and code cleanup for better maintainability.
+
 ## v1.91.0 - 2025-09-29
 
 ### 🚀 Added
