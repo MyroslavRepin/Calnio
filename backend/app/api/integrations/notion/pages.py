@@ -11,6 +11,7 @@ from backend.app.services.crud.users import async_get_by_id
 from backend.app.db.deps import async_get_db
 from backend.app.security.utils import check_if_user_authorized
 from backend.app.services.notion_sync import notion_sync_background
+from backend.app.services.notion_client import get_notion_client
 router = APIRouter()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -45,7 +46,7 @@ async def pages(
             status_code=404, detail="Notion integration not found")
 
     # Creating a client for user
-    notion = AsyncClient(auth=integration.access_token)
+    notion = get_notion_client(integration.access_token)
 
     # # Debug logging to ensure notion client is valid
     # if not hasattr(notion, "search"):
