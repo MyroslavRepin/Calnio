@@ -28,7 +28,7 @@
             {{ error }}
           </div>
           {% endif %}
-          <form class="form-container" action="/login" method="post">
+          <form class="form-container" action="/login" method="post" onsubmit="return validatePasswordLength()">
             <div class="input-group">
               <input
                 type="text"
@@ -39,6 +39,7 @@
             </div>
             <div class="input-group">
               <input
+                id="password"
                 type="password"
                 name="password"
                 placeholder="********"
@@ -80,5 +81,17 @@
         </div>
       </div>
     </div>
+
+    <script>
+      function validatePasswordLength() {
+        const password = document.getElementById("password").value;
+        const passwordBytes = new Blob([password]).size;
+        if (passwordBytes > 72) {
+          alert("Password is too long (max 72 bytes). Please use a shorter password.");
+          return false;
+        }
+        return true;
+      }
+    </script>
   </body>
 </html>

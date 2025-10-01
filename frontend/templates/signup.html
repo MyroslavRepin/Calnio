@@ -116,6 +116,14 @@
       function validatePasswords() {
         const password = document.getElementById("password").value;
         const confirm = document.getElementById("confirm_password").value;
+        
+        // Check password length (bcrypt has 72-byte limit)
+        const passwordBytes = new Blob([password]).size;
+        if (passwordBytes > 72) {
+          alert("Password is too long (max 72 bytes). Please use a shorter password.");
+          return false;
+        }
+        
         if (password !== confirm) {
           alert("Passwords don't match! Please try again.");
           return false;

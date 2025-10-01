@@ -29,6 +29,7 @@ async def dashboard(
     response: Response,
     db: AsyncSession = Depends(async_get_db),
     success: int | None = Query(None),
+    error: str | None = Query(None),
 ):
     data = await check_if_user_authorized(request)
 
@@ -78,6 +79,7 @@ async def dashboard(
         username=user.username,
         email=user.email,
         success=success,
+        error=error,
         OAuth_url=OAuth_url,
         tasks=tasks,
         user_obj=user_obj
@@ -117,5 +119,10 @@ async def update_profile(
 
     await async_update_by_id(db=db, user_id=user_id, new_username=username, new_email=email)
 
-    await async_update_password_by_id(db=db, user_id=user_id, new_password=password)
+    # Only update password if it's not empty and within bcrypt's 72-byte limit
+    if password:
+        if len(password.encode('utf-8')) > 72:
+            return RedirectResponse(url="/dashboard?error=Password+is+too+long+(max+72+bytes)", status_code=status.HTTP_302_FOUND)
+        await async_update_password_by_id(db=db, user_id=user_id, new_password=password)
+    
     return RedirectResponse(url="/dashboard?success=1", status_code=status.HTTP_302_FOUND)

@@ -39,6 +39,10 @@ async def login_post(
     creds: UserLogin = Depends(UserLogin.as_form),
     db: AsyncSession = Depends(async_get_db)
 ):
+    # Check password length before attempting to hash (bcrypt has 72-byte limit)
+    if len(creds.password.encode('utf-8')) > 72:
+        return RedirectResponse("/login?error=Password+is+too+long+(max+72+bytes)", status_code=303)
+    
     query = select(User).where(
         (User.email == creds.login) | (User.username == creds.login))
     result = await db.execute(query)
