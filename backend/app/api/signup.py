@@ -39,6 +39,10 @@ async def signup_post(
     confirm_password: str = Form(...),
     db: AsyncSession = Depends(async_get_db)
 ):
+    # Check password length before attempting to hash (bcrypt has 72-byte limit)
+    if len(password.encode('utf-8')) > 72:
+        return RedirectResponse("/signup?error=Password+is+too+long+(max+72+bytes)&username=" + username + "&email=" + email, status_code=303)
+    
     if password != confirm_password:
         return RedirectResponse("/signup?error=Passwords+do+not+match!&username=" + username + "&email=" + email, status_code=303)
     try:

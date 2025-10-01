@@ -461,6 +461,27 @@
             </div>
           </div>
 
+          <!-- Error Alert -->
+          <div
+            id="error-alert"
+            class="alert-error bg-red-50 border border-red-200 text-red-800 px-4 sm:px-6 py-3 sm:py-4 rounded-lg mb-6 flex items-center justify-between hidden"
+          >
+            <div class="flex items-center">
+              <svg
+                class="w-5 h-5 mr-2 sm:mr-3 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              <span id="error-message" class="font-medium text-sm sm:text-base"></span>
+            </div>
+          </div>
+
           <!-- Header -->
           <header class="mb-6 lg:mb-8">
             <h1
@@ -488,7 +509,7 @@
               </h2>
             </div>
 
-            <form method="post" action="/update-profile">
+            <form method="post" action="/update-profile" onsubmit="return validateProfilePassword()">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div class="col-span-1">
                   <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -519,6 +540,7 @@
                     Password
                   </label>
                   <input
+                    id="profile-password"
                     type="password"
                     name="password"
                     value=""
@@ -614,6 +636,29 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
+        // Show success or error alerts based on query params
+        {% if success %}
+        const successAlert = document.getElementById("success-alert");
+        if (successAlert) {
+          successAlert.classList.remove("hidden");
+          setTimeout(() => {
+            successAlert.classList.add("hidden");
+          }, 3000);
+        }
+        {% endif %}
+
+        {% if error %}
+        const errorAlert = document.getElementById("error-alert");
+        const errorMessage = document.getElementById("error-message");
+        if (errorAlert && errorMessage) {
+          errorMessage.textContent = "{{ error }}";
+          errorAlert.classList.remove("hidden");
+          setTimeout(() => {
+            errorAlert.classList.add("hidden");
+          }, 5000);
+        }
+        {% endif %}
+
         const toggleBtn = document.getElementById("mobile-menu-toggle");
         const closeBtn = document.getElementById("close-mobile-menu");
         const sidebar = document.getElementById("sidebar");
@@ -650,6 +695,19 @@
           });
         });
       });
+
+      function validateProfilePassword() {
+        const password = document.getElementById("profile-password").value;
+        // Only validate if password is not empty (password update is optional)
+        if (password) {
+          const passwordBytes = new Blob([password]).size;
+          if (passwordBytes > 72) {
+            alert("Password is too long (max 72 bytes). Please use a shorter password.");
+            return false;
+          }
+        }
+        return true;
+      }
     </script>
   </body>
 </html>
