@@ -27,7 +27,8 @@ pydantic-settings==2.10.1
 
 # Auth and security
 authx==1.4.3
-passlib[bcrypt]
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
 
 # Email
 email_validator==2.2.0

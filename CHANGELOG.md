@@ -26,6 +26,12 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.92.2 - 2025-09-30
+
+### 🔧 Fixed
+
+- Login issue related to session_id and 72 bytes limit. Improved session handling to prevent duplicate errors.
+
 ## v1.92.1 - 2025-09-30
 
 ### 🔧 Fixed
