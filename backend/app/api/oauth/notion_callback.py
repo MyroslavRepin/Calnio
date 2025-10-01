@@ -95,8 +95,8 @@ async def oauth_callback(
     # Optimize: If user canceled integration -> redirect
     error = request.query_params.get("error")
     if error == "access_denied":
-        # пользователь отменил авторизацию
+        # User canceled Notion OAuth, redirect to dashboard
         logging.critical("User canceled integration")
-        return RedirectResponse(url="/dashboard")
+        return RedirectResponse(url="/dashboard", status_code=302)
 
     return RedirectResponse("/dashboard?success=1", status_code=302)
