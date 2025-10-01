@@ -26,6 +26,11 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.92.3 - 2025-09-30
+
+### 🛠 Fixed
+- Redirects to /dashboard after canceling Notion OAuth (error=access_denied)
+
 ## v1.92.2 - 2025-09-30
 
 ### 🔧 Fixed
