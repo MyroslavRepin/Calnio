@@ -1,10 +1,10 @@
 import os
 
-from backend.app.security.utils import access_token_required, refresh_access_token, check_if_user_authorized
-from backend.app.db.deps import async_get_db
-from backend.app.services.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
+from backend.utils.security.utils import access_token_required, refresh_access_token, check_if_user_authorized
+from backend.db.deps import async_get_db
+from backend.services.crud.users import async_get_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.core.config import settings
-from backend.app.models import UserNotionTask, User
+from backend.db.models import UserNotionTask, User
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
