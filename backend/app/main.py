@@ -1,24 +1,23 @@
 import logging
 
-from backend.app.models import users as user_models
-from backend.app.db.database import AsyncSession, async_engine
+from backend.db.models import users as user_models
+from backend.db.database import async_engine
 from sqladmin import ModelView
 from sqladmin import Admin
 import os
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
 
-from backend.app.api import login, signup, landing, dashboard, users, logout, refresh, error_404
-from backend.app.api.oauth import notion_callback
-from backend.app.api.integrations.notion import pages
+from backend.app.api.auth import router as auth_router
+from backend.app.api import landing, dashboard, refresh_cookies
+from backend.app.api.errors import error_404
+
+from backend.integartions.oauth.oauth import notion_callback
+from backend.integartions.notion import pages
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
-from backend.app.core.config import configure_logging
-from backend.app.services.schedulor import sync_service, start_scheduler, shutdown_scheduler
-from backend.app.db.deps import async_get_db
-import asyncio
+from backend.services.scheduler_service import start_scheduler, shutdown_scheduler
 
 # Remove direct logging.basicConfig and use config
 
@@ -57,14 +56,11 @@ app.mount(
 
 app.add_middleware(IgnoreSpecificPathsMiddleware)
 
-app.include_router(login.router)
-app.include_router(signup.router)
+app.include_router(auth_router)
 app.include_router(landing.router)
 app.include_router(dashboard.router)
 app.include_router(version.router)
-app.include_router(users.router)
-app.include_router(logout.router)
-app.include_router(refresh.router)
+app.include_router(refresh_cookies.router)
 app.include_router(notion_callback.router)
 app.include_router(error_404.router)
 app.include_router(pages.router)
