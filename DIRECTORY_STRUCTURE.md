@@ -4,17 +4,6 @@ Generated automatically on commit.
 
 ```
 Calnio/
-├── alembic/
-│   ├── versions/
-│   │   ├── 195306bb06b8_rename_task_date_to_start_date_in_.py
-│   │   ├── 424907f7e342_add_sync_interval_seconds_column_to_.py
-│   │   ├── 723eede5975e_initial_migration.py
-│   │   ├── a3d53bfab21d_convert_datetime_columns_to_timestamptz_.py
-│   │   ├── cfef8e5e21e7_add_end_date_to_notion_tasks.py
-│   │   └── f74ea4b9e097_add_active_sync_column_manually.py
-│   ├── env.py
-│   ├── README
-│   └── script.py.mako
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -55,6 +44,19 @@ Calnio/
 │   ├── playground.py
 │   └── setup_precommit.py
 ├── server/
+│   ├── alembic/
+│   │   ├── versions/
+│   │   │   ├── 195306bb06b8_rename_task_date_to_start_date_in_.py
+│   │   │   ├── 424907f7e342_add_sync_interval_seconds_column_to_.py
+│   │   │   ├── 723eede5975e_initial_migration.py
+│   │   │   ├── __init__.py
+│   │   │   ├── a3d53bfab21d_convert_datetime_columns_to_timestamptz_.py
+│   │   │   ├── cfef8e5e21e7_add_end_date_to_notion_tasks.py
+│   │   │   └── f74ea4b9e097_add_active_sync_column_manually.py
+│   │   ├── __init__.py
+│   │   ├── env.py
+│   │   ├── README
+│   │   └── script.py.mako
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── errors/
@@ -106,6 +108,9 @@ Calnio/
 │   │   │   │   └── notion_callback.py
 │   │   │   └── __init__.py
 │   │   └── __init__.py
+│   ├── middleware/
+│   │   ├── __init__.py
+│   │   └── ignore_logging.py
 │   ├── services/
 │   │   ├── crud/
 │   │   │   ├── __init__.py
@@ -132,6 +137,8 @@ Calnio/
 ├── alembic.ini
 ├── CHANGELOG.md
 ├── DIRECTORY_STRUCTURE.md
+├── docker-compose.yml
+├── Dockerfile
 ├── LICENSE
 ├── main.py
 ├── manage.py
@@ -152,7 +159,7 @@ This tree excludes files and directories matching patterns from:
 - .vscode
 - settings.json
 - .idea
-- alembic/versions/__pycache__
+- server/alembic/versions/__pycache__
 
 ### Additional exclusions:
 - Python cache files (*.pyc, __pycache__)

@@ -4,4 +4,4 @@
 .vscode
 settings.json
 .idea
-alembic/versions/__pycache__/
+server/alembic/versions/__pycache__/
