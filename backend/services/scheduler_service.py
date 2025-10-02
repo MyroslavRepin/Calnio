@@ -4,7 +4,7 @@ from sqlalchemy.orm import selectinload
 
 from backend.db.deps import async_get_db_cm
 from backend.db.models import User
-from backend.integartions.notion.notion_client import get_notion_client
+from backend.integrations.notion.notion_client import get_notion_client
 from backend.services.notion_sync import notion_sync_background
 
 # Scheduler config, can be extended for custom intervals

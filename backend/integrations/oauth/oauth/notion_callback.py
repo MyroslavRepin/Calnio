@@ -92,11 +92,11 @@ async def oauth_callback(
     logging.info(token_data)
 
     await save_or_update_integration(db, user_id, token_data)
-    # Optimize: If user canceled integration -> redirect
+    # Optimize: If user canceled integrations -> redirect
     error = request.query_params.get("error")
     if error == "access_denied":
         # User canceled Notion OAuth, redirect to dashboard
-        logging.critical("User canceled integration")
+        logging.critical("User canceled integrations")
         return RedirectResponse(url="/dashboard", status_code=302)
 
     return RedirectResponse("/dashboard?success=1", status_code=302)

@@ -13,8 +13,8 @@ from backend.app.api.auth import router as auth_router
 from backend.app.api import landing, dashboard, refresh_cookies
 from backend.app.api.errors import error_404
 
-from backend.integartions.oauth.oauth import notion_callback
-from backend.integartions.notion import pages
+from backend.integrations.oauth.oauth import notion_callback
+from backend.integrations.notion import pages
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from backend.services.scheduler_service import start_scheduler, shutdown_scheduler
