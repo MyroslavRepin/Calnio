@@ -173,7 +173,7 @@ python manage.py migrate "Merged changes"
 ### Reset Database (Development Only)
 ⚠️ **This will delete all data!**
 ```bash
-python backend/app/db/recreate_tables.py
+python server/app/db/recreate_tables.py
 ```
 
 ### Manual Migration Creation

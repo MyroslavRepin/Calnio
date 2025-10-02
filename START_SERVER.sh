@@ -42,7 +42,7 @@ pip install -r requirements.txt
 echo -e "${GREEN}🚀 Launching server...${NC}"
 if [[ "$1" == "--https" ]]; then
   echo "Running on HTTPS" && 
-  uvicorn backend.app.main:app \
+  uvicorn server.app.main:app \
     --host 127.0.0.1 \
     --port 8000 \
     --log-level debug \
@@ -51,7 +51,7 @@ if [[ "$1" == "--https" ]]; then
     --ssl-certfile localhost+2.pem \
     --ssl-keyfile localhost+2-key.pem
 else
-  uvicorn backend.app.main:app \
+  uvicorn server.app.main:app \
     --host 127.0.0.1 \
     --port 8000 \
     --log-level info \
