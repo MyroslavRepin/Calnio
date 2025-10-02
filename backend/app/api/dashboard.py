@@ -66,7 +66,7 @@ async def dashboard(
 
     if not integration:
         raise HTTPException(
-            status_code=404, detail="Notion integration not found")
+            status_code=404, detail="Notion integrations not found")
 
     for task in tasks:
         titles.append(task.title)
