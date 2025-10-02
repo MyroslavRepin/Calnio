@@ -57,11 +57,9 @@ app.mount(
 app.add_middleware(IgnoreSpecificPathsMiddleware)
 
 app.include_router(auth_router)
-app.include_router(auth_router)
 app.include_router(landing.router)
 app.include_router(dashboard.router)
 app.include_router(version.router)
-app.include_router(auth_router)
 app.include_router(refresh_cookies.router)
 app.include_router(notion_callback.router)
 app.include_router(error_404.router)
