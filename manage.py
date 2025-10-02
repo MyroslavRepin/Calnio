@@ -5,8 +5,8 @@ from pathlib import Path
 from backend.app.core.config import settings
 from backend.app.crud import async_create_user, get_users, async_print_users_table, async_delete_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.schemas.users import UserCreate
-from backend.app.db.database import AsyncSessionLocal
-from backend.app.db.utils import async_check_connection, async_create_tables
+from backend.db.database import AsyncSessionLocal
+from backend.db.utils import async_check_connection, async_create_tables
 
 dotenv_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path)

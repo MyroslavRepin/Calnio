@@ -2,12 +2,14 @@ from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from pathlib import Path
 import logging
+from authx import AuthX, AuthXConfig
+from datetime import timedelta
 
 # Загрузить .env перед тем, как объявлять настройки
 dotenv_path = Path(__file__).resolve().parents[3] / ".env"
 load_dotenv(dotenv_path, override=True)
 
-
+# Settings class
 class Settings(BaseSettings):
     env: str
     db: str
@@ -90,10 +92,23 @@ class Settings(BaseSettings):
         ).parents[3] / ".env")  # путь к .env
         env_file_encoding = "utf-8"
 
-
+# Create settings object
 settings = Settings()  # pyright: ignore[reportCallIssue]
 
-
+# Configure logging
 def configure_logging():
     level = getattr(logging, Settings().log_level.upper(), logging.INFO)
     logging.basicConfig(level=level, format=Settings().log_format)
+
+
+#! JWT Token CONFIG
+config = AuthXConfig()
+
+config.JWT_SECRET_KEY = "secret_key"
+config.JWT_ACCESS_COOKIE_NAME = "access_token"
+config.JWT_REFRESH_COOKIE_NAME = "refresh_token"
+config.JWT_TOKEN_LOCATION = ["cookies"]
+config.JWT_COOKIE_CSRF_PROTECT = False
+config.JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=30)
+
+security = AuthX(config=config)

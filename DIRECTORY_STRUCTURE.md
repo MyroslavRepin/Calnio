@@ -17,65 +17,75 @@ Calnio/
 ├── backend/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── integrations/
-│   │   │   │   └── notion/
-│   │   │   │       ├── pages.py
-│   │   │   │       └── tools.py
-│   │   │   ├── oauth/
-│   │   │   │   └── notion_callback.py
+│   │   │   ├── errors/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── error_404.py
 │   │   │   ├── __init__.py
+│   │   │   ├── auth.py
 │   │   │   ├── dashboard.py
-│   │   │   ├── error_404.py
 │   │   │   ├── landing.py
-│   │   │   ├── login.py
-│   │   │   ├── logout.py
-│   │   │   ├── refresh.py
-│   │   │   ├── signup.py
-│   │   │   └── users.py
+│   │   │   └── refresh_cookies.py
 │   │   ├── core/
 │   │   │   ├── __init__.py
 │   │   │   └── config.py
-│   │   ├── db/
-│   │   │   ├── __init__.py
-│   │   │   ├── create_missing_tables.py
-│   │   │   ├── database.py
-│   │   │   ├── deps.py
-│   │   │   ├── recreate_tables.py
-│   │   │   └── utils.py
 │   │   ├── dops/
-│   │   │   ├── jwt_exp_check.py
-│   │   │   └── time_stats_decoder.py
 │   │   ├── middleware/
 │   │   │   └── ignore_logging.py
+│   │   ├── schemas/
+│   │   │   ├── __init__.py
+│   │   │   ├── notion_pages.py
+│   │   │   └── users.py
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   └── version.py
+│   ├── db/
 │   │   ├── models/
 │   │   │   ├── __init__.py
 │   │   │   ├── notion_integration.py
 │   │   │   ├── tasks.py
 │   │   │   └── users.py
-│   │   ├── schemas/
+│   │   ├── repositories/
+│   │   │   └── user.py
+│   │   ├── tools/
 │   │   │   ├── __init__.py
-│   │   │   ├── notion_pages.py
-│   │   │   └── users.py
-│   │   ├── security/
-│   │   │   ├── jwt_config.py
-│   │   │   └── utils.py
-│   │   ├── services/
-│   │   │   ├── crud/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── tasks.py
-│   │   │   │   └── users.py
+│   │   │   ├── create_missing_tables.py
+│   │   │   └── recreate_tables.py
+│   │   ├── __init__.py
+│   │   ├── database.py
+│   │   ├── deps.py
+│   │   └── utils.py
+│   ├── integartions/
+│   │   ├── notion/
 │   │   │   ├── __init__.py
 │   │   │   ├── notion_client.py
-│   │   │   ├── notion_integrations.py
-│   │   │   ├── notion_sync.py
-│   │   │   └── schedulor.py
-│   │   ├── tools/
-│   │   │   └── notion/
-│   │   │       ├── config.py
-│   │   │       └── utils.py
+│   │   │   ├── pages.py
+│   │   │   └── utils.py
+│   │   ├── oauth/
+│   │   │   ├── oauth/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── notion_callback.py
+│   │   │   └── __init__.py
+│   │   └── __init__.py
+│   ├── services/
+│   │   ├── crud/
+│   │   │   ├── __init__.py
+│   │   │   ├── tasks.py
+│   │   │   └── users.py
 │   │   ├── __init__.py
-│   │   ├── main.py
-│   │   └── version.py
+│   │   ├── notion_integrations.py
+│   │   ├── notion_sync.py
+│   │   └── scheduler_service.py
+│   ├── utils/
+│   │   ├── notion/
+│   │   │   ├── __init__.py
+│   │   │   ├── config.py
+│   │   │   └── utils.py
+│   │   ├── security/
+│   │   │   ├── __init__.py
+│   │   │   ├── jwt_exp_check.py
+│   │   │   ├── time_stats_decoder.py
+│   │   │   └── utils.py
+│   │   └── __init__.py
 │   └── __init__.py
 ├── frontend/
 │   ├── assets/
@@ -126,7 +136,6 @@ Calnio/
 ├── Procfile
 ├── README.md
 ├── requirements.txt
-├── START_SERVER.bat
 └── START_SERVER.sh
 ```
 
