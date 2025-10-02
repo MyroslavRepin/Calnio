@@ -1,14 +1,27 @@
+from backend.db.deps import async_get_db_cm
+from backend.db.models import User
 from backend.services.crud.tasks import delete_pages_by_ids, add_tasks_to_db, update_pages_by_ids
 import logging
 from notion_client import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.utils.notion.utils import get_all_ids
+from backend.utils.decorators import timer
+from sqlalchemy import select
 
-
+@timer
 async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id: int):
-    print(f"[Background] notion_sync_background started for user_id={user_id}")
-
     added = await add_tasks_to_db(db, notion=notion, user_id=user_id)
+
+    # Check if active_sync is still True
+    async with async_get_db_cm() as db:
+        stmt = select(User.active_sync).where(User.id == user_id)
+        result = await db.execute(stmt)
+        active_sync = result.scalars().first()
+        if not active_sync:
+            print(f"[Background-Manual] notion_sync_background did not started for user_id={user_id}")
+            return {"added": added}
+
+    print(f"[Background] notion_sync_background started for user_id={user_id}")
 
     current_notion_pages = await get_all_ids(notion=notion)
 

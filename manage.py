@@ -3,7 +3,7 @@ import sys
 from dotenv import load_dotenv
 from pathlib import Path
 from backend.app.core.config import settings
-from backend.app.crud import async_create_user, get_users, async_print_users_table, async_delete_by_id, async_update_by_id, async_update_password_by_id
+from backend.services.crud.users import async_create_user, get_users, async_print_users_table, async_delete_by_id, async_update_by_id, async_update_password_by_id
 from backend.app.schemas.users import UserCreate
 from backend.db.database import AsyncSessionLocal
 from backend.db.utils import async_check_connection, async_create_tables

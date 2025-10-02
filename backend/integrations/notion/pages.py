@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 import os
 import logging
 
@@ -6,6 +7,7 @@ from fastapi import APIRouter, Request, Depends, HTTPException, Response, Backgr
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
+from backend.db.models import UserNotionTask, User
 from backend.services.crud.users import async_get_by_id
 from backend.db.deps import async_get_db
 from backend.utils.security.utils import check_if_user_authorized
@@ -47,13 +49,12 @@ async def pages(
     # Creating a client for user
     notion = get_notion_client(integration.access_token)
 
-    # # Debug logging to ensure notion client is valid
-    # if not hasattr(notion, "search"):
-    #     logging.error(f"Invalid Notion client created for user {user_id}.")
-    #     raise HTTPException(
-    #         status_code=500, detail="Failed to create Notion client.")
-
     # Get tasks from notion db and saving to bd (background task)
+
+    # Setting active_sync to True to start syncing for this user
+    user.active_sync = True
+    await db.commit()
+
     logging.debug(f"notion type={type(notion)}, user_id={user_id}")
     background_tasks.add_task(notion_sync_background, db=db, notion=notion, user_id=user_id)
     return RedirectResponse("/dashboard", 302)

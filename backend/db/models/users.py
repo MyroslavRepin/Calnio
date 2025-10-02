@@ -1,5 +1,5 @@
 from backend.db.database import Base
-from sqlalchemy import Boolean, DateTime
+from sqlalchemy import Boolean, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import Optional
@@ -25,3 +25,5 @@ class User(Base):
 
     notion_tasks = relationship(
         "UserNotionTask", back_populates="user", uselist=False, lazy="selectin")
+
+    active_sync: Mapped[bool] = mapped_column(Boolean, default=False)
