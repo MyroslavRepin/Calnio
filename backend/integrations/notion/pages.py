@@ -10,7 +10,7 @@ from backend.services.crud.users import async_get_by_id
 from backend.db.deps import async_get_db
 from backend.utils.security.utils import check_if_user_authorized
 from backend.services.notion_sync import notion_sync_background
-from backend.integartions.notion.notion_client import get_notion_client
+from backend.integrations.notion.notion_client import get_notion_client
 router = APIRouter()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -40,9 +40,9 @@ async def pages(
     integration = user.notion_integration
 
     if not integration:
-        logging.error(f"User {user_id} does not have a Notion integration.")
+        logging.error(f"User {user_id} does not have a Notion integrations.")
         raise HTTPException(
-            status_code=404, detail="Notion integration not found")
+            status_code=404, detail="Notion integrations not found")
 
     # Creating a client for user
     notion = get_notion_client(integration.access_token)

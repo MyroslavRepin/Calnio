@@ -54,7 +54,7 @@ Calnio/
 │   │   ├── database.py
 │   │   ├── deps.py
 │   │   └── utils.py
-│   ├── integartions/
+│   ├── integrations/
 │   │   ├── notion/
 │   │   │   ├── __init__.py
 │   │   │   ├── notion_client.py

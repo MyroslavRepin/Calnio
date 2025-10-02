@@ -12,7 +12,7 @@ async def save_or_update_integration(db: AsyncSession, user_id: str, data: dict)
 
     if integration:
         # 🔄 Обновляем существующую интеграцию
-        print("🔄 Updating existing integration")
+        print("🔄 Updating existing integrations")
         integration.access_token = data["access_token"]
         integration.workspace_id = data["workspace_id"]
         integration.workspace_name = data.get("workspace_name")
@@ -21,7 +21,7 @@ async def save_or_update_integration(db: AsyncSession, user_id: str, data: dict)
         integration.duplicated_template_id = data.get("duplicated_template_id")
     else:
         # ➕ Создаём новую интеграцию
-        print("➕ Adding new integration")
+        print("➕ Adding new integrations")
         integration = UserNotionIntegration(
             user_id=user_id,
             access_token=data["access_token"],
