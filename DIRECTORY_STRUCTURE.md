@@ -10,7 +10,8 @@ Calnio/
 │   │   ├── 424907f7e342_add_sync_interval_seconds_column_to_.py
 │   │   ├── 723eede5975e_initial_migration.py
 │   │   ├── a3d53bfab21d_convert_datetime_columns_to_timestamptz_.py
-│   │   └── cfef8e5e21e7_add_end_date_to_notion_tasks.py
+│   │   ├── cfef8e5e21e7_add_end_date_to_notion_tasks.py
+│   │   └── f74ea4b9e097_add_active_sync_column_manually.py
 │   ├── env.py
 │   ├── README
 │   └── script.py.mako
@@ -61,7 +62,7 @@ Calnio/
 │   │   │   ├── pages.py
 │   │   │   └── utils.py
 │   │   ├── oauth/
-│   │   │   ├── oauth/
+│   │   │   ├── notion/
 │   │   │   │   ├── __init__.py
 │   │   │   │   └── notion_callback.py
 │   │   │   └── __init__.py
@@ -85,7 +86,8 @@ Calnio/
 │   │   │   ├── jwt_exp_check.py
 │   │   │   ├── time_stats_decoder.py
 │   │   │   └── utils.py
-│   │   └── __init__.py
+│   │   ├── __init__.py
+│   │   └── decorators.py
 │   └── __init__.py
 ├── frontend/
 │   ├── assets/

@@ -13,7 +13,7 @@ from backend.app.api.auth import router as auth_router
 from backend.app.api import landing, dashboard, refresh_cookies
 from backend.app.api.errors import error_404
 
-from backend.integrations.oauth.oauth import notion_callback
+from backend.integrations.oauth.notion import notion_callback
 from backend.integrations.notion import pages
 from backend.app import version
 from backend.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
