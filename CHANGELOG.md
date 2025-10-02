@@ -26,24 +26,44 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
-## v1.92.3 - 2025-09-30
+## v1.14.1 - 2025-10-01
+
+### 🔄 Changed
+
+- **Typo in project version fixed**: version updated from incorrect `1.92` to correct `1.14.1` according to semantic versioning
+- **Major Project Structure Refactoring**: Reorganized backend directory structure for improved clarity and maintainability
+- **Authentication System Consolidation**: Merged multiple authentication files (`login.py`, `logout.py`, `signup.py`) into a unified `auth.py` module
+- **Directory Reorganization**: 
+  - Moved database-related files from `backend/app/db/` to `backend/db/`
+  - Relocated services from `backend/app/services/` to `backend/services/`
+  - Moved integrations to `backend/integartions/` (OAuth and Notion clients)
+  - Reorganized utilities into `backend/utils/` with security and Notion submodules
+- **Enhanced JWT Configuration**: Improved authentication configuration and security utilities organization
+- **File Renaming**: Updated file names for better consistency (e.g., `refresh.py` → `refresh_cookies.py`, `schedulor.py` → `scheduler_service.py`)
+- **Import Path Updates**: Updated all import statements to reflect the new directory structure
+
+### 🔧 Fixed
+
+- Version numbering corrected from '1.92' to '1.14.1' to properly reflect project evolution and changes made since v1.14.0
+
+## v1.14.0 - 2025-09-30
 
 ### 🛠 Fixed
 - Redirects to /dashboard after canceling Notion OAuth (error=access_denied)
 
-## v1.92.2 - 2025-09-30
+## v1.13.2 - 2025-09-30
 
 ### 🔧 Fixed
 
 - Login issue related to session_id and 72 bytes limit. Improved session handling to prevent duplicate errors.
 
-## v1.92.1 - 2025-09-30
+## v1.13.1 - 2025-09-30
 
 ### 🔧 Fixed
 
 - Fixed and created new `async_get_db_cm` context manager for improved database session handling in APScheduler jobs.
 
-## v1.92.0 - 2025-09-30
+## v1.13.0 - 2025-09-30
 
 ### 🚀 Added
 
