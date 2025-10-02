@@ -15,7 +15,46 @@ Calnio/
 │   ├── env.py
 │   ├── README
 │   └── script.py.mako
-├── backend/
+├── frontend/
+│   ├── assets/
+│   │   ├── apple_calendar_app_logo.png
+│   │   ├── apple_logo.png
+│   │   ├── apple_reminders_app_logo.png
+│   │   ├── github_logo.png
+│   │   ├── google_logo.png
+│   │   └── notion_app_logo.png
+│   ├── static/
+│   │   ├── css/
+│   │   │   ├── components.css
+│   │   │   ├── fonts.css
+│   │   │   ├── layout.css
+│   │   │   ├── login.css
+│   │   │   └── main.css
+│   │   └── js/
+│   │       ├── api.js
+│   │       ├── burger-menu.js
+│   │       ├── dashboard.js
+│   │       ├── header.js
+│   │       └── refreshThenDashboard.js
+│   └── templates/
+│       ├── 404.html
+│       ├── 500.html
+│       ├── burger-menu-example.html
+│       ├── dashboard.html
+│       ├── error.html
+│       ├── landing.html
+│       ├── load_dashboard.html
+│       ├── login.html
+│       ├── signup.html
+│       ├── tasks.html
+│       ├── unauthorized.html
+│       └── users.html
+├── scripts/
+│   ├── apscheduler_test.py
+│   ├── generate_tree.py
+│   ├── playground.py
+│   └── setup_precommit.py
+├── server/
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── errors/
@@ -89,45 +128,6 @@ Calnio/
 │   │   ├── __init__.py
 │   │   └── decorators.py
 │   └── __init__.py
-├── frontend/
-│   ├── assets/
-│   │   ├── apple_calendar_app_logo.png
-│   │   ├── apple_logo.png
-│   │   ├── apple_reminders_app_logo.png
-│   │   ├── github_logo.png
-│   │   ├── google_logo.png
-│   │   └── notion_app_logo.png
-│   ├── static/
-│   │   ├── css/
-│   │   │   ├── components.css
-│   │   │   ├── fonts.css
-│   │   │   ├── layout.css
-│   │   │   ├── login.css
-│   │   │   └── main.css
-│   │   └── js/
-│   │       ├── api.js
-│   │       ├── burger-menu.js
-│   │       ├── dashboard.js
-│   │       ├── header.js
-│   │       └── refreshThenDashboard.js
-│   └── templates/
-│       ├── 404.html
-│       ├── 500.html
-│       ├── burger-menu-example.html
-│       ├── dashboard.html
-│       ├── error.html
-│       ├── landing.html
-│       ├── load_dashboard.html
-│       ├── login.html
-│       ├── signup.html
-│       ├── tasks.html
-│       ├── unauthorized.html
-│       └── users.html
-├── scripts/
-│   ├── apscheduler_test.py
-│   ├── generate_tree.py
-│   ├── playground.py
-│   └── setup_precommit.py
 ├── .gitignore
 ├── alembic.ini
 ├── CHANGELOG.md

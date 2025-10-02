@@ -11,8 +11,8 @@ from alembic import context
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Import your database configuration and models
-from backend.db.database import Base
-from backend.app.core.config import settings
+from server.db.database import Base
+from server.app.core.config import settings
 
 # Import all models to ensure they are registered with SQLAlchemy
 
