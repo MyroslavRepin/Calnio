@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
-from backend.app.security.utils import access_token_required, refresh_access_token
+from backend.utils.security.utils import access_token_required, refresh_access_token
 from backend.app.version import __version__
 
 router = APIRouter()

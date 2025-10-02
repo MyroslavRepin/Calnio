@@ -1,5 +1,4 @@
 from logging.config import fileConfig
-import os
 import sys
 from pathlib import Path
 
@@ -12,13 +11,10 @@ from alembic import context
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Import your database configuration and models
-from backend.app.db.database import Base
+from backend.db.database import Base
 from backend.app.core.config import settings
 
 # Import all models to ensure they are registered with SQLAlchemy
-from backend.app.models.users import User
-from backend.app.models.notion_integration import UserNotionIntegration
-from backend.app.models.tasks import UserNotionTask
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
