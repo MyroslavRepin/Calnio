@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     oauth_url_prod: str
     oauth_url_local: str
 
+    ngrok_auth_token: str
+    ngrok_url: str
+
     # Logging config
     log_level: str = "INFO"
     log_format: str = "%(asctime)s %(levelname)s %(message)s"

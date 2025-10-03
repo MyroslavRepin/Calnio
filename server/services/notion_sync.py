@@ -13,6 +13,8 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
     added = await add_tasks_to_db(db, notion=notion, user_id=user_id)
 
     # Check if active_sync is still True
+
+    # AsyncSession made out of HTTP
     async with async_get_db_cm() as db:
         stmt = select(User.active_sync).where(User.id == user_id)
         result = await db.execute(stmt)
@@ -23,11 +25,12 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
 
     print(f"[Background] notion_sync_background started for user_id={user_id}")
 
+    # Todo: Optimize notion API calls
     current_notion_pages = await get_all_ids(notion=notion)
-
     deleted = await delete_pages_by_ids(db, notion, user_id, current_notion_pages)
     updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages)
     logging.info(f"[Background] notion_sync_background finished for user_id={user_id}")
+
     return {
         "added": added,
         "deleted": deleted,
