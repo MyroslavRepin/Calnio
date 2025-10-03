@@ -18,6 +18,7 @@ from server.integrations.notion import pages
 from server.app import version
 from server.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.services.scheduler_service import start_scheduler, shutdown_scheduler
+from server.app.api.webhooks.notion_webhooks import router as notion_webhook_router
 
 # Remove direct logging.basicConfig and use config
 
@@ -55,7 +56,6 @@ app.mount(
     "/fonts", StaticFiles(directory=os.path.join(FRONTEND_DIR, "fonts")), name="fonts")
 
 app.add_middleware(IgnoreSpecificPathsMiddleware)
-
 app.include_router(auth_router)
 app.include_router(landing.router)
 app.include_router(dashboard.router)
@@ -64,6 +64,7 @@ app.include_router(refresh_cookies.router)
 app.include_router(notion_callback.router)
 app.include_router(error_404.router)
 app.include_router(pages.router)
+app.include_router(notion_webhook_router)
 
 
 class UserAdmin(ModelView, model=user_models.User):

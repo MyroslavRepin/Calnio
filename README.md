@@ -182,3 +182,57 @@ python server/app/db/recreate_tables.py
 alembic revision -m "Custom migration"
 # Then edit the generated file manually
 ```
+
+---
+
+# Exposing the Backend with ngrok
+
+To make your local backend accessible over the internet, you can use [ngrok](https://ngrok.com/).
+
+## Step-by-step ngrok setup
+
+1. **Install ngrok**
+   - Download from https://ngrok.com/download
+   - Unzip and move the binary to your PATH (e.g., `/usr/local/bin`)
+   - Or install via Homebrew:
+     ```bash
+     brew install ngrok/ngrok/ngrok
+     ```
+
+2. **Authenticate ngrok**
+   - Sign up at ngrok.com and get your auth token.
+   - Run:
+     ```bash
+     ngrok config add-authtoken <YOUR_AUTH_TOKEN>
+     ```
+
+3. **Expose your local backend**
+   - Run:
+     ```bash
+     ngrok http 8000
+     ```
+   - This will expose your local server (running on port 8000) to the internet.
+
+4. **Access your backend remotely**
+   - Use your ngrok domain:
+     - **Domain:** `splendid-frog-caring.ngrok-free.app`
+     - **Tunnel ID:** `rd_30yfenO1ffkaWZqL6swTVgCDvPc`
+     - **Region:** Global
+     - **Created:** Aug 7, 2025
+
+5. **Check tunnel status and endpoints**
+   - Visit the ngrok dashboard or use the CLI to view active tunnels and endpoints.
+   - Example endpoint: `https://splendid-frog-caring.ngrok-free.app`
+
+## Quick Start with Your ngrok Token and Domain
+
+1. **Authenticate ngrok with your token**
+   ```bash
+   ngrok config add-authtoken 30yfUeunkQtrivsTQb1ZubXStt3_ULkbxYtBYchAUnG9bqtN
+   ```
+
+2. **Expose your backend with your custom domain**
+   ```bash
+   ngrok http 8000 --hostname=splendid-frog-caring.ngrok-free.app
+   ```
+   This will make your backend available at: https://splendid-frog-caring.ngrok-free.app
