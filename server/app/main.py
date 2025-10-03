@@ -19,6 +19,7 @@ from server.app import version
 from server.app.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.services.scheduler_service import start_scheduler, shutdown_scheduler
 from server.app.api.webhooks.notion_webhooks import router as notion_webhook_router
+from server.db.redis_client import init_redis, close_redis
 
 # Remove direct logging.basicConfig and use config
 
@@ -77,9 +78,18 @@ admin.add_view(UserAdmin)
 # APScheduler starting
 @app.on_event("startup")
 def on_startup():
-    # Register jobs here, e.g. interval job every 30 seconds
+    # Register jobs here, e.g.
     start_scheduler()
 
 @app.on_event("shutdown")
 def on_shutdown():
     shutdown_scheduler()
+
+
+@app.on_event("startup")
+async def on_startup_async():
+    await init_redis()
+
+@app.on_event("shutdown")
+async def on_shutdown_async():
+    await close_redis()

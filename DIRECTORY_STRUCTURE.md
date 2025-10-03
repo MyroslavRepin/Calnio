@@ -97,6 +97,7 @@ Calnio/
 │   │   ├── __init__.py
 │   │   ├── database.py
 │   │   ├── deps.py
+│   │   ├── redis_client.py
 │   │   └── utils.py
 │   ├── integrations/
 │   │   ├── notion/
@@ -118,6 +119,11 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── tasks.py
 │   │   │   └── users.py
+│   │   ├── notion_sync/
+│   │   ├── redis/
+│   │   │   ├── __init__.py
+│   │   │   └── redis.py
+│   │   ├── scheduler/
 │   │   ├── __init__.py
 │   │   ├── notion_integrations.py
 │   │   ├── notion_sync.py

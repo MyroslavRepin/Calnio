@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     ngrok_auth_token: str
     ngrok_url: str
 
+    redis_host: str
+    redis_port: int
+    # redis_password: str
+
     # Logging config
     log_level: str = "INFO"
     log_format: str = "%(asctime)s %(levelname)s %(message)s"
