@@ -33,7 +33,7 @@ def start_scheduler():
     if not scheduler.running:
         scheduler.start()
 
-scheduler.add_job(sync_service, 'interval', minutes = 5, coalesce=False)
+# scheduler.add_job(sync_service, 'interval', minutes = 5, coalesce=False)
 
 # Function to shutdown the scheduler
 def shutdown_scheduler(wait=True):

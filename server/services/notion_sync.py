@@ -1,11 +1,13 @@
 from server.db.deps import async_get_db_cm
 from server.db.models import User
 from server.services.crud.tasks import delete_pages_by_ids, add_tasks_to_db, update_pages_by_ids
+from server.utils.notion.utils import get_all_ids
+from server.utils.decorators import timer
+from server.utils.redis.utils import get_webhook_data
+
 import logging
 from notion_client import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from server.utils.notion.utils import get_all_ids
-from server.utils.decorators import timer
 from sqlalchemy import select
 
 @timer
@@ -36,3 +38,12 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
         "deleted": deleted,
         "updated": updated
     }
+
+
+async def webhook_sync():
+    webhook_data = await get_webhook_data()
+    page_id = webhook_data["page_id", [None]]
+
+    if page_id:
+        # Start syncing just for one page
+        ...

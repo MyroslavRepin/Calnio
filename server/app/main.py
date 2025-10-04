@@ -1,6 +1,8 @@
 import logging
 
 from server.db.models import users as user_models
+from server.db.models import tasks as task_models
+from server.db.models.notion_integration import UserNotionIntegration as  notion_integration_models
 from server.db.database import async_engine
 from sqladmin import ModelView
 from sqladmin import Admin
@@ -69,7 +71,7 @@ app.include_router(notion_webhook_router)
 
 
 class UserAdmin(ModelView, model=user_models.User):
-    column_list = [user_models.User.id, user_models.User.email]
+    column_list = [user_models.User.id, user_models.User.email, user_models.User.username, user_models.User.is_superuser]
 
 
 admin = Admin(app, async_engine)
@@ -79,11 +81,13 @@ admin.add_view(UserAdmin)
 @app.on_event("startup")
 def on_startup():
     # Register jobs here, e.g.
-    start_scheduler()
+    # start_scheduler()
+    pass
 
 @app.on_event("shutdown")
 def on_shutdown():
-    shutdown_scheduler()
+    # shutdown_scheduler()
+    pass
 
 
 @app.on_event("startup")
