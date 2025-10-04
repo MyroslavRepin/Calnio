@@ -19,7 +19,7 @@ class UserNotionIntegration(Base):
     access_token: Mapped[str] = mapped_column(nullable=False)
     refresh_token: Mapped[str] = mapped_column(nullable=False)
 
-    workspace_id: Mapped[str] = mapped_column(nullable=False)
+    workspace_id: Mapped[str] = mapped_column(nullable=False, unique=True)
     workspace_name: Mapped[Optional[str]] = mapped_column(nullable=True)
     bot_id: Mapped[Optional[str]] = mapped_column(nullable=True)
     notion_user_id: Mapped[Optional[str]] = mapped_column(nullable=True)
