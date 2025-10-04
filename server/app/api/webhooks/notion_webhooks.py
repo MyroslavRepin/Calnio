@@ -1,4 +1,5 @@
 import json
+
 from sqlalchemy import select
 import uuid
 
@@ -10,8 +11,8 @@ from server.db.deps import async_get_db
 from server.db.models import UserNotionIntegration, User
 from server.db.redis_client import get_redis
 from server.utils.redis.utils import get_webhook_data, save_webhook_data
-from server.services.webhook_service import sync_webhook_data
-
+from server.services.notion_syncing.webhook_service import sync_webhook_data
+from server.utils.utils import convert_uuid_no_dashes
 router = APIRouter()
 
 @router.post("/webhooks/notion/")
@@ -22,18 +23,21 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
     if not isinstance(payload, dict):
         return {"error": "Payload is not a dict"}
 
-    print(">>> Notion webhook collected")
+    # print(json.dumps(payload, indent=4))
 
     raw_page_id = uuid.UUID(payload["entity"]["id"])
     page_id = raw_page_id.hex
 
-    workspace_id = payload.get("workspace_id")
+    raw_workspace_id = uuid.UUID(payload.get("workspace_id"))
+    workspace_id = raw_workspace_id.hex
 
-    print(f">>> Debug info: page_id: {page_id} | workspace_id: {workspace_id}")
+    event_type = payload["type"]
+
+    print(f">>> ℹ️ Debug info: page_id: {page_id} | workspace_id: {workspace_id}")
 
     # Saving data to Redis
     if page_id and workspace_id:
-        # Statement for query db
+        # Getting user by workspace_id (workspace_id is uuid without dashes in db too)
         stmt = (
             select(User)
             .join(UserNotionIntegration)
@@ -46,12 +50,11 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
         data = {
             "user_id": user.id,
             "page_id": page_id,
-            "workspace_id": workspace_id
+            "workspace_id": workspace_id,
+            "event_type": event_type,
         }
-        await save_webhook_data(redis=redis_client, data=data, user_id=user.id)
 
-        webhook_data = await get_webhook_data(user_id=user.id, redis=redis_client)
-        print(">>> Webhook data:", webhook_data)
+        await save_webhook_data(user_id=user.id, redis=redis_client, data=data,)
 
     await sync_webhook_data()
 
