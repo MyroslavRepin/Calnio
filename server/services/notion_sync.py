@@ -10,7 +10,7 @@ from notion_client import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-@timer
+
 async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id: int):
     added = await add_tasks_to_db(db, notion=notion, user_id=user_id)
 

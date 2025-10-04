@@ -38,6 +38,7 @@ Calnio/
 │       ├── tasks.html
 │       ├── unauthorized.html
 │       └── users.html
+├── logs/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── generate_tree.py
@@ -83,6 +84,7 @@ Calnio/
 │   │   ├── __init__.py
 │   │   ├── main.py
 │   │   └── version.py
+│   ├── config/
 │   ├── db/
 │   │   ├── models/
 │   │   │   ├── __init__.py
@@ -120,7 +122,9 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── tasks.py
 │   │   │   └── users.py
-│   │   ├── notion_sync/
+│   │   ├── notion_syncing/
+│   │   │   ├── __init__.py
+│   │   │   └── webhook_service.py
 │   │   ├── redis/
 │   │   │   ├── __init__.py
 │   │   │   └── redis.py
@@ -128,8 +132,7 @@ Calnio/
 │   │   ├── __init__.py
 │   │   ├── notion_integrations.py
 │   │   ├── notion_sync.py
-│   │   ├── scheduler_service.py
-│   │   └── webhook_service.py
+│   │   └── scheduler_service.py
 │   ├── utils/
 │   │   ├── notion/
 │   │   │   ├── __init__.py
@@ -143,7 +146,8 @@ Calnio/
 │   │   │   ├── time_stats_decoder.py
 │   │   │   └── utils.py
 │   │   ├── __init__.py
-│   │   └── decorators.py
+│   │   ├── decorators.py
+│   │   └── utils.py
 │   └── __init__.py
 ├── .gitignore
 ├── alembic.ini

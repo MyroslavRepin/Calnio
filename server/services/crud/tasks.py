@@ -87,18 +87,11 @@ async def create_task(
     await db.refresh(new_task)
     return new_task
 
-async def async_update_task(
+async def update_task(
     db: AsyncSession,
     task: UserNotionTask,
     title: str,
     notion_url: str,
-    #
-    sync_source: str,
-    last_synced_at: datetime = None,
-    caldav_uid: str = None,
-    has_conflict: bool = False,
-    last_modified_source: str = "notion",
-    #
     description: str | None = None,
     start_date: str | None = None,  # приходит строкой из формы или NotionTask
     end_date: str | None = None,    # new field
@@ -129,29 +122,92 @@ async def async_update_task(
         return task
     return None
 
-async def update_task(
-        db: AsyncSession,
-        user_id,
-        data: dict,
-        task: UserNotionTask):
+async def delete_task(db: AsyncSession, user_id: int, page_id: str):
+    stmt = select(UserNotionTask).where(
+        UserNotionTask.notion_page_id == page_id,
+        UserNotionTask.user_id == user_id
+    )
+    result = await db.execute(stmt)
+    task = result.scalar()
     if task:
-        task.title = data["title"]
-        task.description = data["description"]
-        task.start_date = to_utc_datetime(data["start_date"])
-        task.end_date = to_utc_datetime(data["end_date"])
-        task.status = data["status"]
-        task.select_option = data["select_option"]
-        task.done = data["done"]
-        task.priority = data["priority"]
-        db.add(task)
+        print(">>> Deleting task with notion_page_id:")
+        await db.delete(task)
         await db.commit()
-        await db.refresh(task)
+        print(f"Deleted task with notion_page_id: {page_id}")
+# async def update_task(
+#         db: AsyncSession,
+#         user_id,
+#         data: dict,
+#         task: UserNotionTask):
+#     if task:
+#         task.title = data["title"]
+#         task.description = data["description"]
+#         task.start_date = to_utc_datetime(data["start_date"])
+#         task.end_date = to_utc_datetime(data["end_date"])
+#         task.status = data["status"]
+#         task.select_option = data["select_option"]
+#         task.done = data["done"]
+#         task.priority = data["priority"]
+#         db.add(task)
+#         await db.commit()
+#         await db.refresh(task)
+#     else:
+#         return "Task does not exist"
+#     return task
+
+# Syncing logics for each page separate (webhook)
+async def sync_task_by_id(db: AsyncSession, notion: AsyncClient, user_id: int, page_id: str, event_type: str):
+    page = await notion.pages.retrieve(page_id=page_id)
+    notion_page = NotionTask.from_notion(page)
+    start_date_utc = to_utc_datetime(notion_page.start_date)
+    end_date_utc = to_utc_datetime(notion_page.end_date)
+
+    # notion_page_id should be without dashes
+    # stmt = select(UserNotionTask).where(UserNotionTask.notion_page_id == page_id)
+    # result = await db.execute(stmt)
+    # task = result.scalar_one_or_none()
+
+    if event_type == "page.created":
+        print(">>> Task does not exist, creating...")
+        # user_id: int,
+        # title: str,
+        # notion_page_id: str,
+        # notion_url: str,
+        # sync_source: str,
+        # last_synced_at: datetime | None = None,
+        # caldav_uid: str | None = None,
+        # has_conflict: bool = False,
+        # last_modified_source: str = "notion",
+        # description: str | None = None,
+        # start_date: str | None = None,
+        # end_date: str | None = None,
+        # status: str | None = None,
+        # done: bool = False,
+        # priority: str | None = None,
+        # select_option: str | None = None) -> Coroutine[Any, Any, UserNotionTask]
+        await create_task(
+            db=db,
+            user_id=user_id,
+            title=notion_page.title,
+            notion_url=notion_page.notion_page_url,
+            sync_source="notion",
+            notion_page_id=page_id,
+            description=notion_page.description,
+            start_date=start_date_utc,
+            end_date=end_date_utc,
+            status=notion_page.status,
+            select_option=notion_page.select_option,
+            done=notion_page.done,
+            priority=notion_page.priority
+        )
     else:
-        return "Task does not exist"
-    return task
+        print(f">>> {event_type} event for page_id: {page_id}")
 
 
-# Part of CRUD for all pages
+
+
+
+# Part of CRUD for all pages >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 async def add_tasks_to_db(
     db: AsyncSession,
     user_id: int,
@@ -275,35 +331,3 @@ async def update_pages_by_ids(
 
         await update_task(db=db, user_id=user_id, data=data, task=task)
 
-
-# Syncing logics for each page separate (webhook)
-async def sync_task_by_id(db: AsyncSession, notion: AsyncClient, user_id: int, page_id: str):
-    page = await notion.pages.retrieve(page_id=page_id)
-    notion_page = NotionTask.from_notion(page)
-    start_date_utc = to_utc_datetime(notion_page.start_date)
-    end_date_utc = to_utc_datetime(notion_page.end_date)
-
-    stmt = select(UserNotionTask).where(UserNotionTask.notion_page_id == page_id)
-    result = await db.execute(stmt)
-    task = result.scalar_one_or_none()
-
-    if task:
-        print(">>> Task exists, updating...")
-        await update_task(db=db, user_id=user_id, data=notion_page, task=task)
-    else:
-        print(">>> Task does not exist, creating...")
-        await create_task(
-            db=db,
-            user_id=user_id,
-            notion_url=notion_page.notion_page_url,
-            sync_source="notion",
-            notion_page_id=page_id,
-            title=notion_page.title,
-            description=notion_page.description,
-            start_date=start_date_utc,
-            end_date=end_date_utc,
-            status=notion_page.status,
-            select_option=notion_page.select_option,
-            done=notion_page.done,
-            priority=notion_page.priority
-        )
