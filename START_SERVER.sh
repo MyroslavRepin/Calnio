@@ -44,8 +44,8 @@ if [ -f "/.dockerenv" ]; then
   HOST="0.0.0.0"
   echo -e "${YELLOW}🟢 Running in container mode (host: 0.0.0.0)${NC}"
 else
-  HOST="127.0.0.1"
-  echo -e "${YELLOW}🟢 Running in local mode (host: 127.0.0.1)${NC}"
+  HOST="0.0.0.0"
+  echo -e "${YELLOW}🟢 Running in (host: $HOST)${NC}"
 fi
 
 echo -e "${GREEN}🚀 Launching server...${NC}"
