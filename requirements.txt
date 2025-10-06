@@ -55,3 +55,8 @@ apscheduler
 # Development
 pytest
 loguru
+
+# Services
+aiocaldav
+icalendar
+recurring-ical-events
