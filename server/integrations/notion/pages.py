@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 import os
-import logging
+from server.app.core.logging_config import logger
 
 from fastapi import APIRouter, Request, Depends, HTTPException, Response, BackgroundTasks
 from fastapi.templating import Jinja2Templates
@@ -42,7 +42,7 @@ async def pages(
     integration = user.notion_integration
 
     if not integration:
-        logging.error(f"User {user_id} does not have a Notion integrations.")
+        logger.error(f"❌ User {user_id} does not have a Notion integration")
         raise HTTPException(
             status_code=404, detail="Notion integrations not found")
 
@@ -55,6 +55,6 @@ async def pages(
     user.active_sync = True
     await db.commit()
 
-    logging.debug(f"notion type={type(notion)}, user_id={user_id}")
+    logger.debug(f"🔄 Starting background sync for user_id={user_id}")
     background_tasks.add_task(notion_sync_background, db=db, notion=notion, user_id=user_id)
     return RedirectResponse("/dashboard", 302)

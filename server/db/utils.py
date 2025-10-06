@@ -3,18 +3,18 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from server.db.database import async_engine, Base
 import asyncio
-import logging
+from server.app.core.logging_config import logger
 
 
 async def async_create_all_tables():
     """Create all tables in the database asynchronously."""
     try:
-        print("Создаю все таблицы (async)...")
+        logger.info("🔧 Creating all tables (async)...")
         async with async_engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-        print("✅ Все таблицы созданы (async)")
+        logger.info("✅ All tables created successfully (async)")
     except Exception as e:
-        logging.error(f"❌ Ошибка создания таблиц: {e}")
+        logger.error(f"❌ Error creating tables: {e}")
 
 
 # For backward compatibility, keep the old function name as an alias
@@ -26,9 +26,9 @@ async def async_check_connection():
     try:
         async with async_engine.connect() as conn:
             result = await conn.execute(text("SELECT 1"))
-            print("✅ Async подключение успешно! Результат запроса:", result.scalar())
+            logger.info(f"✅ Async connection successful! Query result: {result.scalar()}")
     except SQLAlchemyError as e:
-        print("❌ Ошибка подключения (async):", e)
+        logger.error(f"❌ Connection error (async): {e}")
 
 
 if __name__ == "__main__":

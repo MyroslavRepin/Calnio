@@ -7,8 +7,7 @@ from server.db.database import AsyncSession
 from server.services.notion_integrations import save_or_update_integration
 from server.utils.security.utils import access_token_required, refresh_access_token
 from server.app.core.config import settings
-
-import logging
+from server.app.core.logging_config import logger
 
 router = APIRouter()
 
@@ -19,7 +18,7 @@ async def oauth_callback(
     response: Response,
     db: AsyncSession = Depends(async_get_db),
 ):
-    print(f"Request: {request.cookies}")
+    logger.debug(f"🔑 OAuth callback request with cookies: {request.cookies}")
     # ! Checking for tokens & updating them
     try:
         # 🛡️ Проверка токена
@@ -28,18 +27,18 @@ async def oauth_callback(
     except HTTPException:
         try:
             # ♻️ Обновление access токена
-            logging.info("🔁 Trying to refresh access token")
+            logger.info("🔁 Trying to refresh access token")
             payload = await refresh_access_token(request, response)
             user_id = int(payload["sub"])
         except HTTPException:
-            logging.warning("❌ Unauthorized — redirect to /login")
+            logger.warning("❌ Unauthorized — redirect to /login")
             return RedirectResponse("/login", status_code=401)
     # Getting error message from the query
 
     code = request.query_params.get("code")
 
     if not code:
-        logging.error("⚠️ OAuth code not found in callback URL")
+        logger.error("⚠️ OAuth code not found in callback URL")
         raise HTTPException(
             status_code=400, detail="Code not found in query params")
 
@@ -47,7 +46,7 @@ async def oauth_callback(
 
     notion_redirect_uri = settings.notion_redirect_uri
 
-    print(f"Notion redirect uri: {notion_redirect_uri}")
+    logger.debug(f"🔗 Notion redirect URI: {notion_redirect_uri}")
 
     data = {
         "grant_type": "authorization_code",
@@ -61,7 +60,7 @@ async def oauth_callback(
     OAuth_Client_Secret = settings.notion_secert
 
     if not OAuth_Client_ID or not OAuth_Client_Secret:
-        logging.critical("❗Missing OAuth client credentials")
+        logger.critical("❗Missing OAuth client credentials")
         raise HTTPException(
             status_code=500, detail="OAuth credentials not set in environment")
 
@@ -70,33 +69,30 @@ async def oauth_callback(
     headers = {
         "Content-Type": "application/json"
     }
-    print("Sending to Notion:", data)
+    logger.debug(f"📤 Sending OAuth request to Notion")
     async with httpx.AsyncClient() as client:
         response_data = await client.post(token_url, json=data, auth=auth, headers=headers)
 
-    print("POST data sent to Notion:", data)
-    print("Notion response status:", response_data.status_code)
-    print("Notion response body:", response_data.text)
+    logger.debug(f"📥 Notion response status: {response_data.status_code}")
 
     if response_data.status_code != 200:
-        logging.error(
-            f"🚫 Notion token request failed: {response_data.status_code}")
-        logging.error(f"📝 Response body: {response_data.text}")
-        print("Notion response:", response_data.status_code, response_data.text)
+        logger.error(f"🚫 Notion token request failed: {response_data.status_code}")
+        logger.error(f"📝 Response body: {response_data.text}")
         raise HTTPException(
             status_code=500, detail="Failed to exchange token with Notion")
 
     token_data = response_data.json()
 
-    logging.info("🔐 Notion OAuth Token Response:")
-    logging.info(token_data)
+    logger.info("🔐 Notion OAuth token received successfully")
+    logger.debug(f"Token data: {token_data}")
 
     await save_or_update_integration(db, user_id, token_data)
     # Optimize: If user canceled integrations -> redirect
     error = request.query_params.get("error")
     if error == "access_denied":
         # User canceled Notion OAuth, redirect to dashboard
-        logging.critical("User canceled integrations")
+        logger.warning("⚠️ User canceled OAuth integration")
         return RedirectResponse(url="/dashboard", status_code=302)
 
+    logger.info("✅ Notion integration saved successfully")
     return RedirectResponse("/dashboard?success=1", status_code=302)
