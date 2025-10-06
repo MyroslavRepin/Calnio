@@ -34,8 +34,8 @@ class Settings(BaseSettings):
     ngrok_auth_token: str
     ngrok_url: str
 
-    redis_url: str
-    redis_public_url: str
+    redis_url: str = "redis://localhost:6379"
+    redis_public_url: str = "redis://localhost:6379"
 
     @property
     def database_url(self):
@@ -87,6 +87,14 @@ class Settings(BaseSettings):
             return self.oauth_url_prod
         else:
             return self.oauth_url_local
+
+    @property
+    def redis_connection_url(self):
+        """Get the appropriate Redis URL based on environment"""
+        if self.env == "prod":
+            return self.redis_public_url
+        else:
+            return self.redis_url
 
     class Config:
         env_file = str(Path(__file__).resolve(
