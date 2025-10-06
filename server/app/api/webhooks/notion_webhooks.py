@@ -21,6 +21,7 @@ router = APIRouter()
 async def get_notion_response(request: Request, db: AsyncSession = Depends(async_get_db)):
     redis_client = await get_redis()
     payload = await request.json()
+    logger.debug(json.dumps(payload, indent=4))
 
     if not isinstance(payload, dict):
         logger.warning("⚠️ Webhook payload is not a dict")
