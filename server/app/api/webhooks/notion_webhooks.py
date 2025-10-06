@@ -13,6 +13,8 @@ from server.db.redis_client import get_redis
 from server.utils.redis.utils import get_webhook_data, save_webhook_data
 from server.services.notion_syncing.webhook_service import sync_webhook_data
 from server.utils.utils import convert_uuid_no_dashes
+from server.app.core.logging_config import logger
+
 router = APIRouter()
 
 @router.post("/webhooks/notion/")
@@ -21,9 +23,8 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
     payload = await request.json()
 
     if not isinstance(payload, dict):
+        logger.warning("⚠️ Webhook payload is not a dict")
         return {"error": "Payload is not a dict"}
-
-    # print(json.dumps(payload, indent=4))
 
     raw_page_id = uuid.UUID(payload["entity"]["id"])
     page_id = raw_page_id.hex
@@ -33,7 +34,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
 
     event_type = payload["type"]
 
-    print(f">>> ℹ️ Debug info: page_id: {page_id} | workspace_id: {workspace_id}")
+    logger.debug(f"📥 Webhook received: page_id={page_id}, workspace_id={workspace_id}, event={event_type}")
 
     # Saving data to Redis
     if page_id and workspace_id:
@@ -46,6 +47,10 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
         result = await db.execute(stmt)
         user = result.scalars().first()
 
+        if not user:
+            logger.error(f"❌ User not found for workspace_id: {workspace_id}")
+            return {"error": "User not found"}
+
         # Setting page_id and workspace_id in Redis
         data = {
             "user_id": user.id,
@@ -54,7 +59,8 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
             "event_type": event_type,
         }
 
-        await save_webhook_data(user_id=user.id, redis=redis_client, data=data,)
+        await save_webhook_data(user_id=user.id, redis=redis_client, data=data)
+        logger.debug(f"💾 Webhook data saved to Redis for user_id={user.id}")
 
     await sync_webhook_data()
 

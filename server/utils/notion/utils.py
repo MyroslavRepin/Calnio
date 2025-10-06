@@ -6,6 +6,16 @@ from dateutil import parser
 from notion_client import AsyncClient
 
 
+def normalize_notion_id(notion_id: str) -> str:
+    """
+    Normalize a Notion ID by removing all dashes.
+    Example: '284a5558-72b4-8086-82c3-da846290d940' -> '284a555872b4808682c3da846290d940'
+    """
+    if not notion_id:
+        return notion_id
+    return notion_id.replace("-", "")
+
+
 async def get_all_ids(notion: AsyncClient):
     result = await notion.search()
     database_ids = [
@@ -23,6 +33,8 @@ async def get_all_ids(notion: AsyncClient):
                 try:
                     page_test = await notion.pages.retrieve(page_id=page_id)
                     if page_test.get("url"):
+                        # Return page_id with dashes (Notion API format)
+                        # Normalization will happen in the calling functions
                         page_ids.append(page_id)
                 except Exception as e:
                     logging.warning(

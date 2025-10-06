@@ -41,7 +41,9 @@ Calnio/
 ├── logs/
 ├── scripts/
 │   ├── apscheduler_test.py
+│   ├── cleanup_duplicates.py
 │   ├── generate_tree.py
+│   ├── migrate_normalize_ids.py
 │   ├── playground.py
 │   └── setup_precommit.py
 ├── server/
@@ -73,7 +75,8 @@ Calnio/
 │   │   │   └── refresh_cookies.py
 │   │   ├── core/
 │   │   │   ├── __init__.py
-│   │   │   └── config.py
+│   │   │   ├── config.py
+│   │   │   └── logging_config.py
 │   │   ├── dops/
 │   │   ├── middleware/
 │   │   │   └── ignore_logging.py

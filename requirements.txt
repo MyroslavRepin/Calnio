@@ -54,3 +54,4 @@ apscheduler
 
 # Development
 pytest
+loguru
