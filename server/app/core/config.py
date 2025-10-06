@@ -34,8 +34,8 @@ class Settings(BaseSettings):
     ngrok_auth_token: str
     ngrok_url: str
 
-    redis_url: str = "redis://localhost:6379"
-    redis_public_url: str = "redis://localhost:6379"
+    redis_url: str
+    redis_public_url: str
 
     @property
     def database_url(self):

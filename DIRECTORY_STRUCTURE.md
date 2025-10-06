@@ -156,12 +156,11 @@ Calnio/
 ├── alembic.ini
 ├── CHANGELOG.md
 ├── DIRECTORY_STRUCTURE.md
-├── docker-compose.yml
-├── Dockerfile
 ├── LICENSE
 ├── main.py
 ├── manage.py
 ├── Procfile
+├── railway.json
 ├── README.md
 ├── redis_test.py
 ├── requirements.txt
