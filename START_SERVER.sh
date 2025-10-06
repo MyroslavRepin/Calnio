@@ -39,11 +39,20 @@ echo -e "${GREEN}📦 Installing dependencies...${NC}"
 pip install --upgrade pip
 pip install -r requirements.txt
 
+# Detect if running in a container (/.dockerenv exists)
+if [ -f "/.dockerenv" ]; then
+  HOST="0.0.0.0"
+  echo -e "${YELLOW}🟢 Running in container mode (host: 0.0.0.0)${NC}"
+else
+  HOST="127.0.0.1"
+  echo -e "${YELLOW}🟢 Running in local mode (host: 127.0.0.1)${NC}"
+fi
+
 echo -e "${GREEN}🚀 Launching server...${NC}"
 if [[ "$1" == "--https" ]]; then
   echo "Running on HTTPS" && 
-  uvicorn backend.app.main:app \
-    --host 127.0.0.1 \
+  uvicorn server.app.main:app \
+    --host $HOST \
     --port 8000 \
     --log-level debug \
     --reload \
@@ -51,8 +60,8 @@ if [[ "$1" == "--https" ]]; then
     --ssl-certfile localhost+2.pem \
     --ssl-keyfile localhost+2-key.pem
 else
-  uvicorn backend.app.main:app \
-    --host 127.0.0.1 \
+  uvicorn server.app.main:app \
+    --host $HOST \
     --port 8000 \
     --log-level info \
     --reload \

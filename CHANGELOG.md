@@ -26,6 +26,84 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.15.0 - 2025-10-06
+
+### 🚀 Added
+
+- **Loguru Integration**: Replaced Python's standard logging with Loguru for unified, structured logging across the entire codebase
+- **ID Normalization System**: Added `normalize_notion_id()` utility function to ensure all Notion page IDs are stored consistently without dashes
+- **Enhanced Webhook Logging**: Comprehensive emoji-based logging system for easy visual scanning of webhook events
+  - 🔄 = Sync/processing started
+  - 📝 = Event info
+  - 📡 = API call
+  - 📄 = Data received
+  - 🔍 = Database lookup
+  - ♻️ = Update operation
+  - ➕ = Create operation
+  - 🗑️ = Delete operation
+  - ✅ = Success
+  - ⚠️ = Warning
+  - ❌ = Error
+- **Database Cleanup Script**: Added `cleanup_duplicates.py` script to identify and remove duplicate tasks
+- **ID Migration Script**: Added `migrate_normalize_ids.py` for normalizing existing database IDs
+
+### 🔄 Changed
+
+- **Logging System Overhaul**: 
+  - Removed all `print()` statements from server code
+  - Replaced all `logging.*()` calls with Loguru `logger.*()` 
+  - Unified log format with short timestamps (HH:mm:ss instead of full date)
+  - Intercepted uvicorn logs to use Loguru format
+- **Webhook Event Handling**: 
+  - Now properly handles `page.created`, `page.properties_updated`, and `page.deleted` events
+  - Fixed event type detection (was using `page.updated`, now uses correct `page.properties_updated`)
+- **ID Storage Format**: All task IDs and notion_page_ids now stored without dashes for consistency
+- **CRUD Operations Enhanced**:
+  - `create_task()` now shows whether it's updating existing task or creating new one
+  - Better logging in all CRUD operations with clear indicators
+  - Simplified database queries (removed redundant user_id check when notion_page_id is unique)
+- **Redis Client**: Replaced print statements with proper Loguru logging
+- **OAuth Callback**: Enhanced logging throughout authentication flow
+
+### 🔧 Fixed
+
+- **Critical: Duplicate Tasks Bug**: Fixed webhook sync creating duplicate tasks instead of updating existing ones
+  - Root cause: Mismatch between IDs with dashes (old data) and without dashes (new normalization)
+  - Solution: Normalized all existing IDs and ensured consistent format
+- **Webhook Sync Issues**:
+  - Fixed tasks not being found for deletion (ID format mismatch)
+  - Fixed updates creating new tasks instead of modifying existing ones
+  - Fixed `page.updated` events being ignored (now handles `page.properties_updated`)
+- **Database Cleanup**: Removed 1 duplicate task from production database
+- **Logging Configuration**: 
+  - Removed duplicate logger configurations
+  - Fixed InterceptHandler for proper uvicorn log interception
+  - Cleaned up unused logging imports and functions
+- **Error Handling**: Added proper exception logging with `exc_info=True` for full stack traces
+
+### 🎯 Improved
+
+- **Developer Experience**:
+  - Logs now clearly show whether tasks are being created (➕) or updated (♻️)
+  - Both raw and normalized page IDs logged for debugging
+  - Step-by-step webhook processing visible in logs
+  - Easier to trace sync flow with emoji indicators
+- **Code Quality**:
+  - Removed deprecated `datetime.utcnow()` calls (now using `datetime.now(UTC)`)
+  - Better type hints for CRUD functions
+  - Consistent error messages across all modules
+- **Database Integrity**:
+  - Guaranteed no duplicates (notion_page_id unique constraint enforced)
+  - All IDs normalized for consistent lookups
+  - One notion_page_id = One task (always)
+
+### 📝 Notes
+
+- Migration required: Run `cleanup_duplicates.py` on existing databases to normalize IDs
+- All logs now use consistent emoji system for visual scanning
+- Webhook sync now properly handles all Notion event types
+- No more duplicate tasks - database uniqueness enforced
+
 ## v1.14.1 - 2025-10-01
 
 ### 🔄 Changed
