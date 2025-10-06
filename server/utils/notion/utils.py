@@ -37,6 +37,8 @@ async def get_all_ids(notion: AsyncClient):
                         # Normalization will happen in the calling functions
                         page_ids.append(page_id)
                 except Exception as e:
+                    # Note: This still uses logging.warning for backward compatibility
+                    # If you need Loguru here, import logger from logging_config
                     logging.warning(
                         f"Page {page_id} could not be retrieved: {e}")
 

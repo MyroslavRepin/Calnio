@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from pathlib import Path
-import logging
 from authx import AuthX, AuthXConfig
 from datetime import timedelta
 
@@ -38,10 +37,6 @@ class Settings(BaseSettings):
     redis_host: str
     redis_port: int
     # redis_password: str
-
-    # Logging config
-    log_level: str = "INFO"
-    log_format: str = "%(asctime)s %(levelname)s %(message)s"
 
     @property
     def database_url(self):
@@ -101,12 +96,6 @@ class Settings(BaseSettings):
 
 # Create settings object
 settings = Settings()  # pyright: ignore[reportCallIssue]
-
-# Configure logging
-def configure_logging():
-    level = getattr(logging, Settings().log_level.upper(), logging.INFO)
-    logging.basicConfig(level=level, format=Settings().log_format)
-
 
 #! JWT Token CONFIG
 config = AuthXConfig()

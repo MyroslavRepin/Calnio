@@ -4,8 +4,8 @@ from server.services.crud.tasks import delete_pages_by_ids, add_tasks_to_db, upd
 from server.utils.notion.utils import get_all_ids
 from server.utils.decorators import timer
 from server.utils.redis.utils import get_webhook_data
+from server.app.core.logging_config import logger
 
-import logging
 from notion_client import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -22,16 +22,16 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
         result = await db.execute(stmt)
         active_sync = result.scalars().first()
         if not active_sync:
-            print(f"[Background-Manual] notion_sync_background did not started for user_id={user_id}")
+            logger.info(f"⏸️ Background sync not started for user_id={user_id} (active_sync=False)")
             return {"added": added}
 
-    print(f"[Background] notion_sync_background started for user_id={user_id}")
+    logger.info(f"🔄 Background sync started for user_id={user_id}")
 
     # Todo: Optimize notion API calls
     current_notion_pages = await get_all_ids(notion=notion)
     deleted = await delete_pages_by_ids(db, notion, user_id, current_notion_pages)
     updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages)
-    logging.info(f"[Background] notion_sync_background finished for user_id={user_id}")
+    logger.info(f"✅ Background sync finished for user_id={user_id}")
 
     return {
         "added": added,
