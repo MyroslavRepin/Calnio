@@ -42,7 +42,7 @@ for logger_name in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
     logging_logger.handlers = [InterceptHandler()]
     logging_logger.propagate = False
 
-logger.info("✅ Loguru initialized")
+logger.info("Loguru initialized")
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles

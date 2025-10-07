@@ -26,6 +26,82 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.15.1 - 2025-10-07
+
+### Added
+
+- **Full Async CalDAV ORM Layer**: Complete CalDAV integration with aiocaldav and icalendar
+  - `CalDavORM` class with full CRUD operations (create, read, update, delete)
+  - `CalDavEventData` Pydantic schema for type-safe event handling
+  - `CalDavEventFilter` for advanced event filtering and search
+  - `CalDavEventLocal` SQLAlchemy model for local event persistence
+  - Support for recurring events with iCalendar RRULE
+  - Event filtering by date range, keywords, status, and recurrence rules
+  - Soft delete functionality with proper sync status tracking
+  - Calendar listing and management
+  - Remote and local event synchronization
+- **iCalendar Integration**: Full support for .ics file generation and parsing
+  - VEVENT creation with proper timezone handling
+  - RRULE support for recurring events
+  - Status management (needs-action, completed, cancelled)
+  - Description and datetime field handling
+- **Enhanced Database Models**: New CalDAV event persistence layer
+  - `caldav_events` table with comprehensive event fields
+  - User association and calendar identification
+  - Remote URL tracking for reliable updates/deletes
+  - Sync status management and conflict detection
+
+### Changed
+
+- **Professional Logging**: Removed all emojis from codebase for cleaner, professional appearance
+  - Updated all script files (cleanup_duplicates.py, migrate_normalize_ids.py, setup_precommit.py)
+  - Converted manage.py print statements to proper logger calls
+  - Standardized logging across generate_tree.py and database utilities
+  - Maintained proper log levels (info, warning, error) without emoji decorations
+- **Improved Code Quality**: Enhanced type safety and static analysis compliance
+  - Fixed PEP 604 union syntax compatibility
+  - Resolved SQLAlchemy type hints for where clauses
+  - Updated timezone handling to use `datetime.UTC` instead of deprecated `datetime.utcnow()`
+  - Proper imports and schema exports for better IDE support
+
+### Fixed
+
+- **Import Resolution**: Fixed unresolved reference errors in CalDAV modules
+  - Proper schema package exports in `__init__.py`
+  - Direct module imports for better static analysis
+- **Type Safety**: Resolved all static analyzer warnings
+  - Explicit `__eq__` calls in SQLAlchemy where clauses
+  - Union type annotations using `typing.Union`
+  - Proper timezone-aware datetime defaults
+- **ICS Parsing**: Fixed byte/string conversion issues in icalendar integration
+  - Proper UTF-8 decoding of ICS data before parsing
+  - Safe handling of malformed calendar data
+
+### Technical Details
+
+- **CalDAV ORM Usage Examples**:
+  ```python
+  # Initialize ORM
+  orm = CalDavORM(client)
+  
+  # Create event
+  event = CalDavEventData(
+      title="Meeting",
+      start=datetime(2025,10,7,15,0, tzinfo=UTC),
+      end=datetime(2025,10,7,16,0, tzinfo=UTC),
+      rrule={"FREQ":"DAILY", "COUNT":"5"}
+  )
+  uid = await orm.create_event(calendar, event)
+  
+  # Get events with filters
+  events = await orm.get_events(
+      calendar, 
+      start=datetime.now(UTC),
+      end=datetime.now(UTC) + timedelta(days=30),
+      filters={"keywords": "meeting", "status": "needs-action"}
+  )
+  ```
+
 ## v1.15.0 - 2025-10-06
 
 ### 🚀 Added

@@ -9,12 +9,13 @@ from server.app.core.logging_config import logger
 async def async_create_all_tables():
     """Create all tables in the database asynchronously."""
     try:
-        logger.info("🔧 Creating all tables (async)...")
+        logger.info("Creating all tables (async)...")
         async with async_engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-        logger.info("✅ All tables created successfully (async)")
+        logger.info("All tables created successfully (async)")
     except Exception as e:
-        logger.error(f"❌ Error creating tables: {e}")
+        logger.error(f"Error creating tables: {e}")
+        raise
 
 
 # For backward compatibility, keep the old function name as an alias
@@ -22,13 +23,15 @@ async_create_tables = async_create_all_tables
 
 
 async def async_check_connection():
-    """Асинхронная проверка подключения к БД"""
+    """Check database connection asynchronously."""
     try:
         async with async_engine.connect() as conn:
             result = await conn.execute(text("SELECT 1"))
-            logger.info(f"✅ Async connection successful! Query result: {result.scalar()}")
-    except SQLAlchemyError as e:
-        logger.error(f"❌ Connection error (async): {e}")
+            logger.info("Database connection successful")
+            return True
+    except Exception as e:
+        logger.error(f"Database connection failed: {e}")
+        return False
 
 
 if __name__ == "__main__":

@@ -1,8 +1,3 @@
-# Project Directory Structure
-
-Generated automatically on commit.
-
-```
 Calnio/
 ├── backend/
 │   └── app/
@@ -178,30 +173,3 @@ Calnio/
 ├── requirements.txt
 ├── robots.txt
 └── START_SERVER.sh
-```
-
-## Configuration
-
-This tree excludes files and directories matching patterns from:
-
-### .gitignore patterns:
-- .venv
-- *__pycache__
-- .DS_Store
-- .vscode
-- settings.json
-- .idea
-- server/alembic/versions/__pycache__
-
-### Additional exclusions:
-- Python cache files (*.pyc, __pycache__)
-- Hidden files and directories (except .gitignore)
-- SSL certificates (*.pem, *.key)
-- Database dumps (dump.rdb)
-- Log files (*.log)
-- Temporary files (*.tmp, *.cache)
-- Node modules
-- Build artifacts (*.egg-info, .pytest_cache)
-
-To modify additional ignored extensions, edit `scripts/generate_tree.py`.
-The script automatically respects all patterns in `.gitignore`.
