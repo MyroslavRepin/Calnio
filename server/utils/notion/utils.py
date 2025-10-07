@@ -44,6 +44,9 @@ async def get_all_ids(notion: AsyncClient):
 
     return page_ids
 
+def to_notion_time(db_time):
+    notion_time = db_time.isoformat()
+    return notion_time
 
 def to_utc_datetime(dt):
     """

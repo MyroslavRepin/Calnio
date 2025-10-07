@@ -1,3 +1,4 @@
+import asyncio
 import os
 import sys
 import logging
@@ -64,6 +65,7 @@ from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.services.scheduler_service import shutdown_scheduler, start_scheduler
+from server.services.postgres_trigger import listen_to_postgres
 
 # Creating Main App
 app = FastAPI()
@@ -112,9 +114,8 @@ admin.add_view(UserAdmin)
 # APScheduler starting
 @app.on_event("startup")
 def on_startup():
-    # Register jobs here, e.g.
+    asyncio.create_task(listen_to_postgres("notion_tasks_channel"))
     # start_scheduler()
-    pass
 
 @app.on_event("shutdown")
 def on_shutdown():

@@ -1,5 +1,9 @@
+import json
 from typing import Optional, Dict, Any
 from pydantic import BaseModel
+from pygments.styles.gh_dark import FG_SUBTLE
+
+from server.utils.notion.utils import to_notion_time
 
 
 class NotionTask(BaseModel):
@@ -116,8 +120,50 @@ class NotionTask(BaseModel):
         )
 
     @classmethod
-    def to_notion(cls, data: dict):
-        """Transform NotionTask (ORM) instance into a Notion data JSON."""
+    def to_notion(cls, task: "NotionTask"):
+        """Transform NotionTask (ORM) instance into a Notion data JSON.
+        Args:
+            - task (NotionTask): An instance of NotionTask to be converted into Notion API format.
+        Returns:
+            - dict: A dictionary formatted for the Notion API to create or update a page.
+        This method constructs a Notion-compatible JSON object with the following properties:
+        """
+        # Todo: Check if some data from db is None -> To not update json
         notion_data: Dict[str, Any] = {
-        #     Notion payload, but with data from the ORM
+            "properties": {
+                "Task Date": {
+                    "date": {
+                        "start": to_notion_time(task.start_date),
+                        "end": to_notion_time(task.end_date),
+                    }
+                },
+                "Priority": {
+                    "select": {
+                        "name": task.priority,
+                    }
+                },
+                "Description": {
+                    "rich_text": [
+                        {
+                            "text": {
+                                "content": task.description
+                            }
+                        }
+                    ]
+                },
+                "Status": {
+                    "status": {
+                        "name": task.status,
+                    }
+                },
+                "Select": {
+                    "select": {
+                        "name": task.select_option,
+                    }
+                },
+                "Done": {
+                    "checkbox": task.done
+                },
+            }
         }
+        return notion_data
