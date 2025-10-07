@@ -7,6 +7,7 @@ from server.db.models import User
 from server.integrations.notion.notion_client import get_notion_client
 from server.services.notion_sync import notion_sync_background
 from server.utils.decorators import timer
+from server.app.core.logging_config import logger
 
 # Scheduler config, can be extended for custom intervals
 scheduler = AsyncIOScheduler()
@@ -18,14 +19,14 @@ async def sync_service():
         users = result.scalars().all()
         for user in users:
             if user.active_sync == True:
-                print(
+                logger.debug(
                     f"Scheduler starts for: {user.username}!"
                 )
                 notion = get_notion_client(user.notion_integration.access_token)
                 notion_sync_result = await notion_sync_background(db=db, notion=notion, user_id=user.id)
-                print(f"notion_sync_result: {notion_sync_result}")
+                logger.debug(f"notion_sync_result: {notion_sync_result}")
             else:
-                print(
+                logger.debug(
                     f"Scheduler skipped for: {user.username}!"
                 )
 # Function to start the scheduler

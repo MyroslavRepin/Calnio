@@ -22,16 +22,16 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
         result = await db.execute(stmt)
         active_sync = result.scalars().first()
         if not active_sync:
-            logger.info(f"⏸️ Background sync not started for user_id={user_id} (active_sync=False)")
+            logger.info(f"Background sync not started for user_id={user_id} (active_sync=False)")
             return {"added": added}
 
-    logger.info(f"🔄 Background sync started for user_id={user_id}")
+    logger.info(f"Background sync started for user_id={user_id}")
 
     # Todo: Optimize notion API calls
     current_notion_pages = await get_all_ids(notion=notion)
     deleted = await delete_pages_by_ids(db, notion, user_id, current_notion_pages)
     updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages)
-    logger.info(f"✅ Background sync finished for user_id={user_id}")
+    logger.info(f"Background sync finished for user_id={user_id}")
 
     return {
         "added": added,

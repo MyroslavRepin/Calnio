@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 from pydantic import BaseModel
 
 
@@ -23,6 +23,31 @@ class NotionTask(BaseModel):
 
     @classmethod
     def from_notion(cls, data: dict):
+        """
+        Transform Notion data JSON into a NotionTask (ORM) instance.
+
+        Args:
+            data (dict): The JSON object representing a Notion page, typically as returned by the Notion API.
+
+        Returns:
+            NotionTask: An instance of NotionTask populated with data extracted from the Notion page.
+
+        This method extracts and maps the following fields:
+            - title: The main task title from the 'Task' property.
+            - description: The task description from the 'Description' property.
+            - start_date, end_date: The start and end dates from the 'Task Date' property.
+            - status: The current status from the 'Status' property.
+            - done: Boolean indicating if the task is completed, from the 'Done' property.
+            - priority: The priority level from the 'Priority' property.
+            - select_option: Additional select option from the 'Select' property.
+            - notion_page_id: The unique Notion page ID.
+            - notion_page_url: The URL to the Notion page.
+            - sync_source, last_synced_at, caldav_uid, has_conflict, last_modified_source:
+            Additional metadata, using defaults if not present in the input data.
+
+        Raises:
+            KeyError: If required properties are missing from the input data.
+        """
         props = data["properties"]
 
         # Title
@@ -89,3 +114,10 @@ class NotionTask(BaseModel):
             has_conflict=has_conflict,
             last_modified_source=last_modified_source,
         )
+
+    @classmethod
+    def to_notion(cls, data: dict):
+        """Transform NotionTask (ORM) instance into a Notion data JSON."""
+        notion_data: Dict[str, Any] = {
+        #     Notion payload, but with data from the ORM
+        }
