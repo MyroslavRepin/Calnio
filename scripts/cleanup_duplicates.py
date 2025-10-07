@@ -22,7 +22,7 @@ async def find_duplicates():
         """))
 
         duplicates = result.fetchall()
-        logger.info(f"🔍 Found {len(duplicates)} sets of duplicate tasks")
+        logger.info(f"Found {len(duplicates)} sets of duplicate tasks")
         return duplicates
 
 async def remove_duplicates():
@@ -48,7 +48,7 @@ async def remove_duplicates():
         """))
 
         deleted = result.fetchall()
-        logger.info(f"🗑️ Deleted {len(deleted)} duplicate tasks")
+        logger.info(f"Deleted {len(deleted)} duplicate tasks")
         for task in deleted:
             logger.debug(f"   Deleted: {task[1]} - {task[2]}")
 
@@ -64,10 +64,10 @@ async def normalize_all_ids():
         count_with_dashes = result.scalar()
 
         if count_with_dashes == 0:
-            logger.info("✅ All IDs already normalized!")
+            logger.info("All IDs already normalized!")
             return
 
-        logger.info(f"🔄 Normalizing {count_with_dashes} tasks with dashes...")
+        logger.info(f"Normalizing {count_with_dashes} tasks with dashes...")
 
         # Update notion_page_id
         await conn.execute(
@@ -79,7 +79,7 @@ async def normalize_all_ids():
             text("UPDATE notion_tasks SET id = REPLACE(id, '-', '') WHERE id LIKE '%-%'")
         )
 
-        logger.info("✅ All IDs normalized!")
+        logger.info("All IDs normalized!")
 
 async def show_final_state():
     """Show the final state of the database."""
@@ -93,13 +93,13 @@ async def show_final_state():
             text("SELECT id, notion_page_id, title FROM notion_tasks ORDER BY created_at DESC LIMIT 5")
         )
 
-        logger.info(f"\n📊 Final state: {total} total tasks")
-        logger.info("📋 Recent tasks:")
+        logger.info(f"\nFinal state: {total} total tasks")
+        logger.info("Recent tasks:")
         for row in result:
             logger.info(f"   ID: {row[0][:32]} | notion_page_id: {row[1][:32]} | Title: {row[2]}")
 
 async def main():
-    logger.info("🚀 Starting database cleanup and normalization")
+    logger.info("Starting database cleanup and normalization")
     logger.info("=" * 100)
 
     # Step 1: Find duplicates
@@ -108,9 +108,9 @@ async def main():
     if duplicates:
         # Step 2: Remove duplicates (keep most recent)
         deleted_count = await remove_duplicates()
-        logger.info(f"✅ Removed {deleted_count} duplicate tasks")
+        logger.info(f"Removed {deleted_count} duplicate tasks")
     else:
-        logger.info("✅ No duplicates found")
+        logger.info("No duplicates found")
 
     # Step 3: Normalize all IDs
     await normalize_all_ids()
@@ -119,8 +119,7 @@ async def main():
     await show_final_state()
 
     logger.info("=" * 100)
-    logger.info("✅ Cleanup complete!")
+    logger.info("Cleanup complete!")
 
 if __name__ == "__main__":
     asyncio.run(main())
-
