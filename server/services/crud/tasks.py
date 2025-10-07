@@ -34,7 +34,7 @@ async def create_task(
     # Normalize notion_page_id by removing dashes
     notion_page_id_normalized = normalize_notion_id(notion_page_id)
 
-    logger.debug(f"🔍 Looking for existing task with notion_page_id: {notion_page_id_normalized}")
+    logger.debug(f"Looking for existing task with notion_page_id: {notion_page_id_normalized}")
 
     # Check if task already exists by notion_page_id (which is unique)
     stmt = select(UserNotionTask).where(
@@ -49,7 +49,7 @@ async def create_task(
 
     if existing_task:
         # Update existing task
-        logger.info(f"♻️ Updating existing task: '{existing_task.title}' → '{title}' (id: {existing_task.id})")
+        logger.info(f"Updating existing task: '{existing_task.title}' → '{title}' (id: {existing_task.id})")
         existing_task.title = title
         existing_task.notion_url = notion_url
         existing_task.description = description
@@ -67,7 +67,7 @@ async def create_task(
         existing_task.last_modified_source = last_modified_source
         await db.commit()
         await db.refresh(existing_task)
-        logger.debug(f"✅ Task updated in database")
+        logger.debug(f"Task updated in database")
         return existing_task
 
     # Create new task with normalized ID (no dashes) and UUID without dashes
@@ -97,7 +97,7 @@ async def create_task(
     db.add(new_task)
     await db.commit()
     await db.refresh(new_task)
-    logger.debug(f"✅ New task saved to database")
+    logger.debug(f"New task saved to database")
     return new_task
 
 async def update_task(

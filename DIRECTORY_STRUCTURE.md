@@ -142,6 +142,7 @@ Calnio/
 │   │   ├── __init__.py
 │   │   ├── notion_integrations.py
 │   │   ├── notion_sync.py
+│   │   ├── postgres_trigger.py
 │   │   └── scheduler_service.py
 │   ├── utils/
 │   │   ├── notion/
