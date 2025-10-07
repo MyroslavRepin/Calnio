@@ -21,11 +21,12 @@ router = APIRouter()
 async def get_notion_response(request: Request, db: AsyncSession = Depends(async_get_db)):
     payload = None
     try:
+        logger.debug(json.dumps(payload, indent=4))
         redis_client = await get_redis()
         payload = await request.json()
 
         if not isinstance(payload, dict):
-            logger.warning("⚠️ Webhook payload is not a dict")
+            logger.warning("⚠Webhook payload is not a dict")
             return {"error": "Payload is not a dict"}
 
         raw_page_id = uuid.UUID(payload["entity"]["id"])
@@ -36,7 +37,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
 
         event_type = payload["type"]
 
-        logger.debug(f"📥 Webhook received: page_id={page_id}, workspace_id={workspace_id}, event={event_type}")
+        logger.debug(f"Webhook received: page_id={page_id}, workspace_id={workspace_id}, event={event_type}")
 
         # Saving data to Redis
         if page_id and workspace_id:
@@ -50,7 +51,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
             user = result.scalars().first()
 
             if not user:
-                logger.error(f"❌ User not found for workspace_id: {workspace_id}")
+                logger.error(f"User not found for workspace_id: {workspace_id}")
                 return {"error": "User not found"}
 
             # Setting page_id and workspace_id in Redis
@@ -62,7 +63,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
             }
 
             await save_webhook_data(user_id=user.id, redis=redis_client, data=data)
-            logger.debug(f"💾 Webhook data saved to Redis for user_id={user.id}")
+            logger.debug(f"Webhook data saved to Redis for user_id={user.id}")
 
         await sync_webhook_data()
 
