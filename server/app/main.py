@@ -57,14 +57,11 @@ from server.app.api.errors import error_404
 from server.app.api.webhooks.notion_webhooks import router as notion_webhook_router
 from server.app import version
 from server.db.database import async_engine
-from server.db.models import tasks as task_models
 from server.db.models import users as user_models
-from server.db.models.notion_integration import UserNotionIntegration as notion_integration_models
 from server.db.redis_client import close_redis, init_redis
 from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
-from server.services.scheduler_service import shutdown_scheduler, start_scheduler
 from server.services.postgres_trigger import listen_to_postgres
 
 # Creating Main App

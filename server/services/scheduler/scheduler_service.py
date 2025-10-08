@@ -5,8 +5,7 @@ from sqlalchemy.orm import selectinload
 from server.db.deps import async_get_db_cm
 from server.db.models import User
 from server.integrations.notion.notion_client import get_notion_client
-from server.services.notion_sync import notion_sync_background
-from server.utils.decorators import timer
+from server.services.notion_syncing.notion_sync import notion_sync_background
 from server.app.core.logging_config import logger
 
 # Scheduler config, can be extended for custom intervals
