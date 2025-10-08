@@ -18,7 +18,7 @@ class UserNotionTask(Base):
     priority: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     select_option: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
-    # ✅ Даты с timezone
+
     start_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     end_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     done: Mapped[bool] = mapped_column(Boolean, default=False)

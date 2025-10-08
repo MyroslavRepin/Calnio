@@ -8,6 +8,7 @@ import os
 import shutil
 import stat
 from pathlib import Path
+from server.app.core.logging_config import logger
 
 def setup_precommit_hook():
     """Install the pre-commit hook."""
@@ -19,7 +20,7 @@ def setup_precommit_hook():
 # Git pre-commit hook to generate directory tree structure
 # This file should be placed in .git/hooks/pre-commit and made executable
 
-echo "🌳 Generating directory tree structure..."
+echo "Generating directory tree structure..."
 
 # Run the Python script to generate the tree
 python3 scripts/generate_tree.py
@@ -28,9 +29,9 @@ python3 scripts/generate_tree.py
 if [ $? -eq 0 ]; then
     # Add the generated file to the commit
     git add DIRECTORY_STRUCTURE.md
-    echo "✅ Directory structure updated and added to commit"
+    echo "Directory structure updated and added to commit"
 else
-    echo "❌ Failed to generate directory tree"
+    echo "Failed to generate directory tree"
     exit 1
 fi
 
@@ -51,25 +52,25 @@ exit 0'''
         # Make it executable
         hook_file.chmod(hook_file.stat().st_mode | stat.S_IEXEC)
         
-        print("✅ Pre-commit hook installed successfully!")
-        print(f"   Location: {hook_file}")
-        print("   The directory tree will now be updated automatically before each commit.")
-        
+        logger.info("Pre-commit hook installed successfully!")
+        logger.info(f"   Location: {hook_file}")
+        logger.info("   The directory tree will now be updated automatically before each commit.")
+
         return True
         
     except Exception as e:
-        print(f"❌ Error setting up pre-commit hook: {e}")
+        logger.error(f"Error setting up pre-commit hook: {e}")
         return False
 
 def test_tree_generation():
     """Test the tree generation script."""
-    print("\n🧪 Testing directory tree generation...")
-    
+    logger.info("Testing directory tree generation...")
+
     script_dir = Path(__file__).parent
     generate_script = script_dir / 'generate_tree.py'
     
     if not generate_script.exists():
-        print("❌ generate_tree.py not found!")
+        logger.error("generate_tree.py not found!")
         return False
     
     # Run the script
@@ -79,33 +80,33 @@ def test_tree_generation():
                               capture_output=True, text=True, cwd=script_dir.parent)
         
         if result.returncode == 0:
-            print("✅ Tree generation test successful!")
-            print("   DIRECTORY_STRUCTURE.md should be created/updated")
+            logger.info("Tree generation test successful!")
+            logger.info("   DIRECTORY_STRUCTURE.md should be created/updated")
             return True
         else:
-            print(f"❌ Tree generation failed: {result.stderr}")
+            logger.error(f"Tree generation failed: {result.stderr}")
             return False
             
     except Exception as e:
-        print(f"❌ Error running test: {e}")
+        logger.error(f"Error running test: {e}")
         return False
 
 def main():
     """Main setup function."""
-    print("🔧 Setting up directory tree pre-commit hook...")
-    
+    logger.info("Setting up directory tree pre-commit hook...")
+
     # Test tree generation first
     if not test_tree_generation():
-        print("\n❌ Setup aborted due to test failure.")
+        logger.error("Setup aborted due to test failure.")
         return 1
     
     # Install the hook
     if setup_precommit_hook():
-        print("\n🎉 Setup complete!")
-        print("\nNext steps:")
-        print("1. Make a test commit to see the hook in action")
-        print("2. Check DIRECTORY_STRUCTURE.md to see the generated tree")
-        print("3. Modify IGNORED_EXTENSIONS in generate_tree.py to customize what's excluded")
+        logger.info("Setup complete!")
+        logger.info("Next steps:")
+        logger.info("1. Make a test commit to see the hook in action")
+        logger.info("2. Check DIRECTORY_STRUCTURE.md to see the generated tree")
+        logger.info("3. Modify IGNORED_EXTENSIONS in generate_tree.py to customize what's excluded")
         return 0
     else:
         return 1

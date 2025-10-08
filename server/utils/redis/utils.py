@@ -1,5 +1,6 @@
 import json
 from redis import asyncio as aioredis
+from server.app.core.logging_config import logger
 
 async def save_webhook_data(user_id: int, data: dict, redis: aioredis.Redis):
     """
@@ -11,7 +12,7 @@ async def save_webhook_data(user_id: int, data: dict, redis: aioredis.Redis):
 
     await redis.hset(f"webhook:{user_id}", mapping={"data": data_json})
     await redis.expire(f"webhook:{user_id}", 3600)  # 1 час
-    print(">>> Webhook data saved to Redis")
+    logger.info("Webhook data saved to Redis")
 
 
 async def get_webhook_data(user_id: int, redis: aioredis.Redis):
