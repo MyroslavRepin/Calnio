@@ -26,6 +26,22 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.15.2 - 2025-10-08
+
+### 🔄 Changed
+
+- Refactored Notion integration modules: migrated `notion_sync`, `notion_integrations` to the new `notion_syncing` package for improved structure and maintainability.
+- Enhanced Notion task syncing logic to better coordinate Redis and database interactions.
+- Improved `to_notion` serialization: properties now safely handle `None` values, reducing risk of invalid updates.
+- Updated Postgres triggers to include `db_to_notion_sync` for seamless task updates from database changes.
+- Optimized module imports and removed unused code for better performance and clarity.
+
+### 🔧 Fixed
+
+- Improved webhook handling and task synchronization reliability between Notion and the local database.
+- Fixed issues with task property serialization that could cause incomplete or incorrect Notion updates.
+- Enhanced logging for debugging sync operations and database triggers.
+
 ## v1.15.1 - 2025-10-07
 
 ### Added
