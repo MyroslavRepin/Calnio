@@ -67,7 +67,7 @@ async def sync_webhook_data():
                     title=notion_page.title,
                     notion_page_id=page_id,
                     notion_url=notion_page.notion_page_url,
-                    sync_source="notion",
+                    sync_source="notion_webhook",
                     description=notion_page.description,
                     caldav_uid="not supported yet",
                     has_conflict=False,

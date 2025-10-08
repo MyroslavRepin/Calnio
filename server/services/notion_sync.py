@@ -12,7 +12,7 @@ from sqlalchemy import select
 
 
 async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id: int):
-    added = await add_tasks_to_db(db, notion=notion, user_id=user_id)
+    added = await add_tasks_to_db(db, notion=notion, user_id=user_id, last_modified_source="notion", sync_source="background")
 
     # Check if active_sync is still True
 
@@ -27,10 +27,10 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
 
     logger.info(f"Background sync started for user_id={user_id}")
 
-    # Todo: Optimize notion API calls
+
     current_notion_pages = await get_all_ids(notion=notion)
     deleted = await delete_pages_by_ids(db, notion, user_id, current_notion_pages)
-    updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages)
+    updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages, sync_source="background", last_modified_source="notion")
     logger.info(f"Background sync finished for user_id={user_id}")
 
     return {

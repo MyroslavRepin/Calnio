@@ -26,7 +26,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
         payload = await request.json()
 
         if not isinstance(payload, dict):
-            logger.warning("⚠Webhook payload is not a dict")
+            logger.warning("Webhook payload is not a dict")
             return {"error": "Payload is not a dict"}
 
         raw_page_id = uuid.UUID(payload["entity"]["id"])
