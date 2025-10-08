@@ -1,9 +1,13 @@
-# Project Directory Structure
-
-Generated automatically on commit.
-
-```
 Calnio/
+├── backend/
+│   └── app/
+│       └── tools/
+│           ├── caldav/
+│           │   ├── __init__.py
+│           │   ├── models.py
+│           │   ├── orm.py
+│           │   └── README.md
+│           └── __init__.py
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -51,10 +55,12 @@ Calnio/
 │   │   ├── versions/
 │   │   │   ├── 195306bb06b8_rename_task_date_to_start_date_in_.py
 │   │   │   ├── 424907f7e342_add_sync_interval_seconds_column_to_.py
+│   │   │   ├── 4fb35aabd515_add_usercaldavevent_model.py
 │   │   │   ├── 648e7163d6ae_add_unique_constraint_to_workspace_id_.py
 │   │   │   ├── 723eede5975e_initial_migration.py
 │   │   │   ├── __init__.py
 │   │   │   ├── a3d53bfab21d_convert_datetime_columns_to_timestamptz_.py
+│   │   │   ├── bb6b5e7703cc_add_new_columns.py
 │   │   │   ├── cfef8e5e21e7_add_end_date_to_notion_tasks.py
 │   │   │   └── f74ea4b9e097_add_active_sync_column_manually.py
 │   │   ├── __init__.py
@@ -121,21 +127,24 @@ Calnio/
 │   │   ├── __init__.py
 │   │   └── ignore_logging.py
 │   ├── services/
+│   │   ├── caldav/
 │   │   ├── crud/
 │   │   │   ├── __init__.py
 │   │   │   ├── tasks.py
 │   │   │   └── users.py
 │   │   ├── notion_syncing/
 │   │   │   ├── __init__.py
+│   │   │   ├── notion_integrations.py
+│   │   │   ├── notion_sync.py
 │   │   │   └── webhook_service.py
 │   │   ├── redis/
 │   │   │   ├── __init__.py
 │   │   │   └── redis.py
 │   │   ├── scheduler/
+│   │   │   ├── __init__.py
+│   │   │   └── scheduler_service.py
 │   │   ├── __init__.py
-│   │   ├── notion_integrations.py
-│   │   ├── notion_sync.py
-│   │   └── scheduler_service.py
+│   │   └── postgres_trigger.py
 │   ├── utils/
 │   │   ├── notion/
 │   │   │   ├── __init__.py
@@ -164,31 +173,5 @@ Calnio/
 ├── README.md
 ├── redis_test.py
 ├── requirements.txt
+├── robots.txt
 └── START_SERVER.sh
-```
-
-## Configuration
-
-This tree excludes files and directories matching patterns from:
-
-### .gitignore patterns:
-- .venv
-- *__pycache__
-- .DS_Store
-- .vscode
-- settings.json
-- .idea
-- server/alembic/versions/__pycache__
-
-### Additional exclusions:
-- Python cache files (*.pyc, __pycache__)
-- Hidden files and directories (except .gitignore)
-- SSL certificates (*.pem, *.key)
-- Database dumps (dump.rdb)
-- Log files (*.log)
-- Temporary files (*.tmp, *.cache)
-- Node modules
-- Build artifacts (*.egg-info, .pytest_cache)
-
-To modify additional ignored extensions, edit `scripts/generate_tree.py`.
-The script automatically respects all patterns in `.gitignore`.

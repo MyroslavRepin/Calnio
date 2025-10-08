@@ -198,12 +198,13 @@ The script automatically respects all patterns in `.gitignore`.
     output_file = project_root / "DIRECTORY_STRUCTURE.md"
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(markdown_content)
-        print(f"✅ Directory tree saved to {output_file}")
-        print(f"📋 Excluded {len(gitignore_patterns)} .gitignore patterns + additional rules")
-        return 0
+            f.write(tree_content)
+
+        print(f"Directory tree saved to {output_file}")
+        print(f"Excluded {len(gitignore_patterns)} .gitignore patterns + additional rules")
+
     except Exception as e:
-        print(f"❌ Error writing to {output_file}: {e}")
+        print(f"Error writing to {output_file}: {e}")
         return 1
 
 if __name__ == "__main__":

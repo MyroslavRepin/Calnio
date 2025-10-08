@@ -21,7 +21,7 @@ async def create_task(
     last_synced_at: datetime = None,
     caldav_uid: str = None,
     has_conflict: bool = False,
-    last_modified_source: str = "notion",
+    last_modified_source: str | None = None,
     #
     description: str | None = None,
     start_date: str | None = None,
@@ -34,7 +34,7 @@ async def create_task(
     # Normalize notion_page_id by removing dashes
     notion_page_id_normalized = normalize_notion_id(notion_page_id)
 
-    logger.debug(f"🔍 Looking for existing task with notion_page_id: {notion_page_id_normalized}")
+    logger.debug(f"Looking for existing task with notion_page_id: {notion_page_id_normalized}")
 
     # Check if task already exists by notion_page_id (which is unique)
     stmt = select(UserNotionTask).where(
@@ -49,7 +49,7 @@ async def create_task(
 
     if existing_task:
         # Update existing task
-        logger.info(f"♻️ Updating existing task: '{existing_task.title}' → '{title}' (id: {existing_task.id})")
+        logger.info(f"Updating existing task: '{existing_task.title}' → '{title}' (id: {existing_task.id})")
         existing_task.title = title
         existing_task.notion_url = notion_url
         existing_task.description = description
@@ -67,7 +67,7 @@ async def create_task(
         existing_task.last_modified_source = last_modified_source
         await db.commit()
         await db.refresh(existing_task)
-        logger.debug(f"✅ Task updated in database")
+        logger.debug(f"Task updated in database")
         return existing_task
 
     # Create new task with normalized ID (no dashes) and UUID without dashes
@@ -97,7 +97,7 @@ async def create_task(
     db.add(new_task)
     await db.commit()
     await db.refresh(new_task)
-    logger.debug(f"✅ New task saved to database")
+    logger.debug(f"New task saved to database")
     return new_task
 
 async def update_task(
@@ -111,7 +111,9 @@ async def update_task(
     status: str | None = None,
     done: bool = False,
     priority: str | None = None,
-    select_option: str | None = None
+    select_option: str | None = None,
+    sync_source: str | None = None,
+    last_modified_source: str | None = None
 ) -> UserNotionTask | None:
     if task:
         task.title = title
@@ -124,11 +126,11 @@ async def update_task(
         task.priority = priority
         task.select_option = select_option
         # Always set default values for required fields
-        task.sync_source = "notion"
+        task.sync_source = sync_source
         task.last_synced_at = datetime.now(UTC)
         task.caldav_uid = "not supported yet"
         task.has_conflict = False
-        task.last_modified_source = "notion"
+        task.last_modified_source = last_modified_source
         db.add(task)
         await db.commit()
         await db.refresh(task)
@@ -191,7 +193,7 @@ async def add_tasks_to_db(
     db: AsyncSession,
     user_id: int,
     notion: AsyncClient,
-    sync_source: str = "notion",
+    sync_source: str,
     last_synced_at: datetime = None,
     caldav_uid: str = None,
     has_conflict: bool = False,
@@ -276,7 +278,10 @@ async def update_pages_by_ids(
         db: AsyncSession,
         notion: AsyncClient,
         user_id: int,
-        pages_ids: list):
+        pages_ids: list,
+        sync_source: str,
+        last_modified_source: str
+    ):
     # Getting all users pages from db
     stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
     result = await db.execute(stmt)
@@ -313,7 +318,9 @@ async def update_pages_by_ids(
                 status=notion_page.status,
                 select_option=notion_page.select_option,
                 done=notion_page.done,
-                priority=notion_page.priority
+                priority=notion_page.priority,
+                sync_source=sync_source,
+                last_modified_source=last_modified_source
             )
             updated_pages.append({
                 "page_id": page_id_normalized,

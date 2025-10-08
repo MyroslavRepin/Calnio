@@ -1,3 +1,4 @@
+import asyncio
 import os
 import sys
 import logging
@@ -42,7 +43,7 @@ for logger_name in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
     logging_logger.handlers = [InterceptHandler()]
     logging_logger.propagate = False
 
-logger.info("✅ Loguru initialized")
+logger.info("Loguru initialized")
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -56,14 +57,12 @@ from server.app.api.errors import error_404
 from server.app.api.webhooks.notion_webhooks import router as notion_webhook_router
 from server.app import version
 from server.db.database import async_engine
-from server.db.models import tasks as task_models
 from server.db.models import users as user_models
-from server.db.models.notion_integration import UserNotionIntegration as notion_integration_models
 from server.db.redis_client import close_redis, init_redis
 from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
-from server.services.scheduler_service import shutdown_scheduler, start_scheduler
+from server.services.postgres_trigger import listen_to_postgres
 
 # Creating Main App
 app = FastAPI()
@@ -112,9 +111,8 @@ admin.add_view(UserAdmin)
 # APScheduler starting
 @app.on_event("startup")
 def on_startup():
-    # Register jobs here, e.g.
+    asyncio.create_task(listen_to_postgres("notion_tasks_channel"))
     # start_scheduler()
-    pass
 
 @app.on_event("shutdown")
 def on_shutdown():

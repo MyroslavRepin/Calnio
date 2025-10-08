@@ -69,7 +69,7 @@ def main():
                     await async_create_user(db, user=user)
 
             finally:
-                print(f"✅ User created successfully.")
+                print(f"User created successfully.")
         asyncio.run(create_user_async())
 
     elif command == 'delete_user':
@@ -79,7 +79,7 @@ def main():
                     await async_delete_by_id(db, 1)
 
             finally:
-                print(f"✅ User deleted successfully.")
+                print(f"User deleted successfully.")
         asyncio.run(delete_user_async())
 
     elif command == 'update_user':
@@ -89,7 +89,7 @@ def main():
                     await async_update_by_id(db=db, user_id=6, new_username="bob_king", new_email="bobking@gmail.com")
 
             finally:
-                print(f"✅ User updated successfully.")
+                print(f"User updated successfully.")
         asyncio.run(update_user_async())
     elif command == 'update_password':
         async def update_user_async():
@@ -98,7 +98,7 @@ def main():
                     await async_update_password_by_id(db=db, user_id=13, new_password="new_password")
 
             finally:
-                print(f"✅ User updated successfully.")
+                print(f"User updated successfully.")
         asyncio.run(update_user_async())
     else:
         print(f"Неизвестная команда: {command}")

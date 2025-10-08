@@ -1,5 +1,4 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 import os
 from server.app.core.logging_config import logger
 
@@ -7,11 +6,10 @@ from fastapi import APIRouter, Request, Depends, HTTPException, Response, Backgr
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
-from server.db.models import UserNotionTask, User
 from server.services.crud.users import async_get_by_id
 from server.db.deps import async_get_db
 from server.utils.security.utils import check_if_user_authorized
-from server.services.notion_sync import notion_sync_background
+from server.services.notion_syncing.notion_sync import notion_sync_background
 from server.integrations.notion.notion_client import get_notion_client
 router = APIRouter()
 

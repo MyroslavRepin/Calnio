@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from server.db.models.notion_integration import UserNotionIntegration
+from server.app.core.logging_config import logger
 
 
 async def save_or_update_integration(db: AsyncSession, user_id: str, data: dict):
@@ -11,8 +12,8 @@ async def save_or_update_integration(db: AsyncSession, user_id: str, data: dict)
     integration = result.scalars().first()
 
     if integration:
-        # 🔄 Обновляем существующую интеграцию
-        print("🔄 Updating existing integrations")
+        # Обновляем существующую интеграцию
+        logger.info("Updating existing integrations")
         integration.access_token = data["access_token"]
         integration.workspace_id = data["workspace_id"]
         integration.workspace_name = data.get("workspace_name")
@@ -20,8 +21,8 @@ async def save_or_update_integration(db: AsyncSession, user_id: str, data: dict)
         integration.notion_user_id = data["owner"]["user"]["id"]
         integration.duplicated_template_id = data.get("duplicated_template_id")
     else:
-        # ➕ Создаём новую интеграцию
-        print("➕ Adding new integrations")
+        # Создаём новую интеграцию
+        logger.info("Creating new integrations")
         integration = UserNotionIntegration(
             user_id=user_id,
             access_token=data["access_token"],
