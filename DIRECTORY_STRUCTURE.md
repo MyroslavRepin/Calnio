@@ -134,16 +134,17 @@ Calnio/
 │   │   │   └── users.py
 │   │   ├── notion_syncing/
 │   │   │   ├── __init__.py
+│   │   │   ├── notion_integrations.py
+│   │   │   ├── notion_sync.py
 │   │   │   └── webhook_service.py
 │   │   ├── redis/
 │   │   │   ├── __init__.py
 │   │   │   └── redis.py
 │   │   ├── scheduler/
+│   │   │   ├── __init__.py
+│   │   │   └── scheduler_service.py
 │   │   ├── __init__.py
-│   │   ├── notion_integrations.py
-│   │   ├── notion_sync.py
-│   │   ├── postgres_trigger.py
-│   │   └── scheduler_service.py
+│   │   └── postgres_trigger.py
 │   ├── utils/
 │   │   ├── notion/
 │   │   │   ├── __init__.py

@@ -4,7 +4,7 @@ import httpx
 
 from server.db.deps import async_get_db
 from server.db.database import AsyncSession
-from server.services.notion_integrations import save_or_update_integration
+from server.services.notion_syncing.notion_integrations import save_or_update_integration
 from server.utils.security.utils import access_token_required, refresh_access_token
 from server.app.core.config import settings
 from server.app.core.logging_config import logger

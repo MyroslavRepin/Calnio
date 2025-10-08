@@ -121,52 +121,54 @@ class NotionTask(BaseModel):
 
     @classmethod
     def to_notion(cls, task: "NotionTask"):
-        """Transform NotionTask (ORM) instance into a Notion data JSON.
-        Args:
-            - task (NotionTask): An instance of NotionTask to be converted into Notion API format.
-        Returns:
-            - dict: A dictionary formatted for the Notion API to create or update a page.
-        This method constructs a Notion-compatible JSON object with the following properties:
-        """
-        # Todo: Check if some data from db is None -> To not update json
+        """Transform task instance into a Notion properties JSON, skipping None values."""
+        if getattr(task, "sync_source", None) == "notion":
+            return {"properties": {}}
 
-        # Todo: Get changes in db from Redis and update json
-        if not task.sync_source == "notion":
-            notion_data: Dict[str, Any] = {
-                "properties": {
-                    "Task Date": {
-                        "date": {
-                            "start": to_notion_time(task.start_date),
-                            "end": to_notion_time(task.end_date),
-                        }
-                    },
-                    "Priority": {
-                        "select": {
-                            "name": task.priority,
-                        }
-                    },
-                    "Description": {
-                        "rich_text": [
-                            {
-                                "text": {
-                                    "content": task.description
-                                }
-                            }
-                        ]
-                    },
-                    "Status": {
-                        "status": {
-                            "name": task.status,
-                        }
-                    },
-                    "Select": {
-                        "select": {
-                            "name": task.select_option,
-                        }
-                    },
-                    "Done": {
-                        "checkbox": task.done
-                    },
-                }
+        properties: Dict[str, Any] = {}
+
+        # Task Date: include only if start exists; end is optional
+        start = to_notion_time(getattr(task, "start_date", None))
+        end = to_notion_time(getattr(task, "end_date", None))
+        if start:
+            date_obj: Dict[str, Any] = {"start": start}
+            if end:
+                date_obj["end"] = end
+            properties["Task Date"] = {"date": date_obj}
+
+        title = getattr(task, "title", None)
+        if title:
+            properties["Task"] = {
+                "title": [{"text": {"content": title}}]
             }
-            return notion_data
+
+        # Priority: include only if not None/empty
+        priority = getattr(task, "priority", None)
+        if priority:
+            properties["Priority"] = {"select": {"name": priority}}
+
+        # Description: include only if not None/empty
+        description = getattr(task, "description", None)
+        if description:
+            properties["Description"] = {
+                "rich_text": [
+                    {"text": {"content": description}}
+                ]
+            }
+
+        # Status: include only if not None/empty
+        status = getattr(task, "status", None)
+        if status:
+            properties["Status"] = {"status": {"name": status}}
+
+        # Select: include only if not None/empty
+        select_option = getattr(task, "select_option", None)
+        if select_option:
+            properties["Select"] = {"select": {"name": select_option}}
+
+        # Done: include only if boolean
+        done = getattr(task, "done", None)
+        if isinstance(done, bool):
+            properties["Done"] = {"checkbox": done}
+
+        return {"properties": properties}
