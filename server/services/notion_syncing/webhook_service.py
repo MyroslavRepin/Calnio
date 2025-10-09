@@ -23,8 +23,9 @@ async def sync_webhook_data():
     page_id = normalize_notion_id(page_id_raw)
 
     logger.debug(f"Webhook event: {event_type}")
-    logger.debug(f"User ID: {user_id}")
-    logger.debug(f"Page ID: {page_id}")
+    logger.debug(f"   User ID: {user_id}")
+    logger.debug(f"   Page ID (raw): {page_id_raw}")
+    logger.debug(f"   Page ID (normalized): {page_id}")
 
     async with async_get_db_cm() as db:
         stmt = select(User).where(User.id == user_id)
@@ -67,7 +68,7 @@ async def sync_webhook_data():
                     title=notion_page.title,
                     notion_page_id=page_id,
                     notion_url=notion_page.notion_page_url,
-                    sync_source="notion_webhook",
+                    sync_source="notion",
                     description=notion_page.description,
                     caldav_uid="not supported yet",
                     has_conflict=False,
