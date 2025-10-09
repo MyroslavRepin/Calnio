@@ -9,7 +9,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 if [[ "$1" == "--reset" ]]; then
-  echo -e "${YELLOW}🧹 Removing existing .venv...${NC}"
+  echo -e "${YELLOW}Removing existing .venv...${NC}"
   rm -rf .venv
 fi
 
@@ -19,36 +19,36 @@ if [[ "$1" == "--create_tables" ]]; then
 fi
 
 if [ ! -d ".venv" ]; then
-  echo -e "${YELLOW}🛠️  .venv not found, creating...${NC}"
+  echo -e "${YELLOW}.venv not found, creating...${NC}"
   python3 -m venv .venv
 fi
 
 if [ ! -f ".venv/bin/activate" ]; then
-  echo -e "${RED}❌ Could not find .venv activation script.${NC}"
+  echo -e "${RED}Could not find .venv activation script.${NC}"
   exit 1
 fi
 
 source .venv/bin/activate
 
 if [ ! -f "requirements.txt" ]; then
-  echo -e "${RED}❌ requirements.txt not found!${NC}"
+  echo -e "${RED}requirements.txt not found!${NC}"
   exit 1
 fi
 
-echo -e "${GREEN}📦 Installing dependencies...${NC}"
+echo -e "${GREEN}Installing dependencies...${NC}"
 pip install --upgrade pip
 pip install -r requirements.txt
 
 # Detect if running in a container (/.dockerenv exists)
 if [ -f "/.dockerenv" ]; then
   HOST="0.0.0.0"
-  echo -e "${YELLOW}🟢 Running in container mode (host: 0.0.0.0)${NC}"
+  echo -e "${YELLOW}Running in container mode (host: 0.0.0.0)${NC}"
 else
   HOST="0.0.0.0"
-  echo -e "${YELLOW}🟢 Running in (host: $HOST)${NC}"
+  echo -e "${YELLOW}Running in (host: $HOST)${NC}"
 fi
 
-echo -e "${GREEN}🚀 Launching server...${NC}"
+echo -e "${GREEN}Launching server...${NC}"
 if [[ "$1" == "--https" ]]; then
   echo "Running on HTTPS" && 
   uvicorn server.app.main:app \

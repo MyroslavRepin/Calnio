@@ -16,6 +16,7 @@ async def async_create_all_tables():
     except Exception as e:
         logger.error(f"Error creating tables: {e}")
         raise
+        logger.error(f"Error creating tables: {e}")
 
 
 # For backward compatibility, keep the old function name as an alias

@@ -40,7 +40,7 @@ async def pages(
     integration = user.notion_integration
 
     if not integration:
-        logger.error(f"❌ User {user_id} does not have a Notion integration")
+        logger.error(f"User {user_id} does not have a Notion integration")
         raise HTTPException(
             status_code=404, detail="Notion integrations not found")
 
@@ -53,6 +53,6 @@ async def pages(
     user.active_sync = True
     await db.commit()
 
-    logger.debug(f"🔄 Starting background sync for user_id={user_id}")
+    logger.debug(f"Starting background sync for user_id={user_id}")
     background_tasks.add_task(notion_sync_background, db=db, notion=notion, user_id=user_id)
     return RedirectResponse("/dashboard", 302)

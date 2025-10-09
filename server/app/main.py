@@ -74,7 +74,7 @@ templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 # Setting up handler 500 error
 @app.exception_handler(Exception)
 async def internal_server_error_handler(request, exc):
-    logger.error(f"💥 Internal server error: {exc}")
+    logger.error(f"Internal server error: {exc}")
     return templates.TemplateResponse(
         "500.html",
         {"request": request},
