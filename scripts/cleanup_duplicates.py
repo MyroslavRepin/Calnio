@@ -96,12 +96,10 @@ async def show_final_state():
         logger.info(f"\nFinal state: {total} total tasks")
         logger.info("Recent tasks:")
         for row in result:
-            logger.info(f"   ID: {row[0][:32]} | notion_page_id: {row[1][:32]} | Title: {row[2]}")
+            logger.info(f"ID: {row[0][:32]} | notion_page_id: {row[1][:32]} | Title: {row[2]}")
 
 async def main():
     logger.info("Starting database cleanup and normalization")
-    logger.info("=" * 100)
-
     # Step 1: Find duplicates
     duplicates = await find_duplicates()
 
@@ -118,8 +116,8 @@ async def main():
     # Step 4: Show final state
     await show_final_state()
 
-    logger.info("=" * 100)
     logger.info("Cleanup complete!")
 
 if __name__ == "__main__":
     asyncio.run(main())
+
