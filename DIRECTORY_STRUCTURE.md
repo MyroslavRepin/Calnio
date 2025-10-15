@@ -52,12 +52,10 @@ Calnio/
 │   │   ├── versions/
 │   │   │   ├── 195306bb06b8_rename_task_date_to_start_date_in_.py
 │   │   │   ├── 424907f7e342_add_sync_interval_seconds_column_to_.py
-│   │   │   ├── 4fb35aabd515_add_usercaldavevent_model.py
 │   │   │   ├── 648e7163d6ae_add_unique_constraint_to_workspace_id_.py
 │   │   │   ├── 723eede5975e_initial_migration.py
 │   │   │   ├── __init__.py
 │   │   │   ├── a3d53bfab21d_convert_datetime_columns_to_timestamptz_.py
-│   │   │   ├── bb6b5e7703cc_add_new_columns.py
 │   │   │   ├── cfef8e5e21e7_add_end_date_to_notion_tasks.py
 │   │   │   └── f74ea4b9e097_add_active_sync_column_manually.py
 │   │   ├── __init__.py
@@ -129,7 +127,9 @@ Calnio/
 │   │   ├── caldav/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_client.py
-│   │   │   └── caldav_fetch.py
+│   │   │   ├── caldav_fetch.py
+│   │   │   ├── caldav_orm.py
+│   │   │   └── playground.py
 │   │   ├── crud/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
@@ -141,7 +141,6 @@ Calnio/
 │   │   ├── redis/
 │   │   │   ├── __init__.py
 │   │   │   └── redis.py
-│   │   ├── scheduler/
 │   │   ├── __init__.py
 │   │   ├── notion_integrations.py
 │   │   ├── notion_sync.py

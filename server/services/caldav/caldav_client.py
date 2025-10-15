@@ -36,8 +36,6 @@ async def get_caldav_client(user_id):
 
     icloud_username = str(user.icloud_email)
     icloud_password = str(user.app_specific_password)
-    logger.debug(icloud_username)
-    logger.debug(icloud_password)
 
     client = DAVClient(
         url="https://caldav.icloud.com/",
