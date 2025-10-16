@@ -4,8 +4,10 @@ from datetime import datetime, timedelta, timezone
 import os
 import sys
 import uuid
+from urllib.parse import urlparse
 
 from aiocaldav import Calendar
+
 
 # Ensure project root is on sys.path when running this file directly
 if __name__ == "__main__":
@@ -14,21 +16,23 @@ if __name__ == "__main__":
         sys.path.insert(0, ROOT)
 
 from server.services.caldav.caldav_orm import CalDavORM
+from server.utils.utils import extract_uid
+
 
 async def main():
     orm = CalDavORM(user_id=7)
     await orm.authenticate()
 
-    calendars = await orm.Calendar.all()
+    calendar = await orm.Calendar.get_by_name("Personal")
 
-    for cal in calendars:
-        print(cal["uid"])
+    await orm.Event.create(
+        calendar_uid=extract_uid(calendar.id),
+        title="Test event",
+        description="Test description",
+        location="11324 91st",
+        start=datetime.now(timezone.utc),
+        end=datetime.now(timezone.utc) + timedelta(hours=1),
+    )
 
-
-    # await orm.Calendar.create(title="Test Calendar 2")
-    calendar = await orm.Calendar.get(uid="f6492090-aaae-11f0-b31d-a2b363ae323e")
-
-    delete_cal = await orm.Calendar.delete(calendar)
-    print(delete_cal)
 if __name__ == "__main__":
     asyncio.run(main())
