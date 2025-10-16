@@ -63,7 +63,6 @@ class CalDavORM:
                 calendars = principal.calendars()
 
                 for calendar in calendars:
-
                     if str(uid) in extract_uid(str(calendar.url)):
                         return calendar
 
@@ -71,6 +70,29 @@ class CalDavORM:
 
             return await asyncio.to_thread(_get_calendar)
 
+        # --- GET CALENDAR BY NAME ---
+        async def get_by_name(self, name: str):
+            """Get calendar by name. Returns the calendar object if found, None otherwise."""
+            client = self.orm.client
+            if not client:
+                logger.error("Client not authenticated. Call orm.authenticate() first.")
+                raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
+
+            def _get_calendar_by_name():
+                principal = client.principal()
+                calendars = principal.calendars()
+                calendar = None
+                for calendar in calendars:
+                    print(calendar.name)
+                    if calendar.name == name:
+                        return calendar
+
+                if calendar is None:
+                    logger.warning(f"Calendar with name {name} not found.")
+                if calendar:
+                    return calendar
+
+            return await asyncio.to_thread(_get_calendar_by_name)
 
         async def all(self):
             """
@@ -222,61 +244,59 @@ class CalDavORM:
             self.orm = orm
 
         async def create(self, calendar_uid: str, title: str, start: str, end: str, **kwargs):
-            """Создать новое событие в календаре"""
+            """
+            Create a new event in the calendar.
+
+            Parameters:
+                calendar_uid: str - UID of the calendar to add the event to
+                title: str - title of the event
+                start: str - start datetime in ISO 8601 format
+                end: str - end datetime in ISO 8601 format
+                kwargs: dict - optional additional properties like description, location
+
+            Returns:
+                The created event object
+            """
             client = self.orm.client
             if not client:
                 logger.error("Client not authenticated. Call orm.authenticate() first.")
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
-
-            # Находим календарь
-            calendars = await client.principal().calendars()
-            calendar: Calendar = next((c for c in calendars if calendar_uid in c.url), None)
+            logger.info(f"Creating event in calendar {calendar_uid}")
+            calendar = await self.orm.Calendar.get(uid=calendar_uid)
             if not calendar:
-                logger.warning(f"Calendar with UID '{calendar_uid}' not found.")
-                raise ValueError(f"Calendar with UID '{calendar_uid}' not found.")
+                raise ValueError(f"Calendar with UID {calendar_uid} not found.")
 
-            # Формируем контент события (iCalendar)
-            event_uid = str(uuid4())
-            dtstamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-            dtstart = datetime.fromisoformat(start).strftime("%Y%m%dT%H%M%SZ")
-            dtend = datetime.fromisoformat(end).strftime("%Y%m%dT%H%M%SZ")
+            def _create_event():
+                from icalendar import Event, vDatetime
 
-            description = kwargs.get("description", "")
-            location = kwargs.get("location", "")
+                event = Event()
+                event.add("summary", title)
+                event.add("dtstart", vDatetime(start))
+                event.add("dtend", vDatetime(end))
 
-            ics_content = f"""BEGIN:VCALENDAR
-    VERSION:2.0
-    PRODID:-//Calnio//CalDavORM//EN
-    BEGIN:VEVENT
-    UID:{event_uid}
-    DTSTAMP:{dtstamp}
-    DTSTART:{dtstart}
-    DTEND:{dtend}
-    SUMMARY:{title}
-    DESCRIPTION:{description}
-    LOCATION:{location}
-    END:VEVENT
-    END:VCALENDAR
-    """
+                if "description" in kwargs:
+                    event.add("description", kwargs["description"])
+                if "location" in kwargs:
+                    event.add("location", kwargs["location"])
 
-            # Загружаем событие в календарь (в отдельном потоке)
-            new_event = await asyncio.to_thread(calendar.add_event, ics_content)
-
-            return {
-                "uid": event_uid,
-                "title": title,
-                "start": start,
-                "end": end,
-                "calendar": calendar_uid,
-                "created": True
-                }
+                return calendar.add_event(event.to_ical())
+            try:
+                return await asyncio.to_thread(_create_event)
+            except Exception as e:
+                logger.error(f"Failed to create event: {e}")
+                raise e
         # --- READ ---
         async def get(self, uid: str):
             """Получить одно событие по UID"""
             client = self.orm.client
             if not client:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
-            pass
+            calendar = await self.orm.Calendar.get(uid=uid)
+            def _get_event(uid):
+                if not calendar:
+                    return None
+                return calendar.get_event(uid)
+            return await asyncio.to_thread(_get_event, uid=uid)
 
         async def all(self, calendar_uid: str):
             """Получить все события из календаря"""

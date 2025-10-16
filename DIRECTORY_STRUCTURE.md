@@ -50,14 +50,8 @@ Calnio/
 ├── server/
 │   ├── alembic/
 │   │   ├── versions/
-│   │   │   ├── 195306bb06b8_rename_task_date_to_start_date_in_.py
-│   │   │   ├── 424907f7e342_add_sync_interval_seconds_column_to_.py
-│   │   │   ├── 648e7163d6ae_add_unique_constraint_to_workspace_id_.py
-│   │   │   ├── 723eede5975e_initial_migration.py
-│   │   │   ├── __init__.py
-│   │   │   ├── a3d53bfab21d_convert_datetime_columns_to_timestamptz_.py
-│   │   │   ├── cfef8e5e21e7_add_end_date_to_notion_tasks.py
-│   │   │   └── f74ea4b9e097_add_active_sync_column_manually.py
+│   │   │   ├── 4192080716ba_add_calendars_table.py
+│   │   │   └── 868c1b1fb071_init_fresh_migration.py
 │   │   ├── __init__.py
 │   │   ├── env.py
 │   │   ├── README
@@ -94,6 +88,7 @@ Calnio/
 │   │   ├── models/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
+│   │   │   ├── calendars.py
 │   │   │   ├── notion_integration.py
 │   │   │   ├── tasks.py
 │   │   │   └── users.py
