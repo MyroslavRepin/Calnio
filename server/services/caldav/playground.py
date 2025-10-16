@@ -24,15 +24,11 @@ async def main():
     for cal in calendars:
         print(cal["uid"])
 
-    result = await orm.Event.create(
-        calendar_uid="D4536BB3-626F-4906-9129-FFACAD0D8736",
-        title="Test Meeting",
-        start="2025-10-15T15:00:00",
-        end="2025-10-15T16:00:00",
-        description="Project discussion"
-    )
-    print(result)
 
+    # await orm.Calendar.create(title="Test Calendar 2")
+    calendar = await orm.Calendar.get(uid="f6492090-aaae-11f0-b31d-a2b363ae323e")
 
+    delete_cal = await orm.Calendar.delete(calendar)
+    print(delete_cal)
 if __name__ == "__main__":
     asyncio.run(main())
