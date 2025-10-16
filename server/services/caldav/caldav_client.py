@@ -1,5 +1,6 @@
 import asyncio
-from aiocaldav import DAVClient  # правильно: DAVClient
+# from aiocaldav import DAVClient
+from caldav import DAVClient
 from sqlalchemy import select
 
 from server.db.deps import async_get_db_cm
@@ -28,7 +29,7 @@ async def get_caldav_client(user_id):
         A configured DAVClient instance authenticated for the
         specified user's iCloud account.
     """
-    # todo: realize db search and get data for auth
+    # TODO: realize db search and get data for auth
     async with async_get_db_cm() as db:
         stmt = select(User).where(User.id == user_id)
         result = await db.execute(stmt)
@@ -36,11 +37,14 @@ async def get_caldav_client(user_id):
 
     icloud_username = str(user.icloud_email)
     icloud_password = str(user.app_specific_password)
-
-    client = DAVClient(
-        url="https://caldav.icloud.com/",
-        username=icloud_username,
-        password=icloud_password
-    )
-    logger.debug("CalDav client initialized")
-    return client
+    # Sync layer
+    def _get_caldav_client():
+        client = DAVClient(
+            url="https://caldav.icloud.com/",
+            username=icloud_username,
+            password=icloud_password
+        )
+        logger.debug("CalDav client initialized")
+        return client
+    # Running as async not blocking the main thread
+    return await asyncio.to_thread(_get_caldav_client)
