@@ -5,7 +5,7 @@ from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 class UserCalDavEvent(Base):
-    __tablename__ = "user_caldav_events"
+    __tablename__ = "caldav_events"
     id: Mapped[str] = mapped_column(String, primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     caldav_event_id: Mapped[str] = mapped_column(String, unique=True)
