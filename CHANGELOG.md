@@ -1,4 +1,4 @@
-# 📜 Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -25,6 +25,46 @@ and adheres to [Semantic Versioning](https://semver.org/)
 ### Known Issue
 
 - Anything still broken or limitations users should know -->
+## 1.15.3 - 2025-10-17
+Minor patches and fixes.
+
+### Added
+
+- Rewrote CalDAV integration class to use `asyncio.to_thread` and fixed an error when creating new events.
+- Added an Alembic migration to create the new table introduced in recent commits.
+
+### Changed
+
+- Applied migrations and updated database schema accordingly.
+
+### Fixed
+
+- Miscellaneous minor patches and fixes across the codebase.
+
+### Notes
+
+- Version in `server/app/version.py` was intentionally not changed here.
+
+## [Unreleased] - 2025-10-17
+Minor patches and fixes.
+
+### Added
+
+- Rewrote CalDAV integration class to use `asyncio.to_thread` and fixed an error when creating new events.
+- Added an Alembic migration to create the new table introduced in recent commits.
+
+### Changed
+
+- Applied migrations and updated database schema accordingly.
+
+### Fixed
+
+- Miscellaneous minor patches and fixes across the codebase.
+
+### Notes
+
+- Version in `server/app/version.py` was intentionally not changed here.
+
 
 ## v1.15.2 - 2025-10-08
 
@@ -96,27 +136,27 @@ and adheres to [Semantic Versioning](https://semver.org/)
 ### Technical Details
 
 - **CalDAV ORM Usage Examples**:
-  ```python
-  # Initialize ORM
-  orm = CalDavORM(client)
-  
-  # Create event
-  event = CalDavEventData(
-      title="Meeting",
-      start=datetime(2025,10,7,15,0, tzinfo=UTC),
-      end=datetime(2025,10,7,16,0, tzinfo=UTC),
-      rrule={"FREQ":"DAILY", "COUNT":"5"}
-  )
-  uid = await orm.create_event(calendar, event)
-  
-  # Get events with filters
-  events = await orm.get_events(
-      calendar, 
-      start=datetime.now(UTC),
-      end=datetime.now(UTC) + timedelta(days=30),
-      filters={"keywords": "meeting", "status": "needs-action"}
-  )
-  ```
+```text
+# Initialize ORM
+orm = CalDavORM(client)
+
+# Create event
+event = CalDavEventData(
+    title="Meeting",
+    start=datetime(2025,10,7,15,0, tzinfo=UTC),
+    end=datetime(2025,10,7,16,0, tzinfo=UTC),
+    rrule={"FREQ":"DAILY", "COUNT":"5"}
+)
+uid = await orm.create_event(calendar, event)
+
+# Get events with filters
+events = await orm.get_events(
+    calendar, 
+    start=datetime.now(UTC),
+    end=datetime.now(UTC) + timedelta(days=30),
+    filters={"keywords": "meeting", "status": "needs-action"}
+)
+```
 
 ## v1.15.0 - 2025-10-06
 
@@ -124,7 +164,7 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - **Loguru Integration**: Replaced Python's standard logging with Loguru for unified, structured logging across the entire codebase
 - **ID Normalization System**: Added `normalize_notion_id()` utility function to ensure all Notion page IDs are stored consistently without dashes
-- **Enhanced Webhook Logging**: Comprehensive emoji-based logging system for easy visual scanning of webhook events
+- **Enhanced Webhook Logging**: Comprehensive logging system for easy visual scanning of webhook events
   - 🔄 = Sync/processing started
   - 📝 = Event info
   - 📡 = API call
@@ -176,10 +216,10 @@ and adheres to [Semantic Versioning](https://semver.org/)
 ### Improved
 
 - **Developer Experience**:
-  - Logs now clearly show whether tasks are being created (➕) or updated (♻️)
+  - Logs now clearly show whether tasks are being created or updated
   - Both raw and normalized page IDs logged for debugging
   - Step-by-step webhook processing visible in logs
-  - Easier to trace sync flow with emoji indicators
+  - Easier to trace sync flow with clear indicators
 - **Code Quality**:
   - Removed deprecated `datetime.utcnow()` calls (now using `datetime.now(UTC)`)
   - Better type hints for CRUD functions
@@ -369,7 +409,7 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 ## v1.2.0 - 2025-08-05
 
-### 🔄hanged
+### Changed
 
 - Now **access token** updating in backend
 
