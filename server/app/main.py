@@ -4,6 +4,9 @@ import sys
 import logging
 from loguru import logger
 
+from server.services.scheduler.scheduler_service import shutdown_scheduler, start_scheduler
+
+
 # === 🔧 Intercept standard logging and redirect to Loguru ===
 class InterceptHandler(logging.Handler):
     """Intercept standard logging messages and redirect them to Loguru."""
@@ -63,6 +66,7 @@ from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.services.postgres_trigger import listen_to_postgres
+from server.services.caldav.user_calendars import sync_user_calendars
 
 # Creating Main App
 app = FastAPI()
@@ -112,12 +116,11 @@ admin.add_view(UserAdmin)
 @app.on_event("startup")
 def on_startup():
     asyncio.create_task(listen_to_postgres("notion_tasks_channel"))
-    # start_scheduler()
+    start_scheduler()
 
 @app.on_event("shutdown")
 def on_shutdown():
-    # shutdown_scheduler()
-    pass
+    shutdown_scheduler()
 
 
 @app.on_event("startup")

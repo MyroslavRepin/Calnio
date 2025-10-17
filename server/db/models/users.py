@@ -29,3 +29,8 @@ class User(Base):
         "UserNotionTask", back_populates="user", uselist=False, lazy="selectin")
 
     active_sync: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    # calendars = relationship(
+    #     "UserCalendar", back_populates="user", uselist=True, lazy="selectin")
+    # caldav_events = relationship(
+    #     "UserCalDavEvent", back_populates="user", uselist=True, lazy="

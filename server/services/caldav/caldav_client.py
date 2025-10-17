@@ -29,7 +29,6 @@ async def get_caldav_client(user_id):
         A configured DAVClient instance authenticated for the
         specified user's iCloud account.
     """
-    # TODO: realize db search and get data for auth
     async with async_get_db_cm() as db:
         stmt = select(User).where(User.id == user_id)
         result = await db.execute(stmt)
