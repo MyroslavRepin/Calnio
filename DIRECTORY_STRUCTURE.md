@@ -1,13 +1,4 @@
 Calnio/
-├── backend/
-│   └── app/
-│       └── tools/
-│           ├── caldav/
-│           │   ├── __init__.py
-│           │   ├── models.py
-│           │   ├── orm.py
-│           │   └── README.md
-│           └── __init__.py
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -55,7 +46,9 @@ Calnio/
 │   ├── alembic/
 │   │   ├── versions/
 │   │   │   ├── 4192080716ba_add_calendars_table.py
-│   │   │   └── 868c1b1fb071_init_fresh_migration.py
+│   │   │   ├── 868c1b1fb071_init_fresh_migration.py
+│   │   │   ├── d93d7ae96ef5_auto_generated_migration.py
+│   │   │   └── fed31d6be9ea_auto_generated_migration.py
 │   │   ├── __init__.py
 │   │   ├── env.py
 │   │   ├── README
@@ -126,9 +119,10 @@ Calnio/
 │   │   ├── caldav/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_client.py
-│   │   │   ├── caldav_fetch.py
 │   │   │   ├── caldav_orm.py
-│   │   │   └── playground.py
+│   │   │   ├── playground.py
+│   │   │   ├── user_calendars.py
+│   │   │   └── user_events.py
 │   │   ├── crud/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py

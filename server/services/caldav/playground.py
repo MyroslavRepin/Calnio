@@ -17,6 +17,8 @@ if __name__ == "__main__":
 
 from server.services.caldav.caldav_orm import CalDavORM
 from server.utils.utils import extract_uid
+from server.services.caldav.user_calendars import sync_user_calendars
+from server.services.caldav.user_events import sync_user_events
 
 
 async def main():
@@ -25,14 +27,16 @@ async def main():
 
     calendar = await orm.Calendar.get_by_name("Personal")
 
-    await orm.Event.create(
-        calendar_uid=extract_uid(calendar.id),
-        title="Test event",
-        description="Test description",
-        location="11324 91st",
-        start=datetime.now(timezone.utc),
-        end=datetime.now(timezone.utc) + timedelta(hours=1),
-    )
+    # await orm.Event.create(
+    #     calendar_uid=extract_uid(calendar.id),
+    #     title="Test event",
+    #     description="Test description",
+    #     location="11324 91st",
+    #     start=datetime.now(timezone.utc),
+    #     end=datetime.now(timezone.utc) + timedelta(hours=1),
+    # )
+    # await sync_user_calendars()
+    await sync_user_events()
 
 if __name__ == "__main__":
     asyncio.run(main())
