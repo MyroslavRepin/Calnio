@@ -6,7 +6,7 @@ from server.db.models import User
 from server.db.models.tasks import UserNotionTask
 from server.db.redis_client import get_redis
 from server.integrations.notion.notion_client import get_notion_client
-from server.services.crud.tasks import delete_pages_by_ids, add_tasks_to_db, update_pages_by_ids
+from server.services.crud.tasks import delete_pages_by_ids, add_tasks_to_db, update_pages_by_ids, delete_task
 from server.utils.notion.utils import get_all_ids
 from server.utils.decorators import timer
 from server.utils.redis.utils import get_webhook_data
@@ -75,6 +75,13 @@ async def db_to_notion_sync(db: AsyncSession, user_id):
             page_id = getattr(task, "notion_page_id", None) or getattr(task, "page_id", None)
 
             if page_id:
+
+                page_info = await notion.pages.retrieve(page_id=page_id)
+                if page_info.get("archived", False):
+                    logger.info(f"Page {page_id} is archived; deleting task_id={task.id} from DB")
+                    await delete_task(db, page_id=task.id, user_id=user_id)  # функция удаления из БД
+                    continue
+
                 # Update existing Notion page (PATCH)
                 await notion.pages.update(page_id=page_id, properties=properties)
             else:
