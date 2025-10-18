@@ -26,11 +26,11 @@ class User(Base):
         "UserNotionIntegration", back_populates="user", uselist=False, lazy="selectin")
 
     notion_tasks = relationship(
-        "UserNotionTask", back_populates="user", uselist=False, lazy="selectin")
+        "UserNotionTask", back_populates="user", lazy="selectin")
 
     active_sync: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # calendars = relationship(
     #     "UserCalendar", back_populates="user", uselist=True, lazy="selectin")
-    # caldav_events = relationship(
-    #     "UserCalDavEvent", back_populates="user", uselist=True, lazy="
+    caldav_events = relationship(
+        "CalDavEvent", back_populates="user", lazy="selectin")

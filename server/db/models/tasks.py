@@ -31,7 +31,7 @@ class UserNotionTask(Base):
     )
 
     # Связь с пользователем
-    user: Mapped["User"] = relationship(back_populates="notion_tasks")
+    user: Mapped["User"] = relationship("User", back_populates="notion_tasks")
 
     sync_source: Mapped[str] = mapped_column(String)
     last_synced_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())

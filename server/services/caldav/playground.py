@@ -27,16 +27,18 @@ async def main():
 
     calendar = await orm.Calendar.get_by_name("Personal")
 
-    # await orm.Event.create(
-    #     calendar_uid=extract_uid(calendar.id),
-    #     title="Test event",
-    #     description="Test description",
-    #     location="11324 91st",
-    #     start=datetime.now(timezone.utc),
-    #     end=datetime.now(timezone.utc) + timedelta(hours=1),
-    # )
+    await orm.Event.create(
+        calendar_uid=extract_uid(calendar.id),
+        title="Test event",
+        description="Test description",
+        location="11324 91st",
+        start=datetime.now(timezone.utc),
+        end=datetime.now(timezone.utc) + timedelta(hours=1),
+    )
     # await sync_user_calendars()
-    await sync_user_events()
+    # await sync_user_events()
+    caledar_uid = extract_uid(calendar.id)
+    await orm.Event.save_from_caldav(calendar_uid=caledar_uid, user_id=7)
 
 if __name__ == "__main__":
     asyncio.run(main())

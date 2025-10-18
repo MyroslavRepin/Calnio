@@ -1,10 +1,15 @@
 import asyncio
 import datetime
 from uuid import uuid4
+from types import SimpleNamespace
 
 from aiocaldav import Calendar as AIOCalendar
 from caldav import Calendar
+from icalendar import Calendar as ICalCalendar
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from server.db.deps import async_get_db_cm
+from server.db.models.caldav_events import CalDavEvent
 from server.utils.utils import extract_uid
 from server.app.core.logging_config import logger
 
@@ -299,11 +304,62 @@ class CalDavORM:
             return await asyncio.to_thread(_get_event, uid=uid)
 
         async def all(self, calendar_uid: str):
-            """Получить все события из календаря"""
+            """Get all events from a CalDAV calendar, returning simple objects."""
             client = self.orm.client
             if not client:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
-            pass
+
+            calendar = await self.orm.Calendar.get(uid=calendar_uid)
+            if not calendar:
+                raise ValueError(f"Calendar with UID {calendar_uid} not found.")
+
+            def _get_all_events(calendar):
+                result = []
+
+                try:
+                    raw_events = calendar.events()
+                except Exception:
+                    try:
+                        raw_events = calendar.get_events()
+                    except Exception:
+                        raw_events = []
+
+                for ev in raw_events:
+                    try:
+                        # get ICS data
+                        ics = getattr(ev, "data", None) or getattr(ev, "instance", None)
+                        if ics and hasattr(ics, "to_ical"):
+                            ics = ics.to_ical()
+                        if isinstance(ics, bytes):
+                            ics = ics.decode("utf-8", errors="ignore")
+                        if not ics:
+                            continue
+
+                        cal = ICalCalendar.from_ical(ics)
+                        for comp in cal.walk():
+                            if comp.name == "VEVENT":
+                                uid = str(comp.get("uid"))
+                                url = getattr(ev, "url", None) or getattr(ev, "href", None)
+                                title = str(comp.get("summary")) if comp.get("summary") else None
+                                start = comp.get("dtstart").dt if comp.get("dtstart") else None
+                                end = comp.get("dtend").dt if comp.get("dtend") else None
+                                description = str(comp.get("description")) if comp.get("description") else None
+
+                                result.append(SimpleNamespace(
+                                    uid=uid,
+                                    url=url,
+                                    title=title,
+                                    start=start,
+                                    end=end,
+                                    description=description,
+                                    raw=ev,
+                                ))
+                                break
+                    except Exception:
+                        continue
+                return result
+
+            return await asyncio.to_thread(_get_all_events, calendar)
 
         # --- UPDATE ---
         async def update(self, uid: str, **kwargs):
@@ -320,3 +376,50 @@ class CalDavORM:
             if not client:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
             pass
+
+        # --- SAVE EVENTS TO DB ---
+
+        async def save_from_caldav(self, calendar_uid: str, user_id):
+            """Save events from CalDAV to the database."""
+            client = self.orm.client
+            if not client:
+                logger.error("Client not authenticated. Call orm.authenticate() first.")
+                raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
+
+            calendar = await self.orm.Calendar.get(uid=calendar_uid)
+            if not calendar:
+                logger.warning(f"Calendar with UID {calendar_uid} not found.")
+                raise ValueError(f"Calendar with UID {calendar_uid} not found.")
+            try:
+                events = await self.orm.Event.all(calendar_uid)
+            except Exception as e:
+                logger.warning(f"Failed to get events from CalDAV: {e}")
+                return
+            try:
+                for event in events:
+                    # TODO: Here I need to parse the event and save it to the database
+                    try:
+                        uid = event.uid
+                        url = event.url
+                        title = event.title
+                        start = event.start
+                        end = event.end
+                        description = event.description
+
+                        logger.info(f"{title}")
+                    except Exception as e:
+                        logger.warning(f"Failed to parse event: {e}")
+                        continue
+
+                    await CalDavEvent.create(
+                        user_id=user_id,
+                        caldav_uid=uid,
+                        title=title,
+                        description=description,
+                        start_date=start,
+                        end_date=end,
+                        last_modified_source="caldav"
+                    )
+
+            except Exception as e:
+                logger.warning(f"Failed to get events: {e}")
