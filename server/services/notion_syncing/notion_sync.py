@@ -6,7 +6,7 @@ from server.db.models import User
 from server.db.models.tasks import UserNotionTask
 from server.db.redis_client import get_redis
 from server.integrations.notion.notion_client import get_notion_client
-from server.services.crud.tasks import delete_pages_by_ids, add_tasks_to_db, update_pages_by_ids
+from server.db.repositories.notion_tasks import NotionTaskRepository
 from server.utils.notion.utils import get_all_ids
 from server.utils.decorators import timer
 from server.utils.redis.utils import get_webhook_data
@@ -19,12 +19,14 @@ from sqlalchemy.orm import selectinload
 
 
 async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id: int):
-    added = await add_tasks_to_db(db, notion=notion, user_id=user_id, last_modified_source="notion", sync_source="background")
 
     # Check if active_sync is still True
 
     # AsyncSession made out of HTTP
     async with async_get_db_cm() as db:
+        Task = NotionTaskRepository(db=db)
+        added = await Task.add_tasks_to_db(notion=notion, user_id=user_id, last_modified_source="notion", sync_source="background")
+
         stmt = select(User.active_sync).where(User.id == user_id)
         result = await db.execute(stmt)
         active_sync = result.scalars().first()
@@ -36,8 +38,8 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
 
 
     current_notion_pages = await get_all_ids(notion=notion)
-    deleted = await delete_pages_by_ids(db, notion, user_id, current_notion_pages)
-    updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages, sync_source="background", last_modified_source="notion")
+    deleted = await Task.delete_pages_by_ids(notion, user_id, current_notion_pages)
+    updated = await Task.update_pages_by_ids(notion, user_id, current_notion_pages, sync_source="background", last_modified_source="notion")
     logger.info(f"Background sync finished for user_id={user_id}")
 
     return {

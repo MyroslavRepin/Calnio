@@ -38,3 +38,4 @@ class UserNotionTask(Base):
     caldav_uid: Mapped[str] = mapped_column(String)
     has_conflict: Mapped[Boolean] = mapped_column(Boolean, default=False)
     last_modified_source: Mapped[str] = mapped_column(String)
+

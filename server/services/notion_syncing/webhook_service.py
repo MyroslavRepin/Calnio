@@ -5,7 +5,7 @@ from server.integrations.notion.notion_client import get_notion_client
 from server.utils.notion.utils import to_utc_datetime, normalize_notion_id
 from server.utils.redis.utils import get_webhook_data
 from server.db.redis_client import get_redis
-from server.services.crud.tasks import create_task, delete_task
+from server.db.repositories.notion_tasks import NotionTaskRepository
 from server.app.core.logging_config import logger
 
 from sqlalchemy import select
@@ -28,6 +28,8 @@ async def sync_webhook_data():
     logger.debug(f"   Page ID (normalized): {page_id}")
 
     async with async_get_db_cm() as db:
+        Task = NotionTaskRepository(db=db)
+
         stmt = select(User).where(User.id == user_id)
         result = await db.execute(stmt)
         user = result.scalars().first()
@@ -37,9 +39,9 @@ async def sync_webhook_data():
             return {"error": f"User {user_id} not found"}
 
         # Handle page deletion - don't fetch page data from Notion
-        if event_type == "page.deleted":
+        if event_type == "page.deleted" or event_type == "page.archived":
             logger.info(f"Processing deletion for page_id: {page_id}")
-            deleted = await delete_task(db=db, user_id=user_id, page_id=page_id)
+            deleted = await Task.delete(user_id=user_id, page_id=page_id)
             if deleted:
                 logger.info(f"Task deleted successfully")
             else:
@@ -62,8 +64,7 @@ async def sync_webhook_data():
 
                 # create_task handles both create and update (upsert)
                 # Use normalized page_id without dashes for database
-                task = await create_task(
-                    db=db,
+                task = await Task.create(
                     user_id=user_id,
                     title=notion_page.title,
                     notion_page_id=page_id,
