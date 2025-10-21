@@ -38,6 +38,8 @@ async def main():
     # await sync_user_calendars()
     # await sync_user_events()
     caledar_uid = extract_uid(calendar.id)
+    # This code should save all events from the calendar to the database
+    # The problem that it syncs from db to CalDav too, with duplicates too
     await orm.Event.save_from_caldav(calendar_uid=caledar_uid, user_id=7)
 
 if __name__ == "__main__":

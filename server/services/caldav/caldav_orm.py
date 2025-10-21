@@ -397,7 +397,6 @@ class CalDavORM:
                 return
             try:
                 for event in events:
-                    # TODO: Here I need to parse the event and save it to the database
                     try:
                         uid = event.uid
                         url = event.url
@@ -411,6 +410,7 @@ class CalDavORM:
                         logger.warning(f"Failed to parse event: {e}")
                         continue
 
+                    # TODO: Here I need to saved parsed data to the database
                     await CalDavEvent.create(
                         user_id=user_id,
                         caldav_uid=uid,
