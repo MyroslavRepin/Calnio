@@ -72,3 +72,6 @@ def ensure_datetime_with_tz(dt):
                 logger.debug("Fallback: assigned UTC tzinfo to datetime: %s", dt)
 
     return dt
+
+def is_timezone_aware(dt):
+    return dt is not None and dt.tzinfo is not None and dt.tzinfo.utcoffset(dt) is not None

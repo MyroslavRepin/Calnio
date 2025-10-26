@@ -7,7 +7,7 @@ from server.db.models import UserNotionTask
 from server.db.models.enums import SyncStatus
 from server.db.repositories.caldav_events import CaldavEventsRepository
 from server.services.caldav.caldav_orm import CalDavORM
-from server.utils.utils import extract_uid, ensure_datetime_with_tz
+from server.utils.utils import extract_uid, ensure_datetime_with_tz, is_timezone_aware
 from server.db.repositories.notion_tasks import NotionTaskRepository
 from server.db.models.caldav_events import CalDavEvent
 from server.app.core.logging_config import logger
@@ -83,14 +83,6 @@ class SyncService:
                 parsed_data = await self.repo.parse_ical_full(event_raw)
                 title = parsed_data[0]["title"]
 
-                # Normalize last_modified (fall back to created) and
-                # convert to a timezone-aware datetime (UTC) using the
-                # project's helper. This avoids mixing naive and aware
-                # datetimes which raises "can't subtract offset-naive and
-                # offset-aware datetimes" during comparisons or DB binding.
-                raw_last_modified = parsed_data[0].get("last_modified") or parsed_data[0].get("created")
-                last_modified_caldav = ensure_datetime_with_tz(raw_last_modified)
-
                 # ==================================================
                 # === last_modified_caldav is now either None or an ===
                 # === aware datetime in UTC                        ===
@@ -114,6 +106,8 @@ class SyncService:
                 new_notion_id = str(uuid.uuid4())
 
                 # TODO: Put this code into function
+                logger.debug(f"Is datetime aware: {is_timezone_aware(last_modified_caldav)}")
+                logger.debug(f"Is datetime aware: {is_timezone_aware(existing_caldav_event.updated_at)}")
 
                 # At this point we have last_modified_caldav as either
                 # None or an aware datetime in UTC. Continue processing.
@@ -156,8 +150,11 @@ class SyncService:
                     db.add(new_event_notion)
                     await db.commit()
 
-                # Getting last modified time from notion_tasks (if present)
+                # Getting last modified time from notion_tasks and CalDav
                 notion_updated_at = None
+                raw_last_modified = parsed_data[0].get("last_modified") or parsed_data[0].get("created")
+                last_modified_caldav = ensure_datetime_with_tz(raw_last_modified)
+
                 if existing_notion_event:
                     notion_updated_at = ensure_datetime_with_tz(existing_notion_event.updated_at)
                     if notion_updated_at is None:
