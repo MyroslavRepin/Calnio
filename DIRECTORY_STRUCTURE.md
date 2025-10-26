@@ -52,6 +52,7 @@ Calnio/
 │   │   │   ├── 868c1b1fb071_init_fresh_migration.py
 │   │   │   ├── b9853889096e_add_new_collumn.py
 │   │   │   ├── d93d7ae96ef5_auto_generated_migration.py
+│   │   │   ├── dc86913f74d2_add_timezone_to_caldavevents_datetimes.py
 │   │   │   └── fed31d6be9ea_auto_generated_migration.py
 │   │   ├── __init__.py
 │   │   ├── env.py

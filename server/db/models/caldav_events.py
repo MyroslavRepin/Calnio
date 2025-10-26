@@ -1,4 +1,5 @@
 import uuid
+from time import timezone
 
 from server.db.database import Base
 from datetime import datetime
@@ -20,8 +21,8 @@ class CalDavEvent(Base):
     caldav_uid: Mapped[str] = mapped_column(String, unique=True)
     caldav_url: Mapped[str] = mapped_column(String, unique=True)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
     user: Mapped["User"] = relationship("User", back_populates="caldav_events", lazy="selectin")
 
     start_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
