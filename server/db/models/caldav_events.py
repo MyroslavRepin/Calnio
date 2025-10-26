@@ -3,13 +3,14 @@ import uuid
 from server.db.database import Base
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func
+from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func, Enum
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
 
 
 from server.db.deps import async_get_db_cm
 from server.app.core.logging_config import logger
+from server.db.models.enums import SyncStatus
 
 
 class CalDavEvent(Base):
@@ -17,6 +18,7 @@ class CalDavEvent(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     caldav_uid: Mapped[str] = mapped_column(String, unique=True)
+    caldav_url: Mapped[str] = mapped_column(String, unique=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
@@ -35,6 +37,12 @@ class CalDavEvent(Base):
     sync_source: Mapped[str] = mapped_column(String)
 
     last_synced_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    sync_status: Mapped[SyncStatus] = mapped_column(
+        Enum(SyncStatus),
+        default=SyncStatus.pending,
+        nullable=False
+    )
 
     @classmethod
     async def create(cls, user_id, caldav_uid, title, description, start_date, end_date, synced=False, has_conflict=False, last_modified_source="caldav"):
