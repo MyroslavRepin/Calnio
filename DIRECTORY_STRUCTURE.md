@@ -45,8 +45,12 @@ Calnio/
 ├── server/
 │   ├── alembic/
 │   │   ├── versions/
+│   │   │   ├── 040918af799d_rename_column.py
+│   │   │   ├── 0dcff28cb147_change_column_type.py
+│   │   │   ├── 19fc4fe2811f_change_column_type.py
 │   │   │   ├── 4192080716ba_add_calendars_table.py
 │   │   │   ├── 868c1b1fb071_init_fresh_migration.py
+│   │   │   ├── b9853889096e_add_new_collumn.py
 │   │   │   ├── d93d7ae96ef5_auto_generated_migration.py
 │   │   │   └── fed31d6be9ea_auto_generated_migration.py
 │   │   ├── __init__.py
@@ -86,10 +90,12 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
 │   │   │   ├── calendars.py
+│   │   │   ├── enums.py
 │   │   │   ├── notion_integration.py
 │   │   │   ├── tasks.py
 │   │   │   └── users.py
 │   │   ├── repositories/
+│   │   │   ├── caldav_events.py
 │   │   │   ├── notion_tasks.py
 │   │   │   └── user.py
 │   │   ├── tools/
@@ -139,6 +145,8 @@ Calnio/
 │   │   ├── scheduler/
 │   │   │   ├── __init__.py
 │   │   │   └── scheduler_service.py
+│   │   ├── sync/
+│   │   │   └── sync_manager.py
 │   │   ├── __init__.py
 │   │   └── postgres_trigger.py
 │   ├── utils/

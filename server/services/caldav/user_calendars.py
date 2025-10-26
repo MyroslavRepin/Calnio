@@ -29,12 +29,11 @@ async def sync_user_calendars():
             calendars = await orm.Calendar.all()
 
             for cal in calendars:
-                existing = await db.execute(
-                    select(Calendar).where(
+                stmt = select(Calendar).where(
                         Calendar.user_id == user.id,
-                        Calendar.uid == extract_uid(str(cal["uid"]))  # или cal.uid, зависит от твоего CalDavORM
+                        Calendar.uid == extract_uid(str(cal["url"]))
                     )
-                )
+                existing = await db.execute(stmt)
                 existing_calendar = existing.scalar_one_or_none()
 
                 if not existing_calendar:

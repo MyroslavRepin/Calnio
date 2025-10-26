@@ -7,6 +7,7 @@ from aiocaldav import Calendar as AIOCalendar
 from caldav import Calendar
 from icalendar import Calendar as ICalCalendar
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.util import await_only
 
 from server.db.deps import async_get_db_cm
 from server.db.models.caldav_events import CalDavEvent
@@ -88,7 +89,7 @@ class CalDavORM:
                 calendars = principal.calendars()
                 calendar = None
                 for calendar in calendars:
-                    print(calendar.name)
+                    # logger.debug(calendar.name)
                     if calendar.name == name:
                         return calendar
 
@@ -116,7 +117,7 @@ class CalDavORM:
             list of dict
                 A list containing dictionaries, each representing a calendar. Every
                 dictionary includes the following keys:
-                    - uid (str): The unique identifier of the calendar, extracted from
+                    - event_uid (str): The unique identifier of the calendar, extracted from
                       the calendar URL.
                     - name (str or None): The name of the calendar, or None if not
                       specified.
@@ -136,7 +137,7 @@ class CalDavORM:
                 for cal in calendars:
                     url = getattr(cal, 'url', None)
                     result.append({
-                        "uid": extract_uid(url),
+                        "event_uid": extract_uid(url),
                         "name": getattr(cal, 'name', None),
                         "url": getattr(cal, 'url', None),
                     })
@@ -267,7 +268,7 @@ class CalDavORM:
                 logger.error("Client not authenticated. Call orm.authenticate() first.")
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
             logger.info(f"Creating event in calendar {calendar_uid}")
-            calendar = await self.orm.Calendar.get(uid=calendar_uid)
+            calendar = await self.orm.Calendar.get(event_uid=calendar_uid)
             if not calendar:
                 raise ValueError(f"Calendar with UID {calendar_uid} not found.")
 
@@ -291,25 +292,81 @@ class CalDavORM:
                 logger.error(f"Failed to create event: {e}")
                 raise e
         # --- READ ---
-        async def get(self, uid: str):
-            """Получить одно событие по UID"""
+        async def get(self, calendar, event_uid: str = None, name: str = None):
+            """Get one event by UID or name. Returns the event object if found, None otherwise."""
+            if not event_uid and not name:
+                logger.error("Provide either event_uid or name")
+                raise ValueError("Provide either event_uid or name")
+
             client = self.orm.client
             if not client:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
-            calendar = await self.orm.Calendar.get(uid=uid)
-            def _get_event(uid):
-                if not calendar:
-                    return None
-                return calendar.get_event(uid)
-            return await asyncio.to_thread(_get_event, uid=uid)
 
-        async def all(self, calendar_uid: str):
+            # calendar = await self.orm.Calendar.get(event_uid=event_uid)
+            if not calendar:
+                logger.info(f"Calendar with UID: {calendar} not found")
+                return None
+
+            # Поиск по UID
+            if event_uid:
+                def _get_event():
+                    try:
+                        events = calendar.events()
+                        for event in events:
+                            try:
+                                uid = extract_uid(event.url)
+                                # logger.debug(f"Checking event UID: {uid}")
+                                if uid == event_uid:
+                                    logger.info(f"Found event by UID: {event_uid} - {event}")
+                                    return event
+                            except Exception as e:
+                                logger.debug(f"Failed to extract UID for {event.url}: {e}")
+                                continue
+                        logger.info(f"No event found with UID: {event_uid} in CalDav")
+                        return None
+                    except Exception as e:
+                        logger.error(f"Error getting event by UID: {e}")
+                        return None
+
+                return await asyncio.to_thread(_get_event)
+
+            # Поиск по имени
+            if name:
+                def _get_event_by_name():
+                    try:
+                        events = calendar.events()
+                        list_events = []
+                        for ev in events:
+                            try:
+                                title = ev.vobject_instance.vevent.summary.value
+                                logger.debug(f"Checking event title: {title}")
+                                if title == name:
+                                    logger.info(f"Found event by name: {title}")
+                                    list_events.append(ev)
+                            except AttributeError:
+                                logger.debug(f"Malformed event skipped: {ev}")
+                                continue
+                        if list_events:
+                            logger.info(f"Total found events with name '{name}': {len(list_events)}")
+                            return list_events
+
+                        logger.info(f"No event found with name: {name}")
+                        return None
+                    except Exception as e:
+                        logger.error(f"Error getting event by name: {e}")
+                        return None
+
+                return await asyncio.to_thread(_get_event_by_name)
+
+
+        async def all(self, calendar_uid: str, calendar_name: str = None):
             """Get all events from a CalDAV calendar, returning simple objects."""
             client = self.orm.client
             if not client:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
 
             calendar = await self.orm.Calendar.get(uid=calendar_uid)
+
             if not calendar:
                 raise ValueError(f"Calendar with UID {calendar_uid} not found.")
 
@@ -338,7 +395,7 @@ class CalDavORM:
                         cal = ICalCalendar.from_ical(ics)
                         for comp in cal.walk():
                             if comp.name == "VEVENT":
-                                uid = str(comp.get("uid"))
+                                uid = str(comp.get("event_uid"))
                                 url = getattr(ev, "url", None) or getattr(ev, "href", None)
                                 title = str(comp.get("summary")) if comp.get("summary") else None
                                 start = comp.get("dtstart").dt if comp.get("dtstart") else None
@@ -386,7 +443,7 @@ class CalDavORM:
                 logger.error("Client not authenticated. Call orm.authenticate() first.")
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
 
-            calendar = await self.orm.Calendar.get(uid=calendar_uid)
+            calendar = await self.orm.Calendar.get(event_uid=calendar_uid)
             if not calendar:
                 logger.warning(f"Calendar with UID {calendar_uid} not found.")
                 raise ValueError(f"Calendar with UID {calendar_uid} not found.")
@@ -423,3 +480,36 @@ class CalDavORM:
 
             except Exception as e:
                 logger.warning(f"Failed to get events: {e}")
+
+            return True
+
+        async def exists(self, calendar, event_uid: str):
+            """
+            Check if an event with the specified UID exists in the calendar.
+            Returns the event object if found, None otherwise.
+            """
+            client = self.orm.client
+            if not client:
+                raise RuntimeError("Client not authenticated.")
+            if calendar is None:
+                return None
+
+            # events = await self.orm.Event.all(calendar_uid=calendar.id)
+            try:
+                ev = await self.orm.Event.get(calendar, event_uid)
+            except Exception as e:
+                logger.error(f"Failed to get event: {e}")
+                return None
+
+            def _get_event_by_uid():
+                try:
+                    if ev:
+                        logger.info(f"Found event by UID: {event_uid}")
+                    else:
+                        logger.info(f"No event found with UID: {event_uid}")
+                    return ev
+                except Exception as e:
+                    logger.error(f"Error getting event by UID: {e}")
+                    return None
+
+            return await asyncio.to_thread(_get_event_by_uid)

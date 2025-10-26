@@ -24,7 +24,7 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
 
     # AsyncSession made out of HTTP
     async with async_get_db_cm() as db:
-        Task = NotionTaskRepository(db=db)
+        Task = NotionTaskRepository()
         added = await Task.add_tasks_to_db(notion=notion, user_id=user_id, last_modified_source="notion", sync_source="background")
 
         stmt = select(User.active_sync).where(User.id == user_id)
