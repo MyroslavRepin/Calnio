@@ -50,6 +50,7 @@ Calnio/
 │   │   │   ├── 19fc4fe2811f_change_column_type.py
 │   │   │   ├── 4192080716ba_add_calendars_table.py
 │   │   │   ├── 868c1b1fb071_init_fresh_migration.py
+│   │   │   ├── a4ab66b804c6_convert_sync_status_to_postgresql_enum.py
 │   │   │   ├── b9853889096e_add_new_collumn.py
 │   │   │   ├── d93d7ae96ef5_auto_generated_migration.py
 │   │   │   ├── dc86913f74d2_add_timezone_to_caldavevents_datetimes.py
