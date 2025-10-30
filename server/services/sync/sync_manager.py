@@ -106,8 +106,6 @@ class SyncService:
                 new_notion_id = str(uuid.uuid4())
 
                 # TODO: Put this code into function
-                logger.debug(f"Is datetime aware: {is_timezone_aware(last_modified_caldav)}")
-                logger.debug(f"Is datetime aware: {is_timezone_aware(existing_caldav_event.updated_at)}")
 
                 # At this point we have last_modified_caldav as either
                 # None or an aware datetime in UTC. Continue processing.
