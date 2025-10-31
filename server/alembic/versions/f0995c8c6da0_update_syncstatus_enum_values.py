@@ -21,7 +21,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema - update syncstatus enum from ('pending','done','failed') to ('pending','success','failed')."""
-    
+    op.execute("ALTER TABLE notion_tasks ALTER COLUMN sync_status DROP DEFAULT;")
+    op.execute("ALTER TABLE caldav_events ALTER COLUMN sync_status DROP DEFAULT;")
     # Step 1: Rename old enum type
     op.execute("ALTER TYPE syncstatus RENAME TO syncstatus_old")
     
