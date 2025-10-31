@@ -1,4 +1,7 @@
 Calnio/
+├── docs/
+│   ├── EXAMPLE_TRIGGERS_WITH_ENUM.py
+│   └── POSTGRESQL_ENUM_GUIDE.md
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -46,14 +49,18 @@ Calnio/
 │   ├── alembic/
 │   │   ├── versions/
 │   │   │   ├── 040918af799d_rename_column.py
+│   │   │   ├── 086698cdd088_drop_default_values_from_string_to_enum.py
 │   │   │   ├── 0dcff28cb147_change_column_type.py
 │   │   │   ├── 19fc4fe2811f_change_column_type.py
+│   │   │   ├── 346bc90683e4_merge_heads_after_branch_merge.py
 │   │   │   ├── 4192080716ba_add_calendars_table.py
+│   │   │   ├── 589f8fa06ba0_update_syncstatus_to_enum_manually.py
 │   │   │   ├── 868c1b1fb071_init_fresh_migration.py
 │   │   │   ├── a4ab66b804c6_convert_sync_status_to_postgresql_enum.py
 │   │   │   ├── b9853889096e_add_new_collumn.py
 │   │   │   ├── d93d7ae96ef5_auto_generated_migration.py
 │   │   │   ├── dc86913f74d2_add_timezone_to_caldavevents_datetimes.py
+│   │   │   ├── f0995c8c6da0_update_syncstatus_enum_values.py
 │   │   │   └── fed31d6be9ea_auto_generated_migration.py
 │   │   ├── __init__.py
 │   │   ├── env.py
@@ -180,4 +187,6 @@ Calnio/
 ├── redis_test.py
 ├── requirements.txt
 ├── robots.txt
-└── START_SERVER.sh
+├── START_SERVER.sh
+├── SYNCSTATUS_ENUM_FIX.md
+└── verify_enum_fix.py
