@@ -62,14 +62,21 @@ async def main():
 
 
     # await sync_service.sync_db_to_caldav()
-    # async with async_get_db_cm() as db:
-    #     # await sync_service.sync_caldav_to_db(user_id=7, calendar_name="Personal", db=db)
-    #     await sync_service.sync_db_to_caldav()
-    event_uid =  "70b22548ef8544f88d84f33f47f3cc33".lower()
-    logger.info(event_uid)
-    event = await orm.Event.get(calendar=calendar, event_uid=event_uid)
-    logger.info(event)
-    # event = await orm.Event.get(name="Specific test event", calendar=calendar)
-    # logger.info(event)
+    async with async_get_db_cm() as db:
+        await sync_service.sync_caldav_to_db(user_id=7, calendar_name="Personal", db=db)
+        # await sync_service.sync_db_to_caldav()
+
+    # event_uid =  "70b22548ef8544f88d84f33f47f3cc33".lower()
+    # logger.info(event_uid)
+    # events = await orm.Event.all(calendar_uid=extract_uid(calendar.id))
+    # for event in events:
+    #     logger.info(extract_uid(event.url))
+    # # logger.info(events)
+    # # event = await orm.Event.get(name="Specific test event", calendar=calendar)
+    # # logger.info(event)
+    # event_uid = "e5e1df7d-fea0-41c4-abad-7aa28c8c1aff.ics"
+    # event = await orm.Event.get(event_uid=event_uid, calendar=calendar)
+    # logger.info(f"Event by id: {event}")
+
 if __name__ == "__main__":
     asyncio.run(main())

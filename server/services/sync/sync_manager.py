@@ -87,7 +87,7 @@ class SyncService:
             # === aware datetime in UTC                        ===
             # ==================================================
             event_uid = extract_uid(event.url)
-            logger.info(f"Syncing event '{event.title}' (UID: {event_uid}) for user ID: {user_id}")
+            # logger.info(f"Syncing event '{event.title}' (UID: {event_uid}) for user ID: {user_id}")
 
             # Here I have to add a record to notion_tasks db with sync_status=pending
             stmt = select(CalDavEvent).where(
@@ -131,8 +131,8 @@ class SyncService:
                     description=event.description,
                     start_date=ensure_datetime_with_tz(event.start),
                     end_date=ensure_datetime_with_tz(event.end),
-                    notion_page_id="", # I can't provide notion id because this record not in Notion yet
-                    notion_url="", # Same for url
+                    notion_page_id=None, # I can't provide notion id because this record not in Notion yet
+                    notion_url=None, # Same for url
                     status=None,
                     priority=None,
                     select_option=None,
@@ -147,10 +147,19 @@ class SyncService:
                 db.add(new_event_notion)
                 await db.commit()
 
-            # Getting last modified time from notion_tasks and CalDav
+            # ! Getting last modified time from notion_tasks and CalDav
             notion_updated_at = None
             raw_last_modified = parsed_data[0].get("last_modified") or parsed_data[0].get("created")
             last_modified_caldav = ensure_datetime_with_tz(raw_last_modified)
+
+            logger.debug(
+                "debug sync: existing_caldav_event=%s, existing_notion_event=%s, "
+                "last_modified_caldav=%s (%s), notion_updated_at=%s (%s), event_uid=%s",
+                bool(existing_caldav_event), bool(existing_notion_event),
+                last_modified_caldav, type(last_modified_caldav),
+                notion_updated_at, type(notion_updated_at),
+                event_uid,
+            )
 
             if existing_notion_event:
                 notion_updated_at = ensure_datetime_with_tz(existing_notion_event.updated_at)
@@ -159,20 +168,19 @@ class SyncService:
 
             logger.debug(
                 f"Last modified - CalDav: {last_modified_caldav} - Notion: {notion_updated_at}")
-            logger.debug(
-                f"Date Type - CalDav: {type(last_modified_caldav)} - Notion: {type(notion_updated_at)}")
 
             # Updating existing data in notion_tasks and caldav_events
             # Fixme: Some of datetime fields are with timezone, some without
             if existing_caldav_event and existing_notion_event and last_modified_caldav and notion_updated_at:
                 if last_modified_caldav > notion_updated_at:
-                    # =====================
-                    # CalDAV свежее — обновляем Notion
-                    # =====================
+                    logger.warning("Sync from Caldav to Notion")
+                    # # =====================
+                    # # CalDAV свежее — обновляем Notion
+                    # # =====================
                     logger.info(
                         f"[CalDAV→Notion] '{event.title}' (UID: {event_uid})")
 
-                    # Notion обновление
+                    # Notion update
                     existing_notion_event.title = event.title
                     existing_notion_event.description = event.description
                     existing_notion_event.start_date = ensure_datetime_with_tz(event.start)
@@ -182,17 +190,16 @@ class SyncService:
                     existing_notion_event.last_modified_source = "caldav"
                     existing_notion_event.updated_at = ensure_datetime_with_tz(last_modified_caldav)
 
-                    # CalDAV небольшое обновление — пометки о синхронизации
+                    # Update CalDAV
                     existing_caldav_event.sync_source = "caldav"
                     existing_caldav_event.last_modified_source = "caldav"
-                    # обновляем только поля, которые реально поменялись, если нужно:
                     existing_caldav_event.title = event.title
                     existing_caldav_event.description = event.description
                     existing_caldav_event.start_time = ensure_datetime_with_tz(event.start)
                     existing_caldav_event.end_time = ensure_datetime_with_tz(event.end)
                     existing_caldav_event.caldav_url = str(event.url)
-                    # Не трогаем updated_at, чтобы оно оставалось последним временем изменения
                     await db.commit()
+                # Todo: This peace of code should be in function: sync_db_to_caldav
                 elif notion_updated_at > last_modified_caldav:
                     # =====================
                     # Notion свежее — обновляем CalDAV
@@ -213,6 +220,7 @@ class SyncService:
                     existing_notion_event.sync_status = SyncStatus.pending
                     existing_notion_event.last_modified_source = "notion"
                     await db.commit()
+
             else:
                 # If we don't have both timestamps or both records, log and skip
                 logger.debug(
