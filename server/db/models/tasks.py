@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import Optional
 from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import ENUM as PGEnum
 
 from server.db.models.enums import SyncStatus
-from sqlalchemy import Enum
 
 
 class UserNotionTask(Base):
@@ -45,7 +45,7 @@ class UserNotionTask(Base):
 
 
     sync_status: Mapped[SyncStatus] = mapped_column(
-        Enum(SyncStatus),
+        PGEnum(SyncStatus, name='syncstatus', native_enum=True),
         default=SyncStatus.pending,
         nullable=False
     )
