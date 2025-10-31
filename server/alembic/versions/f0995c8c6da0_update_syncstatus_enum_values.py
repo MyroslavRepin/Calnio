@@ -29,24 +29,29 @@ def upgrade() -> None:
     op.execute("CREATE TYPE syncstatus AS ENUM ('pending', 'success', 'failed')")
     
     # Step 3: Update notion_tasks.sync_status column to use new type
-    # Map 'done' -> 'success' during migration
+    # Map existing values: 'done' -> 'success', everything else stays the same
+    # Note: The database enum was ('pending', 'done', 'failed') so we map 'done' -> 'success'
     op.execute("""
         ALTER TABLE notion_tasks 
         ALTER COLUMN sync_status TYPE syncstatus 
         USING CASE 
             WHEN sync_status::text = 'done' THEN 'success'::syncstatus
-            ELSE sync_status::text::syncstatus
+            WHEN sync_status::text = 'pending' THEN 'pending'::syncstatus
+            WHEN sync_status::text = 'failed' THEN 'failed'::syncstatus
+            ELSE 'pending'::syncstatus  -- fallback for any unexpected values
         END
     """)
     
     # Step 4: Update caldav_events.sync_status column to use new type
-    # Map 'done' -> 'success' during migration
+    # Map existing values: 'done' -> 'success', everything else stays the same
     op.execute("""
         ALTER TABLE caldav_events 
         ALTER COLUMN sync_status TYPE syncstatus 
         USING CASE 
             WHEN sync_status::text = 'done' THEN 'success'::syncstatus
-            ELSE sync_status::text::syncstatus
+            WHEN sync_status::text = 'pending' THEN 'pending'::syncstatus
+            WHEN sync_status::text = 'failed' THEN 'failed'::syncstatus
+            ELSE 'pending'::syncstatus  -- fallback for any unexpected values
         END
     """)
     
@@ -64,7 +69,7 @@ def downgrade() -> None:
     # Step 1: Rename current enum type
     op.execute("ALTER TYPE syncstatus RENAME TO syncstatus_new")
     
-    # Step 2: Create old enum type
+    # Step 2: Create old enum type (the database originally had 'pending', 'done', 'failed')
     op.execute("CREATE TYPE syncstatus AS ENUM ('pending', 'done', 'failed')")
     
     # Step 3: Update notion_tasks.sync_status column to use old type
@@ -74,7 +79,9 @@ def downgrade() -> None:
         ALTER COLUMN sync_status TYPE syncstatus 
         USING CASE 
             WHEN sync_status::text = 'success' THEN 'done'::syncstatus
-            ELSE sync_status::text::syncstatus
+            WHEN sync_status::text = 'pending' THEN 'pending'::syncstatus
+            WHEN sync_status::text = 'failed' THEN 'failed'::syncstatus
+            ELSE 'pending'::syncstatus  -- fallback for any unexpected values
         END
     """)
     
@@ -85,7 +92,9 @@ def downgrade() -> None:
         ALTER COLUMN sync_status TYPE syncstatus 
         USING CASE 
             WHEN sync_status::text = 'success' THEN 'done'::syncstatus
-            ELSE sync_status::text::syncstatus
+            WHEN sync_status::text = 'pending' THEN 'pending'::syncstatus
+            WHEN sync_status::text = 'failed' THEN 'failed'::syncstatus
+            ELSE 'pending'::syncstatus  -- fallback for any unexpected values
         END
     """)
     
