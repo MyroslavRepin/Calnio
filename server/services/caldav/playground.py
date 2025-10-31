@@ -62,9 +62,13 @@ async def main():
 
 
     # await sync_service.sync_db_to_caldav()
-    async with async_get_db_cm() as db:
-        await sync_service.sync_caldav_to_db(user_id=7, calendar_name="Personal", db=db)
-
+    # async with async_get_db_cm() as db:
+    #     # await sync_service.sync_caldav_to_db(user_id=7, calendar_name="Personal", db=db)
+    #     await sync_service.sync_db_to_caldav()
+    event_uid =  "70b22548ef8544f88d84f33f47f3cc33".lower()
+    logger.info(event_uid)
+    event = await orm.Event.get(calendar=calendar, event_uid=event_uid)
+    logger.info(event)
     # event = await orm.Event.get(name="Specific test event", calendar=calendar)
     # logger.info(event)
 if __name__ == "__main__":
