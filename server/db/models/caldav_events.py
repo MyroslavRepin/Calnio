@@ -3,9 +3,9 @@ import uuid
 from server.db.database import Base
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func, Enum
+from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ENUM as PGEnum
 
 
 from server.db.deps import async_get_db_cm
@@ -39,7 +39,7 @@ class CalDavEvent(Base):
     last_synced_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
 
     sync_status: Mapped[SyncStatus] = mapped_column(
-        Enum(SyncStatus),
+        PGEnum(SyncStatus, name='syncstatus', native_enum=True),
         default=SyncStatus.pending,
         nullable=False
     )
