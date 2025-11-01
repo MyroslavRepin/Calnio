@@ -2,6 +2,7 @@ import asyncio
 import datetime
 from uuid import uuid4
 from types import SimpleNamespace
+from sqlalchemy import select
 
 from aiocaldav import Calendar as AIOCalendar
 from caldav import Calendar
@@ -513,3 +514,36 @@ class CalDavORM:
                     return None
 
             return await asyncio.to_thread(_get_event_by_uid)
+
+        async def get_deleted_events(self, db: AsyncSession, user_id: int, calendar: Calendar, events=None):
+            """Get deleted events by comparing local DB and remote CalDAV events."""
+            stmt = select(CalDavEvent.caldav_uid).where(CalDavEvent.user_id == user_id)
+            result = await db.execute(stmt)
+
+            # LIST OF EVENTS UID'S FROM REMOTE / LOCAL
+            local_events = result.scalars().all()
+
+            # Optimized structure to reduce number of calls to CalDAV server
+            if events:
+                remote_events = events
+            else:
+                remote_events = await self.orm.Event.all(calendar_uid=calendar.id)
+
+            local_events_uids = []
+            remote_events_uids = []
+
+            # Making list of events UIDs from remote and local servers
+            for local_event in local_events:
+                local_events_uids.append(local_event)
+
+            for remote_event in remote_events:
+                remote_events_uids.append(extract_uid(remote_event.url))
+
+            deleted_events_local = list(set(remote_events_uids) - set(local_events_uids))
+            deleted_events_remote = list(set(local_events_uids) - set(remote_events_uids))
+
+            deleted_events_total = {
+                "remote": deleted_events_remote,
+                "local": deleted_events_local,
+            }
+            return deleted_events_total

@@ -45,23 +45,5 @@ class CalDavEvent(Base):
         nullable=False
     )
 
-    @classmethod
-    async def create(cls, user_id, caldav_uid, title, description, start_date, end_date, synced=False, has_conflict=False, last_modified_source="caldav"):
-        async with async_get_db_cm() as db:
-            async with db.begin():
-                instance = cls(
-                    id=str(uuid.uuid4()),
-                    user_id=user_id,
-                    caldav_uid=caldav_uid,
-                    title=title,
-                    description=description,
-                    start_time=start_date,
-                    end_time=end_date,
-                    sync_source="caldav",
-                    has_conflict=has_conflict,
-                    last_modified_source=last_modified_source,
-                )
-                db.add(instance)
-            await db.refresh(instance)
-            logger.debug(f"New caldav event saved to database")
-        return instance
+    deleted: Mapped[bool] = mapped_column(Boolean, default=False)
+    deleted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
