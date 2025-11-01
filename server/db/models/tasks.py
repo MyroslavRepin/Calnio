@@ -49,3 +49,5 @@ class UserNotionTask(Base):
         default=SyncStatus.pending,
         nullable=False
     )
+    deleted: Mapped[bool] = mapped_column(Boolean, default=False)
+    deleted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)

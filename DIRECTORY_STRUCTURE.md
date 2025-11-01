@@ -60,6 +60,7 @@ Calnio/
 │   │   │   ├── b9853889096e_add_new_collumn.py
 │   │   │   ├── d93d7ae96ef5_auto_generated_migration.py
 │   │   │   ├── dc86913f74d2_add_timezone_to_caldavevents_datetimes.py
+│   │   │   ├── eca87c3e846a_add_deletede_to_usernotointasks_and_.py
 │   │   │   ├── f0995c8c6da0_update_syncstatus_enum_values.py
 │   │   │   └── fed31d6be9ea_auto_generated_migration.py
 │   │   ├── __init__.py

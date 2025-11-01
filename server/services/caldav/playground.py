@@ -63,8 +63,11 @@ async def main():
 
     # await sync_service.sync_db_to_caldav()
     async with async_get_db_cm() as db:
-        await sync_service.sync_caldav_to_db(user_id=7, calendar_name="Personal", db=db)
-        # await sync_service.sync_db_to_caldav()
+        # await sync_service.sync_caldav_to_db(user_id=7, calendar_name="Personal", db=db)
+
+        deleted_events = await orm.Event.get_deleted_events(calendar=calendar, db=db, user_id=7)
+        logger.info(f"Deleted events: {deleted_events}")
+
 
     # event_uid =  "70b22548ef8544f88d84f33f47f3cc33".lower()
     # logger.info(event_uid)
