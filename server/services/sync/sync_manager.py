@@ -143,11 +143,11 @@ class SyncService:
                 if notion_updated_at is None:
                     notion_updated_at = ensure_datetime_with_tz(existing_notion_event.created_at)
 
-            logger.debug(
-                "Sync debug: existing_caldav=%s, existing_notion=%s, last_modified_caldav=%s, notion_updated_at=%s, UID=%s",
-                bool(existing_caldav_event), bool(existing_notion_event),
-                last_modified_caldav, notion_updated_at, event_uid
-            )
+            # logger.debug(
+            #     "Sync debug: existing_caldav=%s, existing_notion=%s, last_modified_caldav=%s, notion_updated_at=%s, UID=%s",
+            #     bool(existing_caldav_event), bool(existing_notion_event),
+            #     last_modified_caldav, notion_updated_at, event_uid
+            # )
 
 
             # Todo: Add functional to delete events from Notion if they are deleted in CalDAV

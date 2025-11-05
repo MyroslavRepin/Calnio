@@ -41,6 +41,9 @@ async def sync_webhook_data():
         # Handle page deletion - don't fetch page data from Notion
         if event_type == "page.deleted" or event_type == "page.archived":
             logger.info(f"Processing deletion for page_id: {page_id}")
+            deleted = await Task.update(
+                ...
+            )
             deleted = await Task.delete(user_id=user_id, page_id=page_id)
             if deleted:
                 logger.info(f"Task deleted successfully")

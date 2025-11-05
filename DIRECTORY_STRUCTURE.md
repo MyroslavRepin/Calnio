@@ -177,7 +177,10 @@ Calnio/
 │   └── __init__.py
 ├── .gitignore
 ├── alembic.ini
+├── caldav_events.sql
+├── calnio_backup.dump
 ├── CHANGELOG.md
+├── db_schema.sql
 ├── DIRECTORY_STRUCTURE.md
 ├── LICENSE
 ├── main.py

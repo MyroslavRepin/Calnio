@@ -542,6 +542,12 @@ class CalDavORM:
             deleted_events_local = list(set(remote_events_uids) - set(local_events_uids))
             deleted_events_remote = list(set(local_events_uids) - set(remote_events_uids))
 
+            time_now = datetime.datetime.now()
+            time_now = dict(
+                estimate_deleted_at=time_now,
+            )
+            deleted_events_remote.append(time_now)
+
             deleted_events_total = {
                 "remote": deleted_events_remote,
                 "local": deleted_events_local,
