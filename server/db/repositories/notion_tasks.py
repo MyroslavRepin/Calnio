@@ -1,8 +1,8 @@
 # server/db/repositories/notion_task_repository.py
 from notion_client import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from datetime import datetime, UTC
+from sqlalchemy import select, update
+from datetime import datetime, UTC, timezone
 
 from server.app.schemas.notion_pages import NotionTask
 from server.db.deps import async_get_db_cm
@@ -33,6 +33,8 @@ class NotionTaskRepository:
         done: bool = False,
         priority: str | None = None,
         select_option: str | None = None,
+        deleted: bool = False,
+        deleted_at: datetime | None = None
     ) -> UserNotionTask:
         notion_page_id_normalized = normalize_notion_id(notion_page_id)
 
@@ -87,6 +89,7 @@ class NotionTaskRepository:
             await db.refresh(new_task)
             return new_task
 
+    @staticmethod
     async def update(
             self,
             task: UserNotionTask,
@@ -100,7 +103,9 @@ class NotionTaskRepository:
             priority: str | None = None,
             select_option: str | None = None,
             sync_source: str | None = None,
-            last_modified_source: str | None = None
+            last_modified_source: str | None = None,
+            deleted: bool = False,
+            deleted_at: datetime | None = None
     ) -> UserNotionTask | None:
         async with async_get_db_cm() as db:
             if task:
@@ -119,39 +124,44 @@ class NotionTaskRepository:
                 task.caldav_uid = "not supported yet"
                 task.has_conflict = False
                 task.last_modified_source = last_modified_source
+                task.deleted = deleted
+                task.deleted_at = deleted_at
                 task = await db.merge(task)  # присоединяем объект к сессии
                 await db.commit()  # сохраняем изменения
                 await db.refresh(task)  # обновляем объект из БД
                 return task
         return None
 
-    async def delete(
-            self,
-            user_id: int,
-            page_id: str) -> bool:
+    async def delete(self, user_id: int, page_id: str) -> bool:
         """
-        Delete a task by notion_page_id and user_id.
-        Returns True if task was deleted, False if task was not found.
+        Soft-delete a task by notion_page_id and user_id.
+        Returns True if task was marked as deleted, False if task was not found.
         """
-        # Normalize page_id by removing dashes
-        page_id_normalized = normalize_notion_id(page_id)
-
+        # Проверяем, существует ли задача
         async with async_get_db_cm() as db:
             stmt = select(UserNotionTask).where(
-                UserNotionTask.notion_page_id == page_id_normalized,
-                UserNotionTask.user_id == user_id
+                UserNotionTask.id == page_id,
+                UserNotionTask.user_id == user_id,
+                UserNotionTask.deleted.is_(False)  # Только не удалённые
             )
             result = await db.execute(stmt)
             task = result.scalar_one_or_none()
 
-        if task:
-            logger.debug(f"Deleting task: {task.id} (notion_page_id: {page_id_normalized})")
-            await db.delete(task)
-            await db.commit()
-            return True
-        else:
-            logger.debug(f"Task not found for deletion (notion_page_id: {page_id_normalized}, user_id: {user_id})")
-            return False
+            if task:
+                # Мягкое удаление: ставим deleted_at
+                stmt = (
+                    update(UserNotionTask)
+                    .where(UserNotionTask.id == page_id, UserNotionTask.user_id == user_id)
+                    .values(deleted_at=datetime.now(timezone.utc))
+                )
+                await db.execute(stmt)
+                await db.commit()
+
+                logger.debug(f"Soft-deleted task: {task.id} (page_id: {page_id}, user_id: {user_id})")
+                return True
+            else:
+                logger.debug(f"Task not found for soft-deletion (notion_page_id: {page_id}, user_id: {user_id})")
+                return False
 
     async def add_tasks_to_db(
             self,
