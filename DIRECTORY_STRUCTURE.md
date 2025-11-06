@@ -52,6 +52,7 @@ Calnio/
 │   │   │   ├── 086698cdd088_drop_default_values_from_string_to_enum.py
 │   │   │   ├── 0dcff28cb147_change_column_type.py
 │   │   │   ├── 19fc4fe2811f_change_column_type.py
+│   │   │   ├── 23502f720669_add_default_pending_to_sync_status.py
 │   │   │   ├── 346bc90683e4_merge_heads_after_branch_merge.py
 │   │   │   ├── 4192080716ba_add_calendars_table.py
 │   │   │   ├── 569210df4a2b_rename_caldav_uid_to_caldav_id.py
