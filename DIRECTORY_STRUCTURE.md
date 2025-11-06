@@ -145,6 +145,7 @@ Calnio/
 │   │   ├── scheduler/
 │   │   │   ├── __init__.py
 │   │   │   └── scheduler_service.py
+│   │   ├── sync/
 │   │   ├── __init__.py
 │   │   └── postgres_trigger.py
 │   ├── utils/

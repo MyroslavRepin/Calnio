@@ -19,7 +19,7 @@ async def create_task(
     #
     sync_source: str,
     last_synced_at: datetime = None,
-    caldav_uid: str = None,
+    caldav_id: str = None,
     has_conflict: bool = False,
     last_modified_source: str | None = None,
     #
@@ -62,7 +62,7 @@ async def create_task(
         # Always set default values for required fields
         existing_task.sync_source = sync_source
         existing_task.last_synced_at = datetime.now(UTC)
-        existing_task.caldav_uid = caldav_uid if caldav_uid else "not supported yet"
+        existing_task.caldav_id = caldav_id if caldav_id else "not supported yet"
         existing_task.has_conflict = bool(has_conflict)
         existing_task.last_modified_source = last_modified_source
         await db.commit()
@@ -89,7 +89,7 @@ async def create_task(
         # Always set default values for required fields
         sync_source=sync_source,
         last_synced_at=datetime.now(UTC),
-        caldav_uid=caldav_uid if caldav_uid else "not supported yet",
+        caldav_id=caldav_id if caldav_id else "not supported yet",
         has_conflict=bool(has_conflict),
         last_modified_source=last_modified_source
     )
@@ -128,7 +128,7 @@ async def update_task(
         # Always set default values for required fields
         task.sync_source = sync_source
         task.last_synced_at = datetime.now(UTC)
-        task.caldav_uid = "not supported yet"
+        task.caldav_id = "not supported yet"
         task.has_conflict = False
         task.last_modified_source = last_modified_source
         db.add(task)
@@ -195,7 +195,7 @@ async def add_tasks_to_db(
     notion: AsyncClient,
     sync_source: str,
     last_synced_at: datetime = None,
-    caldav_uid: str = None,
+    caldav_id: str = None,
     has_conflict: bool = False,
     last_modified_source: str = "notion"
 ) -> list:
@@ -224,7 +224,7 @@ async def add_tasks_to_db(
             priority=notion_page.priority,
             sync_source=sync_source,
             last_synced_at=last_synced_at,
-            caldav_uid=caldav_uid,
+            caldav_id=caldav_id,
             has_conflict=has_conflict,
             last_modified_source=last_modified_source
         )

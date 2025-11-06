@@ -70,7 +70,7 @@ async def sync_webhook_data():
                     notion_url=notion_page.notion_page_url,
                     sync_source="notion",
                     description=notion_page.description,
-                    caldav_uid="not supported yet",
+                    caldav_id="not supported yet",
                     has_conflict=False,
                     last_modified_source="notion",
                     start_date=start_date_utc,

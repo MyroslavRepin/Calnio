@@ -35,6 +35,6 @@ class UserNotionTask(Base):
 
     sync_source: Mapped[str] = mapped_column(String)
     last_synced_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
-    caldav_uid: Mapped[str] = mapped_column(String)
+    caldav_id: Mapped[str] = mapped_column(String)
     has_conflict: Mapped[Boolean] = mapped_column(Boolean, default=False)
     last_modified_source: Mapped[str] = mapped_column(String)
