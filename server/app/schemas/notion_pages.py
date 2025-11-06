@@ -1,7 +1,5 @@
-import json
 from typing import Optional, Dict, Any
 from pydantic import BaseModel
-from pygments.styles.gh_dark import FG_SUBTLE
 
 from server.utils.notion.utils import to_notion_time
 
@@ -52,42 +50,88 @@ class NotionTask(BaseModel):
         Raises:
             KeyError: If required properties are missing from the input data.
         """
-        props = data["properties"]
+        # Be defensive: Notion webhooks (especially page.created) sometimes omit
+        # properties or include incomplete data. Use .get(...) and guard nested
+        # accesses to avoid TypeError/KeyError when fields are missing.
+        props = data.get("properties") or {}
+
+        def _get_title(props_obj):
+            try:
+                title_prop = props_obj.get("Task") or {}
+                title_list = title_prop.get("title") or []
+                if title_list:
+                    return title_list[0].get("plain_text", "")
+            except Exception:
+                return ""
+            return ""
+
+        def _get_rich_text(props_obj, key):
+            try:
+                prop = props_obj.get(key) or {}
+                rt = prop.get("rich_text") or []
+                if rt:
+                    return rt[0].get("plain_text", "")
+            except Exception:
+                return ""
+            return ""
+
+        def _get_date_range(props_obj):
+            try:
+                prop = props_obj.get("Task Date") or {}
+                date = prop.get("date")
+                if date:
+                    return date.get("start"), date.get("end")
+            except Exception:
+                return None, None
+            return None, None
+
+        def _get_status_name(props_obj):
+            try:
+                prop = props_obj.get("Status") or {}
+                status = prop.get("status")
+                if status:
+                    return status.get("name")
+            except Exception:
+                return None
+            return None
+
+        def _get_checkbox(props_obj, key):
+            try:
+                prop = props_obj.get(key) or {}
+                return bool(prop.get("checkbox", False))
+            except Exception:
+                return False
+
+        def _get_select_name(props_obj, key):
+            try:
+                prop = props_obj.get(key) or {}
+                sel = prop.get("select")
+                if sel:
+                    return sel.get("name")
+            except Exception:
+                return None
+            return None
 
         # Title
-        title = ""
-        if props["Task"]["title"]:
-            title = props["Task"]["title"][0]["plain_text"]
+        title = _get_title(props)
 
         # Description
-        description = ""
-        if props["Description"]["rich_text"]:
-            description = props["Description"]["rich_text"][0]["plain_text"]
+        description = _get_rich_text(props, "Description")
 
         # Task Date
-        start_date = None
-        end_date = None
-        if props["Task Date"]["date"]:
-            start_date = props["Task Date"]["date"].get("start")
-            end_date = props["Task Date"]["date"].get("end")
+        start_date, end_date = _get_date_range(props)
 
         # Status
-        status = None
-        if props["Status"]["status"]:
-            status = props["Status"]["status"]["name"]
+        status = _get_status_name(props)
 
         # Done
-        done = props["Done"]["checkbox"]
+        done = _get_checkbox(props, "Done")
 
         # Priority
-        priority = None
-        if props["Priority"]["select"]:
-            priority = props["Priority"]["select"]["name"]
+        priority = _get_select_name(props, "Priority")
 
         # Select Option
-        select_option = None
-        if props["Select"]["select"]:
-            select_option = props["Select"]["select"]["name"]
+        select_option = _get_select_name(props, "Select")
 
         notion_page_id = data.get("id")
         notion_page_url = data.get(
