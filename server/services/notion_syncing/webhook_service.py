@@ -27,9 +27,7 @@ async def sync_webhook_data(user_id: int = None):
     if user_id is None:
         user_id = 7  # Default fallback
 
-    logger.info("=" * 80)
     logger.info(f"Starting webhook sync for user_id={user_id}")
-    logger.info("=" * 80)
 
     # ========================================================================
     # Step 1: Get Redis client
@@ -122,7 +120,6 @@ async def sync_webhook_data(user_id: int = None):
                 else:
                     logger.warning(f"Task not found in database (may have been already deleted)")
                     result_msg = {"message": "Task not found (already deleted?)", "page_id": page_id_with_dashes, "event_type": event_type}
-                logger.info("=" * 80)
                 return result_msg
             except Exception as e:
                 logger.error(f"Failed to delete task: {e}", exc_info=True)
@@ -192,7 +189,6 @@ async def sync_webhook_data(user_id: int = None):
                     action = "updated" if event_type == "page.properties_updated" else "created"
                     logger.info(f"✓ Task {action} successfully in database (task_id={task.id})")
 
-                    logger.info("=" * 80)
                     return {
                         "message": f"Task {action} successfully",
                         "event_type": event_type,
@@ -212,7 +208,6 @@ async def sync_webhook_data(user_id: int = None):
         # ====================================================================
         else:
             logger.warning(f"Unknown event type: {event_type}")
-            logger.info("=" * 80)
             return {"error": f"Unknown event type: {event_type}"}
 
 
