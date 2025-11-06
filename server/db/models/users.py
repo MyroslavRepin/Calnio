@@ -8,9 +8,9 @@ from typing import Optional
 class User(Base):
     __tablename__ = 'users'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     email: Mapped[str] = mapped_column(unique=True)
-    icloud_email: Mapped[str] = mapped_column(unique=True)
+    icloud_email: Mapped[str] = mapped_column(unique=True, nullable=True)
     app_specific_password: Mapped[str] = mapped_column(nullable=True)
     username: Mapped[str] = mapped_column(unique=True)
     hashed_password: Mapped[Optional[str]] = mapped_column(nullable=True)

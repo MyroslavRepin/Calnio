@@ -16,7 +16,8 @@ from server.db.models.enums import SyncStatus
 
 class CalDavEvent(Base):
     __tablename__ = "caldav_events"
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     caldav_uid: Mapped[str] = mapped_column(String, unique=True)
     caldav_url: Mapped[str] = mapped_column(String, unique=True)

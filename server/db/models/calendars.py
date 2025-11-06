@@ -8,7 +8,8 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 class Calendar(Base):
     __tablename__ = "calendars"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     uid: Mapped[str] = mapped_column(unique=True, nullable=False)
     url: Mapped[str] = mapped_column(nullable=False)
