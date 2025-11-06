@@ -71,10 +71,8 @@ async def create_task(
         return existing_task
 
     # Create new task with normalized ID (no dashes) and UUID without dashes
-    task_uuid = str(uuid.uuid4()).replace("-", "")
-    logger.info(f"Creating NEW task: '{title}' (notion_page_id: {notion_page_id_normalized}, task_id: {task_uuid})")
+    logger.info(f"Creating NEW task: '{title}' (notion_page_id: {notion_page_id_normalized}")
     new_task = UserNotionTask(
-        id=task_uuid,
         user_id=user_id,
         notion_page_id=notion_page_id_normalized,
         notion_url=notion_url,
