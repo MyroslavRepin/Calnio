@@ -11,7 +11,7 @@ from server.db.models.enums import SyncStatus
 class UserNotionTask(Base):
     __tablename__ = "notion_tasks"
 
-    id: Mapped[str] = mapped_column(String, primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     notion_page_id: Mapped[str] = mapped_column(String, unique=True, nullable=True)
     notion_url: Mapped[str] = mapped_column(String, nullable=True)

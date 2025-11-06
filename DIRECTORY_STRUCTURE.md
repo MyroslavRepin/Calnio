@@ -54,7 +54,9 @@ Calnio/
 │   │   │   ├── 19fc4fe2811f_change_column_type.py
 │   │   │   ├── 346bc90683e4_merge_heads_after_branch_merge.py
 │   │   │   ├── 4192080716ba_add_calendars_table.py
+│   │   │   ├── 569210df4a2b_rename_caldav_uid_to_caldav_id.py
 │   │   │   ├── 589f8fa06ba0_update_syncstatus_to_enum_manually.py
+│   │   │   ├── 665c6414c6ba_make_icloud_email_nullable.py
 │   │   │   ├── 868c1b1fb071_init_fresh_migration.py
 │   │   │   ├── a4ab66b804c6_convert_sync_status_to_postgresql_enum.py
 │   │   │   ├── b9853889096e_add_new_collumn.py
@@ -110,6 +112,7 @@ Calnio/
 │   │   │   └── user.py
 │   │   ├── tools/
 │   │   │   ├── __init__.py
+│   │   │   ├── create_all_tables.py
 │   │   │   ├── create_missing_tables.py
 │   │   │   └── recreate_tables.py
 │   │   ├── __init__.py
