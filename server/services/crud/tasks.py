@@ -1,6 +1,5 @@
 from server.app.core.logging_config import logger
 from datetime import datetime, UTC
-import uuid
 from notion_client import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

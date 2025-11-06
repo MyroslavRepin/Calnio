@@ -1,13 +1,14 @@
 from server.db.database import Base
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func
+from sqlalchemy import String, Boolean, DateTime, Text, ForeignKey, func, Integer
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 class UserNotionTask(Base):
     __tablename__ = "notion_tasks"
 
-    id: Mapped[str] = mapped_column(String, primary_key=True)
+    # Changed id to Integer with autoincrement to match the DB sequence (nextval)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     notion_page_id: Mapped[str] = mapped_column(String, unique=True)
     notion_url: Mapped[str] = mapped_column(String, nullable=False)
