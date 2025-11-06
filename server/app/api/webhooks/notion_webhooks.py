@@ -182,6 +182,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
         # ============================================================================
         # 7. Query database for User by workspace_id
         # ============================================================================
+        workspace_id = str(workspace_id_raw)
         try:
             logger.debug(f"Querying database for User with workspace_id={workspace_id}")
             stmt = (
