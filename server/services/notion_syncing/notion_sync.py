@@ -8,43 +8,87 @@ from server.db.redis_client import get_redis
 from server.integrations.notion.notion_client import get_notion_client
 from server.services.crud.tasks import delete_pages_by_ids, add_tasks_to_db, update_pages_by_ids, delete_task
 from server.utils.notion.utils import get_all_ids
-from server.utils.decorators import timer
 from server.utils.redis.utils import get_webhook_data
 from server.app.core.logging_config import logger
 
 from notion_client import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 
 async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id: int):
-    added = await add_tasks_to_db(db, notion=notion, user_id=user_id, last_modified_source="notion", sync_source="background")
+    """
+    Background sync: Fetch all Notion pages and sync with database
+    Operations: CREATE new tasks, UPDATE existing tasks, DELETE removed tasks
+    """
+    logger.info(f"Background sync STARTED for user_id={user_id}")
 
-    # Check if active_sync is still True
-
-    # AsyncSession made out of HTTP
-    async with async_get_db_cm() as db:
+    try:
         stmt = select(User.active_sync).where(User.id == user_id)
         result = await db.execute(stmt)
         active_sync = result.scalars().first()
+
         if not active_sync:
-            logger.info(f"Background sync not started for user_id={user_id} (active_sync=False)")
-            return {"added": added}
+            logger.warning(f"Background sync not started for user_id={user_id} (active_sync=False)")
+            return {"error": "active_sync is False", "added": [], "deleted": {}, "updated": []}
 
-    logger.info(f"Background sync started for user_id={user_id}")
+        logger.info(f"Starting sync for user_id={user_id}")
 
+        logger.info(f"Adding new tasks from Notion")
+        added = await add_tasks_to_db(
+            db=db,
+            notion=notion,
+            user_id=user_id,
+            last_modified_source="notion",
+            sync_source="background"
+        )
+        logger.info(f"Added {len(added)} new tasks")
 
-    current_notion_pages = await get_all_ids(notion=notion)
-    deleted = await delete_pages_by_ids(db, notion, user_id, current_notion_pages)
-    updated = await update_pages_by_ids(db, notion, user_id, current_notion_pages, sync_source="background", last_modified_source="notion")
-    logger.info(f"Background sync finished for user_id={user_id}")
+        logger.info(f"Fetching current pages from Notion")
+        current_notion_pages = await get_all_ids(notion=notion)
+        logger.info(f"Found {len(current_notion_pages)} pages in Notion")
 
-    return {
-        "added": added,
-        "deleted": deleted,
-        "updated": updated
-    }
+        logger.info(f"Deleting removed tasks")
+        deleted = await delete_pages_by_ids(db=db, notion=notion, user_id=user_id, pages_ids=current_notion_pages)
+        logger.info(f"Deleted {len(deleted.get('deleted_pages', []))} tasks")
+
+        logger.info(f"Updating existing tasks")
+        updated = await update_pages_by_ids(
+            db=db,
+            notion=notion,
+            user_id=user_id,
+            pages_ids=current_notion_pages,
+            sync_source="background",
+            last_modified_source="notion"
+        )
+        logger.info(f"Updated {len(updated)} tasks")
+
+        user = await db.execute(select(User).where(User.id == user_id))
+        user_obj = user.scalars().first()
+        if user_obj:
+            user_obj.active_sync = False
+            await db.commit()
+            logger.info(f"Set active_sync=False for user_id={user_id}")
+
+        logger.info(f"Background sync finished for user_id={user_id}")
+        return {
+            "status": "success",
+            "added": added,
+            "deleted": deleted,
+            "updated": updated
+        }
+
+    except Exception as e:
+        logger.error(f"❌ Background sync FAILED for user_id={user_id}: {e}", exc_info=True)
+        # Set active_sync to False even on error
+        try:
+            user = await db.execute(select(User).where(User.id == user_id))
+            user_obj = user.scalars().first()
+            if user_obj:
+                user_obj.active_sync = False
+                await db.commit()
+        except:
+            pass
 
 async def db_to_notion_sync(db: AsyncSession, user_id):
     async with async_get_db_cm() as db:
