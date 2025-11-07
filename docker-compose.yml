@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  calnio:
+    build: .
+    image: calnio
+    container_name: calnio
+    volumes:
+      - .:/calnio
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+

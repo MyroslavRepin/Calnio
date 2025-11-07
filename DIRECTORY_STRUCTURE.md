@@ -1,13 +1,4 @@
 Calnio/
-├── backend/
-│   └── app/
-│       └── tools/
-│           ├── caldav/
-│           │   ├── __init__.py
-│           │   ├── models.py
-│           │   ├── orm.py
-│           │   └── README.md
-│           └── __init__.py
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -175,11 +166,9 @@ Calnio/
 ├── docker-compose.yml
 ├── Dockerfile
 ├── LICENSE
-├── loki-config.yml
 ├── main.py
 ├── manage.py
 ├── Procfile
-├── promtail-config.yml
 ├── railway.json
 ├── README.md
 ├── redis_test.py

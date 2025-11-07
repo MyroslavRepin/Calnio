@@ -1,2 +1,79 @@
-2025-10-04 11:36:44 | INFO | server.app.main | Application startup
-2025-10-04 11:37:03 | INFO | server.app.main | Application shutdown
+2025-11-07 14:05:10 | INFO     | uvicorn.server:_serve:84 - Started server process [80805]
+2025-11-07 14:05:10 | INFO     | uvicorn.lifespan.on:startup:48 - Waiting for application startup.
+2025-11-07 14:05:10 | INFO     | server.db.redis_client:init_redis:13 - Connecting to Redis: shinkansen.proxy.rlwy.net:42953
+2025-11-07 14:05:10 | INFO     | server.db.redis_client:init_redis:19 - Redis connected successfully: True
+2025-11-07 14:05:10 | INFO     | uvicorn.lifespan.on:startup:62 - Application startup complete.
+2025-11-07 14:05:10 | INFO     | server.services.postgres_trigger:listen_to_postgres:20 - Listening to Postgres channel: notion_tasks_channel
+2025-11-07 14:05:12 | INFO     | uvicorn.server:shutdown:264 - Shutting down
+2025-11-07 14:05:12 | INFO     | uvicorn.lifespan.on:shutdown:67 - Waiting for application shutdown.
+2025-11-07 14:05:12 | INFO     | server.db.redis_client:close_redis:41 - Redis connection closed
+2025-11-07 14:05:12 | INFO     | uvicorn.lifespan.on:shutdown:76 - Application shutdown complete.
+2025-11-07 14:05:12 | INFO     | uvicorn.server:_serve:94 - Finished server process [80805]
+2025-11-07 21:25:20 | INFO     | uvicorn.server:_serve:84 - Started server process [8]
+2025-11-07 21:25:20 | INFO     | uvicorn.lifespan.on:startup:48 - Waiting for application startup.
+2025-11-07 21:25:20 | INFO     | server.db.redis_client:init_redis:13 - Connecting to Redis: shinkansen.proxy.rlwy.net:42953
+2025-11-07 21:25:20 | INFO     | server.db.redis_client:init_redis:19 - Redis connected successfully: True
+2025-11-07 21:25:20 | INFO     | uvicorn.lifespan.on:startup:62 - Application startup complete.
+2025-11-07 21:25:25 | INFO     | server.services.postgres_trigger:listen_to_postgres:20 - Listening to Postgres channel: notion_tasks_channel
+2025-11-07 21:27:45 | DEBUG    | server.integrations.notion.pages:pages:56 - Starting background sync for user_id=3
+2025-11-07 21:27:45 | INFO     | uvicorn.protocols.http.h11_impl:send:473 - 192.168.65.1:58175 - "GET /dashboard/pages HTTP/1.1" 302
+2025-11-07 21:27:45 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:24 - Background sync STARTED for user_id=3
+2025-11-07 21:27:45 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:35 - Starting sync for user_id=3
+2025-11-07 21:27:45 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:37 - Adding new tasks from Notion
+2025-11-07 21:27:45 | DEBUG    | httpcore._trace:atrace:87 - connect_tcp.started host='api.notion.com' port=443 local_address=None timeout=60.0 socket_options=None
+2025-11-07 21:27:46 | INFO     | uvicorn.protocols.http.h11_impl:send:473 - 192.168.65.1:58175 - "GET /dashboard HTTP/1.1" 200
+2025-11-07 21:27:50 | DEBUG    | httpcore._trace:atrace:87 - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff9b17d490>
+2025-11-07 21:27:50 | DEBUG    | httpcore._trace:atrace:87 - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff99d34950> server_hostname='api.notion.com' timeout=60.0
+2025-11-07 21:27:50 | DEBUG    | httpcore._trace:atrace:87 - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff9ad86510>
+2025-11-07 21:27:50 | DEBUG    | httpcore._trace:atrace:87 - send_request_headers.started request=<Request [b'POST']>
+2025-11-07 21:27:50 | DEBUG    | httpcore._trace:atrace:87 - send_request_headers.complete
+2025-11-07 21:27:50 | DEBUG    | httpcore._trace:atrace:87 - send_request_body.started request=<Request [b'POST']>
+2025-11-07 21:27:50 | DEBUG    | httpcore._trace:atrace:87 - send_request_body.complete
+2025-11-07 21:27:50 | DEBUG    | httpcore._trace:atrace:87 - receive_response_headers.started request=<Request [b'POST']>
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Fri, 07 Nov 2025 21:27:54 GMT'), (b'Content-Type', b'application/json; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Server', b'cloudflare'), (b'CF-Ray', b'99afeabfba71bef4-YYC'), (b'CF-Cache-Status', b'DYNAMIC'), (b'Content-Encoding', b'gzip'), (b'ETag', b'W/"7e73-bUhkpdApI5DsmhY9A71Cy/UzW+U"'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Vary', b'Accept-Encoding'), (b'content-security-policy', b"default-src 'none'"), (b'referrer-policy', b'strict-origin-when-cross-origin'), (b'x-content-type-options', b'nosniff'), (b'x-dns-prefetch-control', b'off'), (b'x-download-options', b'noopen'), (b'x-frame-options', b'SAMEORIGIN'), (b'x-notion-request-id', b'756929e2-648d-4345-b467-eca4d0913e5b'), (b'x-permitted-cross-domain-policies', b'none'), (b'x-xss-protection', b'0'), (b'Set-Cookie', b'__cf_bm=4JN4y5BwhBkvhmyU1C6rgMqP4Fo6BvSk3H4ufLfgSIY-1762550874-1.0.1.1-hJdPnfhU6gVRepYzXzLAJ7NfKJpwroCMXyJPp9LMp2fWjuA_neEvciiuq.wpndIW3r5GMttkm13gbca8.Y8TLlCNKYJhs3jn4HC4DOh.KoM; path=/; expires=Fri, 07-Nov-25 21:57:54 GMT; domain=.notion.com; HttpOnly; Secure; SameSite=None'), (b'Set-Cookie', b'_cfuvid=pNdJ5DkEjqG3IV4chu.qTM4on9XpAd85CAy3kkw2gmU-1762550874168-0.0.1.1-604800000; path=/; domain=.notion.com; HttpOnly; Secure; SameSite=None'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-11-07 21:27:54 | INFO     | httpx._client:_send_single_request:1740 - HTTP Request: POST https://api.notion.com/v1/search "HTTP/1.1 200 OK"
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - receive_response_body.started request=<Request [b'POST']>
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - receive_response_body.complete
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - response_closed.started
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - response_closed.complete
+2025-11-07 21:27:54 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:45 - Added 0 new tasks
+2025-11-07 21:27:54 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:47 - Fetching current pages from Notion
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - send_request_headers.started request=<Request [b'POST']>
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - send_request_headers.complete
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - send_request_body.started request=<Request [b'POST']>
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - send_request_body.complete
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - receive_response_headers.started request=<Request [b'POST']>
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Fri, 07 Nov 2025 21:27:54 GMT'), (b'Content-Type', b'application/json; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Server', b'cloudflare'), (b'CF-Ray', b'99afead47e6abef4-YYC'), (b'CF-Cache-Status', b'DYNAMIC'), (b'Content-Encoding', b'gzip'), (b'ETag', b'W/"7e73-eayNzLB80NJghKgZGSx0DIbp2UY"'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Vary', b'Accept-Encoding'), (b'content-security-policy', b"default-src 'none'"), (b'referrer-policy', b'strict-origin-when-cross-origin'), (b'x-content-type-options', b'nosniff'), (b'x-dns-prefetch-control', b'off'), (b'x-download-options', b'noopen'), (b'x-frame-options', b'SAMEORIGIN'), (b'x-notion-request-id', b'b7595b11-6226-46f7-b998-9a6290533013'), (b'x-permitted-cross-domain-policies', b'none'), (b'x-xss-protection', b'0'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-11-07 21:27:54 | INFO     | httpx._client:_send_single_request:1740 - HTTP Request: POST https://api.notion.com/v1/search "HTTP/1.1 200 OK"
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - receive_response_body.started request=<Request [b'POST']>
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - receive_response_body.complete
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - response_closed.started
+2025-11-07 21:27:54 | DEBUG    | httpcore._trace:atrace:87 - response_closed.complete
+2025-11-07 21:27:54 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:49 - Found 0 pages in Notion
+2025-11-07 21:27:54 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:51 - Deleting removed tasks
+2025-11-07 21:27:54 | DEBUG    | server.services.crud.tasks:delete_pages_by_ids:272 - Comparing 0 Notion pages with DB tasks for user_id=3
+2025-11-07 21:27:54 | INFO     | server.services.crud.tasks:delete_pages_by_ids:288 - Found 10 tasks to delete for user_id=3
+2025-11-07 21:27:54 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=25 for user_id=3
+2025-11-07 21:27:54 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=19 for user_id=3
+2025-11-07 21:27:54 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=23 for user_id=3
+2025-11-07 21:27:54 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=27 for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=28 for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=26 for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=21 for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=22 for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=20 for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.crud.tasks:delete_pages_by_ids:300 - Deleting task id=24 for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.crud.tasks:delete_pages_by_ids:304 - Deleted 10 tasks for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:53 - Deleted 10 tasks
+2025-11-07 21:27:55 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:55 - Updating existing tasks
+2025-11-07 21:27:55 | DEBUG    | server.services.crud.tasks:update_pages_by_ids:322 - update_pages_by_ids: Updating tasks for user_id=3 from 0 Notion pages
+2025-11-07 21:27:55 | INFO     | server.services.crud.tasks:update_pages_by_ids:377 - Updated 0 existing tasks
+2025-11-07 21:27:55 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:64 - Updated 0 tasks
+2025-11-07 21:27:55 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:71 - Set active_sync=False for user_id=3
+2025-11-07 21:27:55 | INFO     | server.services.notion_syncing.notion_sync:notion_sync_background:73 - Background sync finished for user_id=3
+2025-11-07 21:28:15 | INFO     | uvicorn.protocols.http.h11_impl:send:473 - 192.168.65.1:54244 - "GET /dashboard HTTP/1.1" 200
+2025-11-07 21:30:15 | INFO     | uvicorn.server:shutdown:264 - Shutting down
+2025-11-07 21:30:15 | INFO     | uvicorn.lifespan.on:shutdown:67 - Waiting for application shutdown.
+2025-11-07 21:30:15 | INFO     | server.db.redis_client:close_redis:41 - Redis connection closed
+2025-11-07 21:30:15 | INFO     | uvicorn.lifespan.on:shutdown:76 - Application shutdown complete.
+2025-11-07 21:30:15 | INFO     | uvicorn.server:_serve:94 - Finished server process [8]
