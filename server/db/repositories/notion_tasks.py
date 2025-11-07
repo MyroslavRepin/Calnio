@@ -57,7 +57,7 @@ class NotionTaskRepository:
                 existing_task.select_option = select_option
                 existing_task.sync_source = sync_source
                 existing_task.last_synced_at = datetime.now(UTC)
-                existing_task.caldav_uid = caldav_uid or "not supported yet"
+                existing_task.caldav_id = caldav_uid or "not supported yet"
                 existing_task.has_conflict = bool(has_conflict)
                 existing_task.last_modified_source = last_modified_source
                 await db.commit()

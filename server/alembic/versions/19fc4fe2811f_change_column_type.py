@@ -116,7 +116,7 @@ def downgrade() -> None:
     op.create_table('caldav_events',
     sa.Column('id', sa.UUID(), server_default=sa.text('gen_random_uuid()'), autoincrement=False, nullable=False),
     sa.Column('user_id', sa.INTEGER(), autoincrement=False, nullable=False),
-    sa.Column('caldav_uid', sa.VARCHAR(), autoincrement=False, nullable=False),
+    sa.Column('caldav_id', sa.VARCHAR(), autoincrement=False, nullable=False),
     sa.Column('title', sa.VARCHAR(), autoincrement=False, nullable=False),
     sa.Column('description', sa.TEXT(), autoincrement=False, nullable=True),
     sa.Column('start_time', postgresql.TIMESTAMP(timezone=True), autoincrement=False, nullable=True),
@@ -133,6 +133,6 @@ def downgrade() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('user_caldav_events_user_id_fkey')),
     sa.PrimaryKeyConstraint('id', name=op.f('user_caldav_events_pkey')),
     sa.UniqueConstraint('caldav_url', name=op.f('caldav_events_caldav_url_key'), postgresql_include=[], postgresql_nulls_not_distinct=False),
-    sa.UniqueConstraint('user_id', 'caldav_uid', name=op.f('uq_user_caldav_events_user_caldav_uid'), postgresql_include=[], postgresql_nulls_not_distinct=False)
+    sa.UniqueConstraint('user_id', 'caldav_id', name=op.f('uq_user_caldav_events_user_caldav_uid'), postgresql_include=[], postgresql_nulls_not_distinct=False)
     )
     # ### end Alembic commands ###

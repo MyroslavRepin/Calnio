@@ -1,4 +1,4 @@
-"""rename caldav_uid to caldav_id~
+"""rename caldav_id to caldav_id~
 
 Revision ID: 569210df4a2b
 Revises: 665c6414c6ba
@@ -21,7 +21,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade():
     op.alter_column(
         'notion_tasks',
-        'caldav_uid',
+        'caldav_id',
         new_column_name='caldav_id'
     )
 
@@ -29,5 +29,5 @@ def downgrade():
     op.alter_column(
         'notion_tasks',
         'caldav_id',
-        new_column_name='caldav_uid'
+        new_column_name='caldav_id'
     )

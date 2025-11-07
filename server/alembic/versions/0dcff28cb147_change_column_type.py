@@ -41,7 +41,7 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_column('caldav_events', 'sync_status')
     op.drop_column('notion_tasks', 'sync_status')
-    op.alter_column('notion_tasks', 'caldav_id', new_column_name='caldav_uid')
+    op.alter_column('notion_tasks', 'caldav_id', new_column_name='caldav_id')
 
     # удалить тип ENUM
     sync_status_enum = postgresql.ENUM('pending', 'done', 'failed', name='syncstatus')

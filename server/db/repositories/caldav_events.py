@@ -42,7 +42,7 @@ class CaldavEventsRepository:
             try:
                 task_uid = getattr(task, "uid", str(task.id))
 
-                # Проверяем, есть ли уже событие с таким user_id + caldav_uid
+                # Проверяем, есть ли уже событие с таким user_id + caldav_id
                 stmt = select(CalDavEvent).where(
                     CalDavEvent.user_id == user_id,
                     CalDavEvent.caldav_uid == task_uid

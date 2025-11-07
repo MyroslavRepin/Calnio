@@ -21,7 +21,7 @@ class NotionTask(BaseModel):
     # Updated default values for new columns
     sync_source: Optional[str] = "notion"
     last_synced_at: Optional[str] = None
-    caldav_uid: Optional[str] = None
+    caldav_id: Optional[str] = None
     has_conflict: Optional[bool] = False
     last_modified_source: Optional[str] = "notion"
 
@@ -46,7 +46,7 @@ class NotionTask(BaseModel):
             - select_option: Additional select option from the 'Select' property.
             - notion_page_id: The unique Notion page ID.
             - notion_page_url: The URL to the Notion page.
-            - sync_source, last_synced_at, caldav_uid, has_conflict, last_modified_source:
+            - sync_source, last_synced_at, , has_conflict, last_modified_source:
             Additional metadata, using defaults if not present in the input data.
 
         Raises:
@@ -96,7 +96,7 @@ class NotionTask(BaseModel):
         # Use default values for new columns unless provided in data
         sync_source = data.get("sync_source", "notion")
         last_synced_at = data.get("last_synced_at", None)
-        caldav_uid = data.get("caldav_uid", None)
+        caldav_uid = data.get("", None)
         has_conflict = data.get("has_conflict", False)
         last_modified_source = data.get("last_modified_source", "notion")
 
@@ -114,7 +114,7 @@ class NotionTask(BaseModel):
             select_option=select_option,
             sync_source=sync_source,
             last_synced_at=last_synced_at,
-            caldav_uid=caldav_uid,
+            caldav_id=caldav_id,
             has_conflict=has_conflict,
             last_modified_source=last_modified_source,
         )
