@@ -73,9 +73,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
     extracted_fields = {}  # Track which fields we successfully extracted
     missing_fields = {}  # Track which fields were missing
 
-    logger.info("=" * 80)
     logger.info("Notion webhook request received")
-    logger.info("=" * 80)
 
     try:
         # ============================================================================
@@ -247,9 +245,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
         # ============================================================================
         # 11. Success response
         # ============================================================================
-        logger.info("=" * 80)
         logger.info("Webhook processed successfully")
-        logger.info("=" * 80)
         return {
             "message": "Notion webhook processed successfully",
             "event_type": event_type,
@@ -262,5 +258,4 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
         logger.error(f"Unexpected error processing webhook: {e}", exc_info=True)
         if payload is not None:
             logger.debug(f"Payload state at error: {json.dumps(payload, indent=2, default=str)}")
-        logger.info("=" * 80)
         return {"error": f"Unexpected error: {str(e)}"}
