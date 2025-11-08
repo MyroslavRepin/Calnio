@@ -65,7 +65,6 @@ class NotionTaskRepository:
                 return existing_task
 
             new_task = UserNotionTask(
-                id=str(uuid.uuid4()).replace("-", ""),
                 user_id=user_id,
                 notion_page_id=notion_page_id_normalized,
                 notion_url=notion_url,
@@ -79,7 +78,7 @@ class NotionTaskRepository:
                 select_option=select_option,
                 sync_source=sync_source,
                 last_synced_at=datetime.now(UTC),
-                caldav_uid=caldav_uid or "not supported yet",
+                caldav_id=caldav_uid or "not supported yet",
                 has_conflict=bool(has_conflict),
                 last_modified_source=last_modified_source
             )
@@ -89,7 +88,6 @@ class NotionTaskRepository:
             await db.refresh(new_task)
             return new_task
 
-    @staticmethod
     async def update(
             self,
             task: UserNotionTask,

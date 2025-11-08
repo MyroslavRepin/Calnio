@@ -30,16 +30,15 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
             logger.warning("Webhook payload is not a dict")
             return {"error": "Payload is not a dict"}
 
-        raw_page_id = uuid.UUID(payload["entity"]["id"])
-        page_id = raw_page_id.hex
+        page_id = payload["entity"]["id"]
 
-        raw_workspace_id = uuid.UUID(payload.get("workspace_id"))
-        workspace_id = raw_workspace_id.hex
+        raw_workspace_id = payload.get("workspace_id")
+        workspace_id = str(raw_workspace_id)
 
         event_type = payload["type"]
 
         logger.debug(f"Webhook received: page_id={page_id}, workspace_id={workspace_id}, event={event_type}")
-
+        logger.debug(f"Webhook received: {json.dumps(payload, indent=4)}")
         # Saving data to Redis
         if page_id and workspace_id:
             # Getting user by workspace_id (workspace_id is uuid without dashes in db too)
@@ -49,7 +48,7 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
                 .where(UserNotionIntegration.workspace_id == workspace_id)
             )
             result = await db.execute(stmt)
-            user = result.scalars().first()
+            user = result.scalar_one_or_none()
 
             if not user:
                 logger.error(f"User not found for workspace_id: {workspace_id}")

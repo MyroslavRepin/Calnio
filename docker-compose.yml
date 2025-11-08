@@ -1,0 +1,8 @@
+services:
+  calnio:
+    container_name: "calnio"
+    build: .
+    volumes:
+      - .:/app
+    ports:
+     - "8000:8000"

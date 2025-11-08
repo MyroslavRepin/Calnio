@@ -37,6 +37,7 @@ Calnio/
 │       ├── unauthorized.html
 │       └── users.html
 ├── logs/
+├── loki-setup/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -187,6 +188,8 @@ Calnio/
 ├── CHANGELOG.md
 ├── db_schema.sql
 ├── DIRECTORY_STRUCTURE.md
+├── docker-compose.yml
+├── Dockerfile
 ├── LICENSE
 ├── main.py
 ├── manage.py
