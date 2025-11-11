@@ -25,6 +25,32 @@ and adheres to [Semantic Versioning](https://semver.org/)
 ### Known Issue
 
 - Anything still broken or limitations users should know -->
+## 1.15.4 - 2025-11-06
+
+### Fixed
+
+- Fixed duplicate task creation in database by implementing composite unique constraint on (user_id, notion_page_id) instead of global unique constraint on notion_page_id alone
+- Fixed create_task() UPSERT query to filter by both notion_page_id AND user_id, ensuring each user's duplicate checks are isolated
+- Fixed notion_sync_background() database session management to use same session throughout instead of opening new connection
+- Fixed update_pages_by_ids() to only update tasks for specific user instead of fetching all pages repeatedly
+- Fixed delete_pages_by_ids() to properly filter by user_id when deleting stale tasks
+- Fixed CalDav model relationship back_populates reference from "notion_tasks" to "caldav_events"
+- Fixed webhook handler list parsing for updated_properties field which is sent as list from Notion, not dict
+
+### Changed
+
+- Removed emoji from logging messages across all sync operations
+- Removed logging separator lines (====) for cleaner log output
+- Improved logging clarity without sacrificing readability
+- Updated UPSERT pattern to include user_id filter in all duplicate detection queries
+
+### Technical Details
+
+- Database: Composite unique constraint prevents duplicates per user while allowing same Notion page ID across different users
+- Background sync: Now uses single database session with proper commit management
+- Webhook sync: Safely handles updated_properties as list with default=[] instead of dict
+- Query pattern: All duplicate checks now use where(notion_page_id=X, user_id=Y)
+
 ## 1.15.3 - 2025-10-17
 Minor patches and fixes.
 
