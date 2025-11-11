@@ -28,7 +28,7 @@ async def sync_webhook_data():
     logger.debug(f"   Page ID (normalized): {page_id}")
 
     async with async_get_db_cm() as db:
-        Task = NotionTaskRepository(db=db)
+        Task = NotionTaskRepository()
 
         stmt = select(User).where(User.id == user_id)
         result = await db.execute(stmt)

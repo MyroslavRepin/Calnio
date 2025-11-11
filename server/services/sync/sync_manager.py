@@ -111,14 +111,13 @@ class SyncService:
                     notion_page_id=new_notion_id,
                 )
                 new_event_notion = UserNotionTask(
-                    id=new_notion_id,
                     user_id=user_id,
                     title=event.title,
                     description=event.description,
                     start_date=ensure_datetime_with_tz(event.start),
                     end_date=ensure_datetime_with_tz(event.end),
-                    notion_page_id=None,
-                    notion_url=None,
+                    notion_page_id=new_notion_id,
+                    notion_url=None, # Should save notion url
                     status=None,
                     priority=None,
                     select_option=None,
