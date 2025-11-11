@@ -20,26 +20,50 @@ from sqlalchemy.orm import selectinload
 
 async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id: int):
 
-    # Check if active_sync is still True
+    # Check if active_sync is still True and get user's database_id
+    stmt = select(User).options(selectinload(User.notion_integration)).where(User.id == user_id)
+    result = await db.execute(stmt)
+    user = result.scalars().first()
 
-    # AsyncSession made out of HTTP
-    async with async_get_db_cm() as db:
-        Task = NotionTaskRepository()
-        added = await Task.add_tasks_to_db(notion=notion, user_id=user_id, last_modified_source="notion", sync_source="background")
+    if not user:
+        logger.error(f"User {user_id} not found")
+        return {"added": [], "deleted": {"deleted_pages": []}, "updated": []}
 
-        stmt = select(User.active_sync).where(User.id == user_id)
-        result = await db.execute(stmt)
-        active_sync = result.scalars().first()
-        if not active_sync:
-            logger.info(f"Background sync not started for user_id={user_id} (active_sync=False)")
-            return {"added": added}
+    if not user.active_sync:
+        logger.info(f"Sync is not active for user_id={user_id}, skipping sync")
+        return {"added": [], "deleted": {"deleted_pages": []}, "updated": []}
+
+    # Get the database_id from the integration
+    database_id = None
+    if user.notion_integration:
+        database_id = user.notion_integration.duplicated_template_id
+        if database_id:
+            logger.info(f"Using database_id={database_id} for user_id={user_id}")
+        else:
+            logger.warning(f"No database_id found for user_id={user_id}, will search all databases")
+    else:
+        logger.warning(f"No notion_integration found for user_id={user_id}")
 
     logger.info(f"Background sync started for user_id={user_id}")
 
+    Task = NotionTaskRepository()
 
-    current_notion_pages = await get_all_ids(notion=notion)
+    # Step 1: Add new tasks from Notion
+    logger.info(f"Step 1: Adding new tasks for user_id={user_id}")
+    added = await Task.add_tasks_to_db(notion=notion, user_id=user_id, last_modified_source="notion", sync_source="background", database_id=database_id)
+    logger.info(f"Added {len(added)} new tasks for user_id={user_id}")
+
+    # Step 2: Delete tasks that no longer exist in Notion
+    logger.info(f"Step 2: Checking for deleted tasks for user_id={user_id}")
+    current_notion_pages = await get_all_ids(notion=notion, database_id=database_id)
     deleted = await Task.delete_pages_by_ids(notion, user_id, current_notion_pages)
+    logger.info(f"Deleted {len(deleted.get('deleted_pages', []))} tasks for user_id={user_id}")
+
+    # Step 3: Update existing tasks
+    logger.info(f"Step 3: Updating existing tasks for user_id={user_id}")
     updated = await Task.update_pages_by_ids(notion, user_id, current_notion_pages, sync_source="background", last_modified_source="notion")
+    logger.info(f"Updated {len(updated)} tasks for user_id={user_id}")
+
     logger.info(f"Background sync finished for user_id={user_id}")
 
     return {
@@ -49,13 +73,12 @@ async def notion_sync_background(db: AsyncSession, notion: AsyncClient, user_id:
     }
 
 async def db_to_notion_sync(db: AsyncSession, user_id):
-    async with async_get_db_cm() as db:
-        stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
-        stmt_user = select(User).where(User.id == user_id)
-        result = await db.execute(stmt)
-        result_user = await db.execute(stmt_user)
-        tasks = result.scalars().all()
-        user = result_user.scalars().first()
+    stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
+    stmt_user = select(User).where(User.id == user_id)
+    result = await db.execute(stmt)
+    result_user = await db.execute(stmt_user)
+    tasks = result.scalars().all()
+    user = result_user.scalars().first()
 
     notion = get_notion_client(user.notion_integration.access_token)
     redis = await get_redis()
@@ -85,5 +108,5 @@ async def db_to_notion_sync(db: AsyncSession, user_id):
                 if not database_id:
                     logger.warning(f"No Notion database_id for user_id={user_id}; skipping create for task_id={task.id}")
                     continue
-                await notion.pages.create(parent={"database_id": database_id}, properties=properties)
 
+                await notion.pages.create(parent={"database_id": database_id}, properties=properties)

@@ -137,15 +137,15 @@ class NotionTaskRepository:
         """
         # Проверяем, существует ли задача
         async with async_get_db_cm() as db:
-            stmt = select(UserNotionTask).where(
+            stmt = select(UserNotionTask.id).where(
                 UserNotionTask.id == page_id,
                 UserNotionTask.user_id == user_id,
                 UserNotionTask.deleted.is_(False)  # Только не удалённые
             )
             result = await db.execute(stmt)
-            task = result.scalar_one_or_none()
+            task_id = result.scalar_one_or_none()
 
-            if task:
+            if task_id:
                 # Мягкое удаление: ставим deleted_at
                 stmt = (
                     update(UserNotionTask)
@@ -155,7 +155,7 @@ class NotionTaskRepository:
                 await db.execute(stmt)
                 await db.commit()
 
-                logger.debug(f"Soft-deleted task: {task.id} (page_id: {page_id}, user_id: {user_id})")
+                logger.debug(f"Soft-deleted task: {task_id} (page_id: {page_id}, user_id: {user_id})")
                 return True
             else:
                 logger.debug(f"Task not found for soft-deletion (notion_page_id: {page_id}, user_id: {user_id})")

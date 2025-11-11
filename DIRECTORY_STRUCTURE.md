@@ -41,6 +41,7 @@ Calnio/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
+│   ├── check_notion_access.py
 │   ├── cleanup_duplicates.py
 │   ├── generate_tree.py
 │   ├── migrate_normalize_ids.py
@@ -193,10 +194,10 @@ Calnio/
 ├── LICENSE
 ├── main.py
 ├── manage.py
+├── ngrok.yml
 ├── Procfile
 ├── railway.json
 ├── README.md
-├── redis_test.py
 ├── requirements.txt
 ├── robots.txt
 ├── START_SERVER.sh
