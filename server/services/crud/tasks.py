@@ -43,12 +43,13 @@ async def create_task(
     This is the ONLY place where tasks are created/updated from webhooks and bulk sync.
     """
     # Store notion_page_id AS-IS with dashes - this is the Notion UUID (unique identifier)
-    logger.debug(f"create_task: Checking for existing task with notion_page_id={notion_page_id}")
+    logger.debug(f"create_task: Checking for existing task with notion_page_id={notion_page_id}, user_id={user_id}")
 
-    # Check if task already exists by notion_page_id
-    # notion_page_id is UNIQUE in the database
+    # Check if task already exists by BOTH notion_page_id AND user_id
+    # This ensures each user has their own copy of the task
     stmt = select(UserNotionTask).where(
-        UserNotionTask.notion_page_id == notion_page_id
+        UserNotionTask.notion_page_id == notion_page_id,
+        UserNotionTask.user_id == user_id
     )
     result = await db.execute(stmt)
     existing_task = result.scalar_one_or_none()
@@ -58,15 +59,11 @@ async def create_task(
     end_date_dt = to_utc_datetime(end_date)
 
     if existing_task:
-        # ====================================================================
-        # TASK EXISTS: UPDATE instead of creating duplicate
-        # ====================================================================
         logger.info(
-            f"✓ DUPLICATE PREVENTION: Task exists - UPDATING "
-            f"(task_id={existing_task.id}, notion_page_id={notion_page_id})"
+            f"Task exists, updating: task_id={existing_task.id}, notion_page_id={notion_page_id}"
         )
-        logger.debug(f"  Old: title='{existing_task.title}'")
-        logger.debug(f"  New: title='{title}'")
+        logger.debug(f"Old title: {existing_task.title}")
+        logger.debug(f"New title: {title}")
 
         existing_task.title = title
         existing_task.notion_url = notion_url
@@ -85,17 +82,14 @@ async def create_task(
 
         await db.commit()
         await db.refresh(existing_task)
-        logger.info(f"✓ Task UPDATED successfully (id={existing_task.id})")
+        logger.info(f"Task updated successfully: id={existing_task.id}")
         return existing_task
 
-    # ========================================================================
-    # TASK DOES NOT EXIST: CREATE new task
-    # ========================================================================
-    logger.info(f"✓ NEW TASK: Creating (notion_page_id={notion_page_id}, title='{title}')")
+    logger.info(f"Creating new task: notion_page_id={notion_page_id}, title={title}")
 
     new_task = UserNotionTask(
         user_id=user_id,
-        notion_page_id=notion_page_id,  # Store WITH dashes as received from Notion API
+        notion_page_id=notion_page_id,
         notion_url=notion_url,
         title=title,
         description=description,
@@ -115,7 +109,7 @@ async def create_task(
     db.add(new_task)
     await db.commit()
     await db.refresh(new_task)
-    logger.info(f"✓ Task CREATED successfully (id={new_task.id})")
+    logger.info(f"Task created successfully: id={new_task.id}")
     return new_task
 
 
@@ -269,19 +263,29 @@ async def delete_pages_by_ids(
         notion: AsyncClient,
         user_id: int,
         pages_ids: list):
-    """Delete tasks that are no longer in Notion"""
+    """
+    Delete tasks that no longer exist in Notion.
+    Compare DB tasks with current Notion pages and delete missing ones.
+
+    CRITICAL: pages_ids must contain Notion UUIDs WITH DASHES
+    """
+    logger.debug(f"Comparing {len(pages_ids)} Notion pages with DB tasks for user_id={user_id}")
+
+    # Get all tasks for this user from database
     stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
     result = await db.execute(stmt)
     tasks = result.scalars().all()
 
-    # Get all notion_page_ids from database (stored WITH dashes)
+    # Get notion_page_ids stored in DB (already WITH dashes)
     pages_ids_db = [task.notion_page_id for task in tasks]
 
     # pages_ids from Notion (WITH dashes)
     pages_ids_notion = pages_ids
 
-    # Find pages in DB but not in Notion
+    # Find pages in DB but NOT in Notion (these were deleted in Notion)
     pages_to_delete = list(set(pages_ids_db) - set(pages_ids_notion))
+
+    logger.info(f"Found {len(pages_to_delete)} tasks to delete for user_id={user_id}")
 
     # Delete stale tasks
     for page_id in pages_to_delete:
@@ -290,12 +294,14 @@ async def delete_pages_by_ids(
             UserNotionTask.user_id == user_id
         )
         result = await db.execute(stmt)
-        task = result.scalar()
+        task = result.scalar_one_or_none()
+
         if task:
+            logger.info(f"Deleting task id={task.id} for user_id={user_id}")
             await db.delete(task)
-            logger.info(f"Deleted stale task (notion_page_id={page_id})")
 
     await db.commit()
+    logger.info(f"Deleted {len(pages_to_delete)} tasks for user_id={user_id}")
     return {"deleted_pages": pages_to_delete}
 
 
@@ -307,44 +313,67 @@ async def update_pages_by_ids(
         sync_source: str,
         last_modified_source: str
     ):
-    """Bulk sync: update tasks from Notion"""
-    all_ids = await get_all_ids(notion=notion)
+    """
+    Bulk sync: Update existing tasks from Notion.
+    Only updates tasks that already exist in the database.
+
+    CRITICAL: pages_ids must contain Notion UUIDs WITH DASHES
+    """
+    logger.debug(f"update_pages_by_ids: Updating tasks for user_id={user_id} from {len(pages_ids)} Notion pages")
+
     updated_pages = []
 
-    for page_id in all_ids:
-        logger.debug(f"Bulk sync: Updating page_id={page_id}")
+    # For each Notion page, check if task exists in DB and update it
+    for page_id in pages_ids:
+        logger.debug(f"Checking for update: page_id={page_id}, user_id={user_id}")
 
+        # Query: find task by notion_page_id AND user_id
         stmt = select(UserNotionTask).where(
-            UserNotionTask.notion_page_id == page_id  # Search WITH dashes
+            UserNotionTask.notion_page_id == page_id,  # Search WITH dashes
+            UserNotionTask.user_id == user_id  # Filter by user
         )
         result = await db.execute(statement=stmt)
         task = result.scalar_one_or_none()
 
-        page = await notion.pages.retrieve(page_id=page_id)
-        notion_page = NotionTask.from_notion(page)
+        if not task:
+            # Task doesn't exist for this user - skip (will be created by add_tasks_to_db)
+            logger.debug(f"Task not found for update (page_id={page_id}, user_id={user_id}); skipping")
+            continue
 
-        if task:
-            # Task exists: update it
-            await update_task(
-                db=db,
-                task=task,
-                title=notion_page.title,
-                notion_url=notion_page.notion_page_url,
-                description=notion_page.description,
-                start_date=to_utc_datetime(notion_page.start_date),
-                end_date=to_utc_datetime(notion_page.end_date),
-                status=notion_page.status,
-                select_option=notion_page.select_option,
-                done=notion_page.done,
-                priority=notion_page.priority,
-                sync_source=sync_source,
-                last_modified_source=last_modified_source
-            )
-            updated_pages.append({
-                "page_id": page_id,
-                "title": notion_page.title,
-                "status": "updated"
-            })
+        # Fetch latest data from Notion
+        try:
+            page = await notion.pages.retrieve(page_id=page_id)
+            notion_page = NotionTask.from_notion(page)
+        except Exception as e:
+            logger.error(f"Failed to fetch page from Notion (page_id={page_id}): {e}")
+            continue
 
+        # Task exists: UPDATE it
+        logger.info(f"Updating task (id={task.id}, notion_page_id={page_id}, title='{notion_page.title}')")
+
+        await update_task(
+            db=db,
+            task=task,
+            title=notion_page.title,
+            notion_url=notion_page.notion_page_url,
+            description=notion_page.description,
+            start_date=to_utc_datetime(notion_page.start_date),
+            end_date=to_utc_datetime(notion_page.end_date),
+            status=notion_page.status,
+            select_option=notion_page.select_option,
+            done=notion_page.done,
+            priority=notion_page.priority,
+            sync_source=sync_source,
+            last_modified_source=last_modified_source
+        )
+
+        updated_pages.append({
+            "page_id": page_id,
+            "task_id": task.id,
+            "title": notion_page.title,
+            "status": "updated"
+        })
+
+    logger.info(f"Updated {len(updated_pages)} existing tasks")
     return updated_pages
 
