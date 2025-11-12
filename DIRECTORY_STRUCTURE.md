@@ -168,13 +168,23 @@ Calnio/
 │   │   ├── decorators.py
 │   │   └── utils.py
 │   └── __init__.py
+├── services/
+│   └── sync/
+│       └── server/
+│           └── app/
+│               ├── api/
+│               ├── core/
+│               └── schemas/
 ├── .gitignore
 ├── alembic.ini
 ├── CHANGELOG.md
 ├── DIRECTORY_STRUCTURE.md
+├── docker-compose.yml
+├── Dockerfile
 ├── LICENSE
 ├── main.py
 ├── manage.py
+├── ngrok.yml
 ├── Procfile
 ├── railway.json
 ├── README.md

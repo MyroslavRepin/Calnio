@@ -1,0 +1,18 @@
+services:
+  calnio:
+    container_name: "calnio"
+    build: .
+    volumes:
+      - .:/calnio
+    ports:
+     - "8000:8000"
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: "ngrok"
+    depends_on:
+      - calnio
+    volumes:
+      - ./ngrok.yml:/ngrok.yml
+    command: start --all --config /ngrok.yml --log=stdout --log-level=info
+    restart: always
