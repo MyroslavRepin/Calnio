@@ -5,6 +5,7 @@ services:
     build: .
     volumes:
       - .:/calnio
+      - ./logs:/calnio/logs
     ports:
      - "8000:8000"
 

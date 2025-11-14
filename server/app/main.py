@@ -37,6 +37,16 @@ logger.add(
     level="DEBUG",
 )
 
+os.makedirs("logs", exist_ok=True)
+logger.add("logs/app_{time:YYYY-MM-DD}.log",
+           rotation="1 day",
+           retention="14 days",
+           compression="zip",
+           format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
+           level="DEBUG",
+           backtrace=True,
+           diagnose=True)
+
 # Intercept all standard logging and redirect to Loguru
 logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
 
@@ -45,6 +55,11 @@ for logger_name in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
     logging_logger = logging.getLogger(logger_name)
     logging_logger.handlers = [InterceptHandler()]
     logging_logger.propagate = False
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
 
 logger.info("Loguru initialized")
 
