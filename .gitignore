@@ -5,3 +5,4 @@
 settings.json
 .idea
 server/alembic/versions/__pycache__/
+logs/

@@ -18,3 +18,10 @@ services:
       - ./ngrok.yml:/ngrok.yml
     command: start --all --config /ngrok.yml --log=stdout --log-level=info
     restart: always
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
