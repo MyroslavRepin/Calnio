@@ -35,3 +35,104 @@
 2025-11-14 08:04:31 | INFO | uvicorn.lifespan.on:startup:62 - Application startup complete.
 2025-11-14 08:04:31 | INFO | server.services.postgres_trigger:listen_to_postgres:20 - Listening to Postgres channel: notion_tasks_channel
 2025-11-14 08:04:46 | INFO | uvicorn.protocols.http.h11_impl:send:473 - 192.168.65.1:51497 - "GET /dashboard HTTP/1.1" 200
+2025-11-14 08:09:30 | DEBUG | apscheduler.schedulers.base:_process_jobs:1151 - Looking for jobs to run
+2025-11-14 08:09:30 | DEBUG | apscheduler.schedulers.base:_process_jobs:1258 - Next wakeup is due at 2025-11-14 08:14:30.909643+00:00 (in 299.997358 seconds)
+2025-11-14 08:09:30 | INFO | apscheduler.executors.base:run_coroutine_job:179 - Running job "sync_user_calendars (trigger: interval[0:05:00], next run at: 2025-11-14 08:14:30 UTC)" (scheduled at 2025-11-14 08:09:30.909643+00:00)
+2025-11-14 08:09:31 | INFO | apscheduler.executors.base:run_coroutine_job:203 - Job "sync_user_calendars (trigger: interval[0:05:00], next run at: 2025-11-14 08:14:30 UTC)" executed successfully
+2025-11-14 08:14:30 | DEBUG | apscheduler.schedulers.base:_process_jobs:1151 - Looking for jobs to run
+2025-11-14 08:14:30 | DEBUG | apscheduler.schedulers.base:_process_jobs:1258 - Next wakeup is due at 2025-11-14 08:19:30.909643+00:00 (in 299.997232 seconds)
+2025-11-14 08:14:30 | INFO | apscheduler.executors.base:run_coroutine_job:179 - Running job "sync_user_calendars (trigger: interval[0:05:00], next run at: 2025-11-14 08:19:30 UTC)" (scheduled at 2025-11-14 08:14:30.909643+00:00)
+2025-11-14 08:14:31 | INFO | apscheduler.executors.base:run_coroutine_job:203 - Job "sync_user_calendars (trigger: interval[0:05:00], next run at: 2025-11-14 08:19:30 UTC)" executed successfully
+2025-11-14 08:14:36 | INFO | server.app.main:<module>:64 - Loguru initialized
+2025-11-14 08:14:37 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'SafeConfigParser': <class 'configparser.ConfigParser'>
+2025-11-14 08:14:37 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'NativeStringIO': <class '_io.StringIO'>
+2025-11-14 08:14:37 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'BytesIO': <class '_io.BytesIO'>
+2025-11-14 08:14:37 | DEBUG | passlib.registry:register_crypt_handler:296 - registered 'bcrypt' handler: <class 'passlib.handlers.bcrypt.bcrypt'>
+2025-11-14 08:14:37 | INFO | uvicorn.server:_serve:84 - Started server process [8]
+2025-11-14 08:14:37 | INFO | uvicorn.lifespan.on:startup:48 - Waiting for application startup.
+2025-11-14 08:14:37 | INFO | apscheduler.schedulers.base:_real_add_job:1090 - Added job "sync_user_calendars" to job store "default"
+2025-11-14 08:14:37 | INFO | apscheduler.schedulers.base:start:214 - Scheduler started
+2025-11-14 08:14:37 | INFO | server.db.redis_client:init_redis:13 - Connecting to Redis: shinkansen.proxy.rlwy.net:42953
+2025-11-14 08:14:37 | DEBUG | apscheduler.schedulers.base:_process_jobs:1151 - Looking for jobs to run
+2025-11-14 08:14:37 | DEBUG | apscheduler.schedulers.base:_process_jobs:1258 - Next wakeup is due at 2025-11-14 08:19:36.981155+00:00 (in 299.872762 seconds)
+2025-11-14 08:14:37 | INFO | server.db.redis_client:init_redis:19 - Redis connected successfully: True
+2025-11-14 08:14:37 | INFO | uvicorn.lifespan.on:startup:62 - Application startup complete.
+2025-11-14 08:14:37 | INFO | server.services.postgres_trigger:listen_to_postgres:20 - Listening to Postgres channel: notion_tasks_channel
+2025-11-14 08:14:55 | INFO | server.app.main:<module>:64 - Loguru initialized
+2025-11-14 08:14:55 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'SafeConfigParser': <class 'configparser.ConfigParser'>
+2025-11-14 08:14:55 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'NativeStringIO': <class '_io.StringIO'>
+2025-11-14 08:14:55 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'BytesIO': <class '_io.BytesIO'>
+2025-11-14 08:14:55 | DEBUG | passlib.registry:register_crypt_handler:296 - registered 'bcrypt' handler: <class 'passlib.handlers.bcrypt.bcrypt'>
+2025-11-14 08:14:55 | INFO | uvicorn.server:_serve:84 - Started server process [8]
+2025-11-14 08:14:55 | INFO | uvicorn.lifespan.on:startup:48 - Waiting for application startup.
+2025-11-14 08:14:55 | INFO | apscheduler.schedulers.base:_real_add_job:1090 - Added job "sync_user_calendars" to job store "default"
+2025-11-14 08:14:55 | INFO | apscheduler.schedulers.base:start:214 - Scheduler started
+2025-11-14 08:14:55 | INFO | server.db.redis_client:init_redis:13 - Connecting to Redis: shinkansen.proxy.rlwy.net:42953
+2025-11-14 08:14:55 | DEBUG | apscheduler.schedulers.base:_process_jobs:1151 - Looking for jobs to run
+2025-11-14 08:14:55 | DEBUG | apscheduler.schedulers.base:_process_jobs:1258 - Next wakeup is due at 2025-11-14 08:19:55.473242+00:00 (in 299.866398 seconds)
+2025-11-14 08:14:55 | INFO | server.db.redis_client:init_redis:19 - Redis connected successfully: True
+2025-11-14 08:14:55 | INFO | uvicorn.lifespan.on:startup:62 - Application startup complete.
+2025-11-14 08:14:56 | INFO | server.services.postgres_trigger:listen_to_postgres:20 - Listening to Postgres channel: notion_tasks_channel
+2025-11-14 08:15:54 | INFO | server.app.main:<module>:64 - Loguru initialized
+2025-11-14 08:15:54 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'SafeConfigParser': <class 'configparser.ConfigParser'>
+2025-11-14 08:15:54 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'NativeStringIO': <class '_io.StringIO'>
+2025-11-14 08:15:54 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'BytesIO': <class '_io.BytesIO'>
+2025-11-14 08:15:54 | DEBUG | passlib.registry:register_crypt_handler:296 - registered 'bcrypt' handler: <class 'passlib.handlers.bcrypt.bcrypt'>
+2025-11-14 08:15:54 | INFO | uvicorn.server:_serve:84 - Started server process [8]
+2025-11-14 08:15:54 | INFO | uvicorn.lifespan.on:startup:48 - Waiting for application startup.
+2025-11-14 08:15:54 | INFO | apscheduler.schedulers.base:_real_add_job:1090 - Added job "sync_user_calendars" to job store "default"
+2025-11-14 08:15:54 | INFO | apscheduler.schedulers.base:start:214 - Scheduler started
+2025-11-14 08:15:54 | INFO | server.db.redis_client:init_redis:13 - Connecting to Redis: shinkansen.proxy.rlwy.net:42953
+2025-11-14 08:15:54 | DEBUG | apscheduler.schedulers.base:_process_jobs:1151 - Looking for jobs to run
+2025-11-14 08:15:54 | DEBUG | apscheduler.schedulers.base:_process_jobs:1258 - Next wakeup is due at 2025-11-14 08:20:54.502521+00:00 (in 299.861577 seconds)
+2025-11-14 08:15:54 | INFO | server.db.redis_client:init_redis:19 - Redis connected successfully: True
+2025-11-14 08:15:54 | INFO | uvicorn.lifespan.on:startup:62 - Application startup complete.
+2025-11-14 08:15:55 | INFO | server.services.postgres_trigger:listen_to_postgres:20 - Listening to Postgres channel: notion_tasks_channel
+2025-11-14 08:19:04 | INFO | uvicorn.server:shutdown:264 - Shutting down
+2025-11-14 08:19:04 | INFO | uvicorn.lifespan.on:shutdown:67 - Waiting for application shutdown.
+2025-11-14 08:19:04 | INFO | apscheduler.schedulers.base:shutdown:245 - Scheduler has been shut down
+2025-11-14 08:19:04 | INFO | server.db.redis_client:close_redis:41 - Redis connection closed
+2025-11-14 08:19:04 | INFO | uvicorn.lifespan.on:shutdown:76 - Application shutdown complete.
+2025-11-14 08:19:04 | INFO | uvicorn.server:_serve:94 - Finished server process [8]
+2025-11-14 16:26:25 | INFO | server.app.main:<module>:64 - Loguru initialized
+2025-11-14 16:26:25 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'SafeConfigParser': <class 'configparser.ConfigParser'>
+2025-11-14 16:26:25 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'NativeStringIO': <class '_io.StringIO'>
+2025-11-14 16:26:25 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'BytesIO': <class '_io.BytesIO'>
+2025-11-14 16:26:25 | DEBUG | passlib.registry:register_crypt_handler:296 - registered 'bcrypt' handler: <class 'passlib.handlers.bcrypt.bcrypt'>
+2025-11-14 16:26:25 | INFO | uvicorn.server:_serve:84 - Started server process [8]
+2025-11-14 16:26:25 | INFO | uvicorn.lifespan.on:startup:48 - Waiting for application startup.
+2025-11-14 16:26:25 | INFO | apscheduler.schedulers.base:_real_add_job:1090 - Added job "sync_user_calendars" to job store "default"
+2025-11-14 16:26:25 | INFO | apscheduler.schedulers.base:start:214 - Scheduler started
+2025-11-14 16:26:25 | INFO | server.db.redis_client:init_redis:13 - Connecting to Redis: shinkansen.proxy.rlwy.net:42953
+2025-11-14 16:26:25 | DEBUG | apscheduler.schedulers.base:_process_jobs:1151 - Looking for jobs to run
+2025-11-14 16:26:25 | DEBUG | apscheduler.schedulers.base:_process_jobs:1258 - Next wakeup is due at 2025-11-14 16:31:25.482482+00:00 (in 299.853076 seconds)
+2025-11-14 16:26:26 | INFO | server.db.redis_client:init_redis:19 - Redis connected successfully: True
+2025-11-14 16:26:26 | INFO | uvicorn.lifespan.on:startup:62 - Application startup complete.
+2025-11-14 16:26:26 | INFO | server.services.postgres_trigger:listen_to_postgres:20 - Listening to Postgres channel: notion_tasks_channel
+2025-11-14 16:27:05 | INFO | uvicorn.server:shutdown:264 - Shutting down
+2025-11-14 16:27:05 | INFO | uvicorn.lifespan.on:shutdown:67 - Waiting for application shutdown.
+2025-11-14 16:27:05 | INFO | apscheduler.schedulers.base:shutdown:245 - Scheduler has been shut down
+2025-11-14 16:27:05 | INFO | server.db.redis_client:close_redis:41 - Redis connection closed
+2025-11-14 16:27:05 | INFO | uvicorn.lifespan.on:shutdown:76 - Application shutdown complete.
+2025-11-14 16:27:05 | INFO | uvicorn.server:_serve:94 - Finished server process [8]
+2025-11-14 16:28:11 | INFO | server.app.main:<module>:64 - Loguru initialized
+2025-11-14 16:28:11 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'SafeConfigParser': <class 'configparser.ConfigParser'>
+2025-11-14 16:28:11 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'NativeStringIO': <class '_io.StringIO'>
+2025-11-14 16:28:11 | DEBUG | passlib.utils.compat:__getattr__:449 - loaded lazy attr 'BytesIO': <class '_io.BytesIO'>
+2025-11-14 16:28:11 | DEBUG | passlib.registry:register_crypt_handler:296 - registered 'bcrypt' handler: <class 'passlib.handlers.bcrypt.bcrypt'>
+2025-11-14 16:28:11 | INFO | uvicorn.server:_serve:84 - Started server process [8]
+2025-11-14 16:28:11 | INFO | uvicorn.lifespan.on:startup:48 - Waiting for application startup.
+2025-11-14 16:28:11 | INFO | apscheduler.schedulers.base:_real_add_job:1090 - Added job "sync_user_calendars" to job store "default"
+2025-11-14 16:28:11 | INFO | apscheduler.schedulers.base:start:214 - Scheduler started
+2025-11-14 16:28:11 | INFO | server.db.redis_client:init_redis:13 - Connecting to Redis: shinkansen.proxy.rlwy.net:42953
+2025-11-14 16:28:11 | DEBUG | apscheduler.schedulers.base:_process_jobs:1151 - Looking for jobs to run
+2025-11-14 16:28:11 | DEBUG | apscheduler.schedulers.base:_process_jobs:1258 - Next wakeup is due at 2025-11-14 16:33:11.229582+00:00 (in 299.847976 seconds)
+2025-11-14 16:28:11 | INFO | server.db.redis_client:init_redis:19 - Redis connected successfully: True
+2025-11-14 16:28:11 | INFO | uvicorn.lifespan.on:startup:62 - Application startup complete.
+2025-11-14 16:28:11 | INFO | server.services.postgres_trigger:listen_to_postgres:20 - Listening to Postgres channel: notion_tasks_channel
+2025-11-14 16:28:23 | INFO | uvicorn.server:shutdown:264 - Shutting down
+2025-11-14 16:28:23 | INFO | uvicorn.lifespan.on:shutdown:67 - Waiting for application shutdown.
+2025-11-14 16:28:23 | INFO | apscheduler.schedulers.base:shutdown:245 - Scheduler has been shut down
+2025-11-14 16:28:23 | INFO | server.db.redis_client:close_redis:41 - Redis connection closed
+2025-11-14 16:28:23 | INFO | uvicorn.lifespan.on:shutdown:76 - Application shutdown complete.
+2025-11-14 16:28:23 | INFO | uvicorn.server:_serve:94 - Finished server process [8]

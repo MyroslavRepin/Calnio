@@ -36,8 +36,6 @@ Calnio/
 │       ├── tasks.html
 │       ├── unauthorized.html
 │       └── users.html
-├── logs/
-├── loki-setup/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
