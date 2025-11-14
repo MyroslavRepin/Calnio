@@ -1,6 +1,7 @@
 services:
   calnio:
-    container_name: "calnio"
+    image: calnio:latest
+    container_name: calnio
     build: .
     volumes:
       - .:/calnio

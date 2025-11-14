@@ -12,7 +12,7 @@ from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.app.schemas.notion_pages import NotionTask
-from server.db.deps import async_get_db
+from server.db.deps import async_get_db, async_get_db_cm
 from server.db.models import UserNotionIntegration, User, UserNotionTask
 from server.db.models.enums import SyncStatus
 from server.db.redis_client import get_redis
@@ -21,11 +21,31 @@ from server.utils.redis.utils import get_webhook_data, save_webhook_data
 from server.services.notion_syncing.webhook_service import sync_webhook_data
 from server.utils.utils import convert_uuid_no_dashes
 from server.app.core.logging_config import logger
+from server.services.notion_syncing.webhook_handler import NotionWebhookService
 
 router = APIRouter()
 
-@router.post("/webhooks/notion/")
+@router.post("/webhooks/notion")
 async def get_notion_response(request: Request, db: AsyncSession = Depends(async_get_db)):
+    """
+    Handle Notion webhook responses.
+
+    This function processes the incoming payload from Notion webhooks and updates
+    the corresponding user, task, or integration data accordingly. It supports
+    events like page creation, deletion, and property updates by interacting
+    with a database, Redis, and the Notion API.
+
+    Parameters:
+    request (Request): The HTTP request containing the webhook payload.
+    db (AsyncSession): Dependency-injected asynchronous database session.
+
+    Returns:
+    dict: A dictionary containing the response message or error information.
+
+    Raises:
+    KeyError: If required keys are missing in the payload.
+    ValueError: If invalid data types are encountered in the payload.
+    """
     payload = None
     try:
         redis_client = await get_redis()
@@ -45,7 +65,6 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
         event_type = payload["type"]
 
         logger.debug(f"Webhook received: page_id={page_id}, workspace_id={workspace_id}, event={event_type}")
-
 
         if page_id and workspace_id:
             # Getting user by workspace_id (workspace_id is uuid without dashes in db too)
@@ -69,113 +88,35 @@ async def get_notion_response(request: Request, db: AsyncSession = Depends(async
                 "event_type": event_type,
             }
 
+            webhook_handler = NotionWebhookService()
+
+            # Delete
             if event_type == "page.deleted":
-                stmt = select(UserNotionTask).where(
-                    UserNotionTask.user_id == user.id,
-                    UserNotionTask.notion_page_id == page_id
-                )
-                result = await db.execute(stmt)
-                task = result.scalar_one_or_none()
+                async with async_get_db_cm() as db:
+                    update_task = await webhook_handler.handle_page_deleted(db=db, user_id=user.id, page_id=page_id)
+                    logger.debug(f"Deleted task: {update_task}")
 
-                if not task:
-                    logger.warning(f"Task not found in database for page_id={page_id}")
-                    return {"error": "Task not found"}
-
-                task.deleted = True
-                task.deleted_at = datetime.now(datetime.timezone.utc)
-
-                await db.commit()
-                await db.refresh(task)
-                logger.info(f"Task {task.id} marked as deleted.")
-
+            # Other operations
             else:
                 user_id = user.id
                 notion_client = get_notion_client(user.notion_integration.access_token)
                 page = await notion_client.pages.retrieve(page_id=page_id)
-                logger.debug(f"Notion page: {page}")
                 notion_page = NotionTask.from_notion(page)
+                logger.debug(f"Notion page: {notion_page.__dict__}")
 
+                # Create
                 if event_type == "page.created":
-                    # Todo: if there are no tasks with same notion_page_id -> Create new page
-                    stmt = select(UserNotionTask).where(
-                        UserNotionTask.user_id==user.id,
-                        UserNotionTask.notion_page_id==page_id
-                    )
-                    result = await db.execute(stmt)
-                    task = result.scalar_one_or_none()
+                    async with async_get_db_cm() as db:
+                        # Todo: This function falls if some of properties are missing, need to handle that
+                        create_task = await webhook_handler.handle_page_created(db=db, user=user, user_id=user_id, page_id=page_id)
+                        logger.debug(f"Created task: {create_task}")
 
-                    if task:
-                        logger.warning(f"Task: {task.id} already exists in database")
-                        return {"error": "Task already exists"}
-                    if not task:
-                        try:
-                            logger.debug(f"Creating new task for page_id: {page_id}")
-                            start_date = parser.isoparse(notion_page.start_date)
-                            end_date = parser.isoparse(notion_page.end_date)
-                            logger.debug(f"notion_page data: {notion_page.__dict__}")
-                            debug_data = {
-                                "user_id": user_id,
-                                "notion_page_id": page_id,
-                                "notion_url": notion_page.notion_page_url,
-                                "title": notion_page.title,
-                                "description": notion_page.description,
-                                "status": notion_page.status,
-                                "priority": notion_page.priority,
-                                "select_option": notion_page.select_option,
-                                "done": notion_page.done,
-                                "start_date": start_date,
-                                "end_date": end_date,
-                                "sync_source": "notion",
-                                "caldav_id": "pending",
-                                "last_modified_source": "notion",
-                                "sync_status": SyncStatus.pending,
-                                "deleted": False,
-                            }
-
-                            # Note: NoneType error happened because all the columns cannot be NULL
-                            # Fixme: Add user config to select automaticly end date range if not picked manually
-                            logger.debug(
-                                f"Creating new task with data: {json.dumps(debug_data, default=str, indent=4)}")
-                            new_task = UserNotionTask(
-                                **debug_data
-                            )
-                            db.add(new_task)
-                            await db.commit()
-                            await db.refresh(new_task)
-                        except Exception as e:
-                            logger.error(f"Error creating new task: {e}")
-                            return {"error": str(e)}
-
-
+                # Update
                 if event_type == "page.properties_updated":
-                    # Todo: get the page and update properties
-                    stmt = select(UserNotionTask).where(
-                        UserNotionTask.user_id == user.id,
-                        UserNotionTask.notion_page_id == page_id
-                    )
-                    result = await db.execute(stmt)
-                    task = result.scalar_one_or_none()
-
-                    if not task:
-                        logger.warning(f"Task not found in database for page_id={page_id}")
-                        return {"error": "Task not found"}
-                    else:
-                        logger.debug(f"Task: {task.id} found in database")
-                        task.title = notion_page.title
-                        task.description = notion_page.description
-                        task.status = notion_page.status
-                        task.priority = notion_page.priority
-                        task.select_option = notion_page.select_option
-                        task.done = notion_page.done
-                        task.start_date = parser.isoparse(notion_page.start_date)
-                        task.end_date = parser.isoparse(notion_page.end_date)
-                        task.last_modified_source = "notion"
-                        task.sync_status = SyncStatus.pending
-
-                        await db.commit()
-                        await db.refresh(task)
-                        logger.info(f"Task {task.id} updated.")
-            # await sync_webhook_data()
+                    async with async_get_db_cm() as db:
+                        update_task = await webhook_handler.handle_page_updated(db=db, user=user, user_id=user_id, page_id=page_id)
+                        logger.debug(f"Updated task: {update_task}")
+                # Todo: Handle other events as undeleting and archiving
 
         return {"message": "Notion response", "response": payload}
     except Exception as e:
