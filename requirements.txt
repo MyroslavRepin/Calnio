@@ -62,3 +62,8 @@ icalendar
 recurring-ical-events
 caldav
 python-dateutil
+
+# Logs
+litestar
+prometheus_client
+prometheus_fastapi_instrumentator

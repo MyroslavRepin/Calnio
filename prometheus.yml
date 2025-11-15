@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 3s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "litestar"
+    honor_labels: true
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["litestar:8010"]
+        labels:
+          app: litestar
+          service: litestar
+          tier: backend
+    relabel_configs:
+      # При необходимости можно нормализовать target-имя в instance
+      - source_labels: [__address__]
+        target_label: instance
+        regex: "([^:]+):.*"
+        replacement: "$1"
