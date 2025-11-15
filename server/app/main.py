@@ -6,8 +6,15 @@ from loguru import logger
 
 from server.services.scheduler.scheduler_service import shutdown_scheduler, start_scheduler
 
+from litestar import Litestar, get
+from litestar.plugins.prometheus import PrometheusConfig, PrometheusController
+from litestar.openapi.config import OpenAPIConfig
+from litestar.openapi.plugins import ScalarRenderPlugin
+from litestar.exceptions import HTTPException
 
-# === 🔧 Intercept standard logging and redirect to Loguru ===
+
+
+# === Intercept standard logging and redirect to Loguru ===
 class InterceptHandler(logging.Handler):
     """Intercept standard logging messages and redirect them to Loguru."""
     def emit(self, record):
@@ -86,6 +93,8 @@ from server.services.caldav.user_calendars import sync_user_calendars
 # Creating Main App
 app = FastAPI()
 
+from prometheus_fastapi_instrumentator import Instrumentator
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "frontend"))
 templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
@@ -120,9 +129,9 @@ app.include_router(pages.router)
 app.include_router(notion_webhook_router)
 
 
+
 class UserAdmin(ModelView, model=user_models.User):
     column_list = [user_models.User.id, user_models.User.email, user_models.User.username, user_models.User.is_superuser]
-
 
 admin = Admin(app, async_engine)
 admin.add_view(UserAdmin)

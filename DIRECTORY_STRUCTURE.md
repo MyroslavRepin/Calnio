@@ -36,6 +36,9 @@ Calnio/
 │       ├── tasks.html
 │       ├── unauthorized.html
 │       └── users.html
+├── grafana/
+│   ├── calnio_litestar_dashboard.json
+│   └── datasources.yaml
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -97,6 +100,7 @@ Calnio/
 │   │   │   └── users.py
 │   │   ├── __init__.py
 │   │   ├── main.py
+│   │   ├── main_litestar.py
 │   │   └── version.py
 │   ├── config/
 │   ├── db/
@@ -199,10 +203,13 @@ Calnio/
 ├── docker-compose.yml
 ├── Dockerfile
 ├── LICENSE
+├── loki-config.yaml
 ├── main.py
 ├── manage.py
 ├── ngrok.yml
 ├── Procfile
+├── prometheus.yml
+├── promtail-config.yaml
 ├── railway.json
 ├── README.md
 ├── requirements.txt
