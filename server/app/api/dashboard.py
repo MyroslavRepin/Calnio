@@ -73,14 +73,15 @@ async def dashboard(
         descriptions.append(task.description)
         priorities.append(task.priority)
 
-    html_content = templates.get_template("dashboard.html").render(
+    html_content = templates.get_template("brutalist-dashboard.html").render(
         request=request,
         username=user.username,
         email=user.email,
         success=success,
         OAuth_url=OAuth_url,
         tasks=tasks,
-        user_obj=user_obj
+        user_obj=user_obj,
+        user={"id": user_id}
     )
     return HTMLResponse(content=html_content, headers=response.headers, status_code=200)
 

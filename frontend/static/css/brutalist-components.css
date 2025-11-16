@@ -447,37 +447,167 @@
 /* ==================== MOBILE RESPONSIVE ==================== */
 
 @media (max-width: 968px) {
+  /* Grid layouts */
   .pricing-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-md);
   }
   
   .feature-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+  
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Buttons more compact */
+  .btn {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-body-sm);
   }
   
   .btn-large {
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
     font-size: var(--font-size-body);
   }
   
+  .btn-small {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-body-xs);
+  }
+  
+  /* Forms more compact */
+  .form {
+    gap: var(--space-md);
+  }
+  
+  .form-group {
+    gap: var(--space-xs);
+  }
+  
+  .form-input,
+  .form-textarea,
+  .form-select {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-body-sm);
+  }
+  
+  .form-label {
+    font-size: var(--font-size-body-xs);
+  }
+  
+  /* Cards more compact */
+  .card {
+    padding: var(--space-md);
+  }
+  
+  .card-header {
+    padding: var(--space-md);
+    font-size: var(--font-size-body-sm);
+  }
+  
+  .card-body {
+    padding: var(--space-md);
+    font-size: var(--font-size-body-sm);
+  }
+  
   .card-stat {
-    padding: var(--space-lg);
+    padding: var(--space-md);
   }
   
   .card-stat-number {
-    font-size: var(--font-size-display-lg);
+    font-size: var(--font-size-display-md);
   }
   
+  .card-stat-label {
+    font-size: var(--font-size-body-xs);
+  }
+  
+  /* Pricing cards */
   .pricing-card {
     padding: var(--space-lg);
   }
   
-  .table {
+  .pricing-name {
+    font-size: var(--font-size-h4);
+  }
+  
+  .pricing-price {
+    font-size: var(--font-size-display-md);
+  }
+  
+  .pricing-features {
+    gap: var(--space-sm);
+  }
+  
+  .pricing-feature {
+    padding: var(--space-sm) 0;
     font-size: var(--font-size-body-sm);
+  }
+  
+  /* Tables */
+  .table {
+    font-size: var(--font-size-body-xs);
   }
   
   .table th,
   .table td {
-    padding: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+  }
+  
+  /* Badges */
+  .badge {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-body-xs);
+  }
+  
+  /* Feature cards */
+  .feature-card {
+    padding: var(--space-lg);
+  }
+  
+  .feature-title {
+    font-size: var(--font-size-h5);
+  }
+  
+  .feature-description {
+    font-size: var(--font-size-body-sm);
+  }
+  
+  /* Alerts */
+  .alert {
+    padding: var(--space-md);
+    font-size: var(--font-size-body-sm);
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .btn {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-body-xs);
+  }
+  
+  .btn-large {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-body-sm);
+  }
+  
+  .auth-container {
+    padding: var(--space-md);
+  }
+  
+  .auth-title {
+    font-size: var(--font-size-h4);
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-stat-number {
+    font-size: var(--font-size-display);
   }
 }

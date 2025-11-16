@@ -35,7 +35,7 @@ async def login(request: Request):
         return RedirectResponse("/dashboard", status_code=302)
     # Check for error in query params (for GET requests after redirect)
     error = request.query_params.get("error")
-    return templates.TemplateResponse("login.html", {"request": request, "error": error})
+    return templates.TemplateResponse("brutalist-login.html", {"request": request, "error": error})
 
 
 @router.post('/login')
@@ -89,7 +89,7 @@ async def login_post(
 @router.get("/signup", response_class=HTMLResponse)
 async def signup(request: Request):
     error = request.query_params.get("error")
-    return templates.TemplateResponse("signup.html", {"request": request, "error": error})
+    return templates.TemplateResponse("brutalist-signup.html", {"request": request, "error": error})
 
 
 @router.post('/signup')
