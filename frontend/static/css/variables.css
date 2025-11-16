@@ -1,0 +1,174 @@
+/**
+ * BRUTALIST MINIMALISM DESIGN SYSTEM
+ * Variables.css - CSS Custom Properties
+ * 
+ * DESIGN PHILOSOPHY:
+ * - Strict black & white only
+ * - No gradients, shadows, or intermediate colors
+ * - Swiss Design meets Bauhaus
+ * - Form follows function
+ */
+
+:root {
+  /* ==================== COLORS ==================== */
+  /* Primary colors - BLACK & WHITE only */
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+  
+  /* Theme variables (default: light mode) */
+  --color-bg: var(--color-white);
+  --color-text: var(--color-black);
+  --color-border: var(--color-black);
+  --color-bg-inverse: var(--color-black);
+  --color-text-inverse: var(--color-white);
+  
+  /* ==================== TYPOGRAPHY ==================== */
+  /* Font families */
+  --font-display: 'Space Grotesk', sans-serif;  /* Logo, Display */
+  --font-heading: 'Playfair Display', serif;    /* Headings */
+  --font-body: 'Inter', sans-serif;             /* Body, UI */
+  
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+  
+  /* Font sizes - Display */
+  --font-size-display-xl: 88px;  /* Hero headlines */
+  --font-size-display-lg: 72px;  /* Large display */
+  --font-size-display-md: 56px;  /* Medium display */
+  
+  /* Font sizes - Headings */
+  --font-size-h1: 48px;
+  --font-size-h2: 40px;
+  --font-size-h3: 32px;
+  --font-size-h4: 24px;
+  --font-size-h5: 20px;
+  --font-size-h6: 18px;
+  
+  /* Font sizes - Body */
+  --font-size-body-lg: 18px;
+  --font-size-body: 16px;
+  --font-size-body-sm: 14px;
+  --font-size-body-xs: 12px;
+  
+  /* Line heights */
+  --line-height-tight: 1.1;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* Letter spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.05em;
+  --letter-spacing-wider: 0.1em;
+  
+  /* ==================== SPACING ==================== */
+  /* Spacing scale - generous whitespace */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-2xl: 64px;
+  --space-3xl: 80px;
+  --space-4xl: 96px;
+  
+  /* Component-specific spacing */
+  --padding-section: var(--space-3xl);
+  --padding-card: var(--space-lg);
+  --padding-button-x: var(--space-lg);
+  --padding-button-y: var(--space-sm);
+  --padding-input: var(--space-sm);
+  
+  /* ==================== BORDERS ==================== */
+  /* Border widths - always 1px */
+  --border-width: 1px;
+  --border-width-thick: 2px;
+  --border-width-thicker: 3px;
+  
+  /* Border styles */
+  --border: var(--border-width) solid var(--color-border);
+  --border-thick: var(--border-width-thick) solid var(--color-border);
+  --border-thicker: var(--border-width-thicker) solid var(--color-border);
+  
+  /* Border radius - NONE (90° angles only) */
+  --border-radius: 0;
+  
+  /* ==================== LAYOUT ==================== */
+  /* Container widths */
+  --container-max-width: 1200px;
+  --sidebar-width: 300px;
+  --nav-height: 80px;
+  
+  /* Grid gaps */
+  --grid-gap: var(--border-width);
+  --grid-gap-lg: var(--space-lg);
+  
+  /* Z-index scale */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  
+  /* ==================== TRANSITIONS ==================== */
+  /* Transition durations - minimal only */
+  --transition-fast: 0.15s;
+  --transition-base: 0.2s;
+  --transition-slow: 0.3s;
+  
+  /* Transition timing */
+  --transition-timing: ease-in-out;
+  
+  /* Standard transitions */
+  --transition-colors: background-color var(--transition-base) var(--transition-timing),
+                       color var(--transition-base) var(--transition-timing),
+                       border-color var(--transition-base) var(--transition-timing);
+  --transition-all: all var(--transition-base) var(--transition-timing);
+  
+  /* ==================== BREAKPOINTS ==================== */
+  /* Single breakpoint system */
+  --breakpoint-mobile: 968px;
+  
+  /* ==================== SHADOWS ==================== */
+  /* NO SHADOWS - Brutalist principle */
+  --shadow-none: none;
+}
+
+/* ==================== DARK MODE ==================== */
+body.dark-mode {
+  /* Invert colors for dark mode */
+  --color-bg: var(--color-black);
+  --color-text: var(--color-white);
+  --color-border: var(--color-white);
+  --color-bg-inverse: var(--color-white);
+  --color-text-inverse: var(--color-black);
+}
+
+/* ==================== MOBILE OVERRIDES ==================== */
+@media (max-width: 968px) {
+  :root {
+    /* Reduce display sizes for mobile */
+    --font-size-display-xl: 56px;
+    --font-size-display-lg: 48px;
+    --font-size-display-md: 40px;
+    
+    /* Reduce heading sizes */
+    --font-size-h1: 36px;
+    --font-size-h2: 32px;
+    --font-size-h3: 24px;
+    --font-size-h4: 20px;
+    
+    /* Reduce section padding */
+    --padding-section: var(--space-xl);
+    
+    /* Adjust sidebar for mobile */
+    --sidebar-width: 100%;
+    --nav-height: 64px;
+  }
+}
