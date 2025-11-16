@@ -15,6 +15,12 @@ from server.db.database import Base
 from server.app.core.config import settings
 
 # Import all models to ensure they are registered with SQLAlchemy
+from server.db.models.users import User
+from server.db.models.tasks import UserNotionTask
+from server.db.models.notion_integration import UserNotionIntegration
+from server.db.models.waitlist import Waitlist
+from server.db.models.calendars import Calendar
+from server.db.models.caldav_events import CalDavEvent
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
