@@ -1,0 +1,381 @@
+/**
+ * BRUTALIST MINIMALISM DESIGN SYSTEM
+ * Base.css - Foundation styles, typography, utilities, grid
+ * 
+ * NO decoration, only essential elements
+ */
+
+/* ==================== RESETS ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default styles */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+}
+
+/* Remove focus outline, we'll add our own */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: var(--border-thick);
+  outline-offset: 2px;
+}
+
+/* ==================== BASE STYLES ==================== */
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  transition: var(--transition-colors);
+  overflow-x: hidden;
+}
+
+/* ==================== TYPOGRAPHY ==================== */
+
+/* Display text - Space Grotesk Bold */
+.display-xl,
+.display-lg,
+.display-md {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.display-xl {
+  font-size: var(--font-size-display-xl);
+}
+
+.display-lg {
+  font-size: var(--font-size-display-lg);
+}
+
+.display-md {
+  font-size: var(--font-size-display-md);
+}
+
+/* Headings - Playfair Display Bold/Black */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+}
+
+h1, .h1 { font-size: var(--font-size-h1); font-weight: var(--font-weight-black); }
+h2, .h2 { font-size: var(--font-size-h2); font-weight: var(--font-weight-black); }
+h3, .h3 { font-size: var(--font-size-h3); font-weight: var(--font-weight-bold); }
+h4, .h4 { font-size: var(--font-size-h4); font-weight: var(--font-weight-bold); }
+h5, .h5 { font-size: var(--font-size-h5); font-weight: var(--font-weight-bold); }
+h6, .h6 { font-size: var(--font-size-h6); font-weight: var(--font-weight-bold); }
+
+/* Body text - Inter */
+p, .body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  margin: 0;
+}
+
+.body-lg {
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-relaxed);
+}
+
+.body-sm {
+  font-size: var(--font-size-body-sm);
+}
+
+.body-xs {
+  font-size: var(--font-size-body-xs);
+}
+
+/* Text transforms */
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.text-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.text-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Text alignment */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* ==================== GRID SYSTEM ==================== */
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.container-full {
+  width: 100%;
+  padding: 0 var(--space-lg);
+}
+
+/* Grid with 1px gaps */
+.grid {
+  display: grid;
+  gap: var(--grid-gap);
+  width: 100%;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Grid with larger gaps */
+.grid-lg {
+  gap: var(--grid-gap-lg);
+}
+
+/* Auto-fit grid for responsive cards */
+.grid-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Flex utilities */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+/* Gap utilities */
+.gap-xs { gap: var(--space-xs); }
+.gap-sm { gap: var(--space-sm); }
+.gap-md { gap: var(--space-md); }
+.gap-lg { gap: var(--space-lg); }
+.gap-xl { gap: var(--space-xl); }
+
+/* ==================== SPACING UTILITIES ==================== */
+
+/* Margin utilities */
+.m-0 { margin: 0; }
+.mt-xs { margin-top: var(--space-xs); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mt-xl { margin-top: var(--space-xl); }
+.mt-2xl { margin-top: var(--space-2xl); }
+.mt-3xl { margin-top: var(--space-3xl); }
+
+.mb-xs { margin-bottom: var(--space-xs); }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+.mb-xl { margin-bottom: var(--space-xl); }
+.mb-2xl { margin-bottom: var(--space-2xl); }
+.mb-3xl { margin-bottom: var(--space-3xl); }
+
+/* Padding utilities */
+.p-0 { padding: 0; }
+.p-lg { padding: var(--space-lg); }
+.p-xl { padding: var(--space-xl); }
+.p-2xl { padding: var(--space-2xl); }
+.p-3xl { padding: var(--space-3xl); }
+
+.px-lg { padding-left: var(--space-lg); padding-right: var(--space-lg); }
+.px-xl { padding-left: var(--space-xl); padding-right: var(--space-xl); }
+
+.py-lg { padding-top: var(--space-lg); padding-bottom: var(--space-lg); }
+.py-xl { padding-top: var(--space-xl); padding-bottom: var(--space-xl); }
+.py-2xl { padding-top: var(--space-2xl); padding-bottom: var(--space-2xl); }
+.py-3xl { padding-top: var(--space-3xl); padding-bottom: var(--space-3xl); }
+
+/* ==================== BORDERS ==================== */
+
+.border { border: var(--border); }
+.border-t { border-top: var(--border); }
+.border-b { border-bottom: var(--border); }
+.border-l { border-left: var(--border); }
+.border-r { border-right: var(--border); }
+
+.border-thick { border: var(--border-thick); }
+
+/* ==================== COLOR UTILITIES ==================== */
+
+.bg-primary { background-color: var(--color-bg); }
+.bg-inverse { background-color: var(--color-bg-inverse); }
+
+.text-primary { color: var(--color-text); }
+.text-inverse { color: var(--color-text-inverse); }
+
+/* ==================== SECTIONS ==================== */
+
+.section {
+  padding: var(--padding-section) 0;
+  border-bottom: var(--border);
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-black);
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+/* Hide on mobile */
+@media (max-width: 968px) {
+  .hide-mobile {
+    display: none !important;
+  }
+  
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .container {
+    padding: 0 var(--space-md);
+  }
+}
+
+/* Hide on desktop */
+@media (min-width: 969px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip to content link */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border);
+  z-index: 9999;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ==================== SELECTION ==================== */
+
+::selection {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+::-moz-selection {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
