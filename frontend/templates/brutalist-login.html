@@ -11,17 +11,23 @@
       Enter your credentials to access your account
     </p>
     
-    <form class="form" method="POST" action="/auth/login">
+    {% if error %}
+    <div class="alert alert-error">
+      {{ error }}
+    </div>
+    {% endif %}
+    
+    <form class="form" method="POST" action="/login">
       <div class="form-group">
-        <label for="email" class="form-label">EMAIL ADDRESS</label>
+        <label for="login" class="form-label">EMAIL OR USERNAME</label>
         <input 
-          type="email" 
-          id="email" 
-          name="email" 
+          type="text" 
+          id="login" 
+          name="login" 
           class="form-input" 
-          placeholder="you@example.com"
+          placeholder="you@example.com or username"
           required
-          autocomplete="email"
+          autocomplete="username"
         >
       </div>
       

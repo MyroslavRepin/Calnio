@@ -38,7 +38,7 @@ async def landing(request: Request, response: Response):
 
         except HTTPException:
             return templates.TemplateResponse(
-                "landing.html",
+                "brutalist-landing.html",
                 {
                     "request": request,
                     "version": __version__,  # вот так правильно
