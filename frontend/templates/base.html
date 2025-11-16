@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>{% block title %}Calnio{% endblock %}</title>
+    
+    <!-- Analytics Scripts -->
+    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0130/7009.js" async="async"></script>
+    <script defer src="https://analytics.calnio.com/script.js" data-website-id="4c81d3ea-9951-4d28-b426-129f058ec90e"></script>
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="/font/fonts.css" />
+    
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="/static/css/variables.css" />
+    <link rel="stylesheet" href="/static/css/base.css" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+    <link rel="stylesheet" href="/static/css/components.css" />
+    
+    <!-- Page-specific styles -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Include navbar component -->
+    {% block navbar %}
+        {% include "components/navbar.html" %}
+    {% endblock %}
+    
+    <!-- Main content area -->
+    <main>
+        {% block content %}
+        <!-- Page-specific content goes here -->
+        {% endblock %}
+    </main>
+    
+    <!-- Include footer component -->
+    {% block footer %}
+        {% include "components/footer.html" %}
+    {% endblock %}
+    
+    <!-- Page-specific scripts -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
