@@ -46,7 +46,6 @@ Calnio/
 │   ├── WEBHOOK_QUICK_REFERENCE.md
 │   └── WEBHOOK_TESTING.md
 ├── logs/
-├── loki-setup/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -123,6 +122,7 @@ Calnio/
 │   │   │   │   └── notion_callback.py
 │   │   │   └── __init__.py
 │   │   └── __init__.py
+│   ├── logs/
 │   ├── middleware/
 │   │   ├── __init__.py
 │   │   └── ignore_logging.py
@@ -168,6 +168,13 @@ Calnio/
 │   │   ├── decorators.py
 │   │   └── utils.py
 │   └── __init__.py
+├── services/
+│   └── sync/
+│       └── server/
+│           └── app/
+│               ├── api/
+│               ├── core/
+│               └── schemas/
 ├── .gitignore
 ├── alembic.ini
 ├── CHANGELOG.md
