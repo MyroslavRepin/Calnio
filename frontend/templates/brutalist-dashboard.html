@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Calnio{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+  <!-- Sidebar -->
+  <aside class="dashboard-sidebar">
+    <div class="dashboard-sidebar-content">
+      <div class="sidebar-section">
+        <div class="sidebar-title">NAVIGATION</div>
+        <nav class="sidebar-menu">
+          <a href="/dashboard" class="sidebar-link active">OVERVIEW</a>
+          <a href="/dashboard/tasks" class="sidebar-link">TASKS</a>
+          <a href="/dashboard/conflicts" class="sidebar-link">CONFLICTS</a>
+          <a href="/dashboard/logs" class="sidebar-link">SYNC LOGS</a>
+        </nav>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">ACCOUNT</div>
+        <nav class="sidebar-menu">
+          <a href="/dashboard/profile" class="sidebar-link">PROFILE</a>
+          <a href="/dashboard/settings" class="sidebar-link">SETTINGS</a>
+          <a href="/auth/logout" class="sidebar-link">LOGOUT</a>
+        </nav>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">DASHBOARD</h1>
+      <p class="dashboard-subtitle">
+        Monitor your sync status and manage your integrations
+      </p>
+    </div>
+    
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="card-stat">
+        <div class="card-stat-number">1,247</div>
+        <div class="card-stat-label">TOTAL SYNCS</div>
+      </div>
+      
+      <div class="card-stat">
+        <div class="card-stat-number">42</div>
+        <div class="card-stat-label">TODAY</div>
+      </div>
+      
+      <div class="card-stat">
+        <div class="card-stat-number">0</div>
+        <div class="card-stat-label">CONFLICTS</div>
+      </div>
+      
+      <div class="card-stat">
+        <div class="card-stat-number">ACTIVE</div>
+        <div class="card-stat-label">STATUS</div>
+      </div>
+    </div>
+    
+    <!-- Recent Activity Section -->
+    <div class="content-section">
+      <h2 class="content-title">RECENT ACTIVITY</h2>
+      
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>TIME</th>
+              <th>EVENT</th>
+              <th>SOURCE</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>10:34 AM</td>
+              <td>Meeting with Team</td>
+              <td>APPLE CALENDAR</td>
+              <td><span class="badge badge-inverse">SYNCED</span></td>
+            </tr>
+            <tr>
+              <td>10:12 AM</td>
+              <td>Review Project Docs</td>
+              <td>NOTION</td>
+              <td><span class="badge badge-inverse">SYNCED</span></td>
+            </tr>
+            <tr>
+              <td>09:45 AM</td>
+              <td>Weekly Planning</td>
+              <td>APPLE REMINDERS</td>
+              <td><span class="badge badge-inverse">SYNCED</span></td>
+            </tr>
+            <tr>
+              <td>09:30 AM</td>
+              <td>Code Review</td>
+              <td>NOTION</td>
+              <td><span class="badge badge-inverse">SYNCED</span></td>
+            </tr>
+            <tr>
+              <td>08:15 AM</td>
+              <td>Morning Standup</td>
+              <td>APPLE CALENDAR</td>
+              <td><span class="badge badge-inverse">SYNCED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Connected Services Section -->
+    <div class="content-section">
+      <h2 class="content-title">CONNECTED SERVICES</h2>
+      
+      <div class="grid-3 grid-lg">
+        <div class="card">
+          <div class="card-header">NOTION</div>
+          <div class="card-body">
+            <p class="mb-md">
+              <strong>Workspace:</strong> My Workspace<br>
+              <strong>Status:</strong> Connected<br>
+              <strong>Last Sync:</strong> 2 mins ago
+            </p>
+            <button class="btn btn-small">DISCONNECT</button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">APPLE CALENDAR</div>
+          <div class="card-body">
+            <p class="mb-md">
+              <strong>Account:</strong> iCloud<br>
+              <strong>Status:</strong> Connected<br>
+              <strong>Last Sync:</strong> 2 mins ago
+            </p>
+            <button class="btn btn-small">DISCONNECT</button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">APPLE REMINDERS</div>
+          <div class="card-body">
+            <p class="mb-md">
+              <strong>Account:</strong> iCloud<br>
+              <strong>Status:</strong> Connected<br>
+              <strong>Last Sync:</strong> 2 mins ago
+            </p>
+            <button class="btn btn-small">DISCONNECT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="content-section">
+      <h2 class="content-title">QUICK ACTIONS</h2>
+      
+      <div class="flex gap-md">
+        <button class="btn btn-primary">SYNC NOW</button>
+        <button class="btn">VIEW LOGS</button>
+        <button class="btn">CONFIGURE RULES</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+{% endblock %}
