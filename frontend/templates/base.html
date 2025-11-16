@@ -55,7 +55,7 @@
       
       <!-- Actions -->
       <div class="nav-actions">
-        <button class="theme-toggle" aria-label="Toggle theme">DARK</button>
+        <button class="theme-toggle hide-mobile" aria-label="Toggle theme">DARK</button>
         {% if user %}
         <a href="/dashboard" class="btn btn-primary">DASHBOARD</a>
         {% else %}
@@ -83,6 +83,9 @@
     <a href="/login" class="nav-mobile-link">LOGIN</a>
     <a href="/signup" class="nav-mobile-link">SIGN UP</a>
     {% endif %}
+    
+    <!-- Theme Toggle in Mobile Menu -->
+    <button class="theme-toggle nav-mobile-link" aria-label="Toggle theme" style="text-align: left;">DARK MODE</button>
   </div>
   {% endblock %}
   
