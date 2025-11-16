@@ -51,7 +51,7 @@ from fastapi.templating import Jinja2Templates
 from sqladmin import Admin
 from sqladmin import ModelView
 
-from server.app.api import dashboard, landing, refresh_cookies
+from server.app.api import dashboard, landing, refresh_cookies, brutalist
 from server.app.api.auth import router as auth_router
 from server.app.api.errors import error_404
 from server.app.api.webhooks.notion_webhooks import router as notion_webhook_router
@@ -93,6 +93,7 @@ app.add_middleware(IgnoreSpecificPathsMiddleware)
 app.include_router(auth_router)
 app.include_router(landing.router)
 app.include_router(dashboard.router)
+app.include_router(brutalist.router)
 app.include_router(version.router)
 app.include_router(refresh_cookies.router)
 app.include_router(notion_callback.router)
