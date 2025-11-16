@@ -21,7 +21,7 @@
     <!-- Page-specific styles -->
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body{% if self.body_class() %} class="{{ self.body_class() }}"{% endif %}>
     <!-- Include navbar component -->
     {% block navbar %}
         {% include "components/navbar.html" %}
