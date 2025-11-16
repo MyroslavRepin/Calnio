@@ -2,35 +2,78 @@
 
 {% block title %}Dashboard - Calnio{% endblock %}
 
+{% block navigation %}
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-container">
+    <!-- Logo -->
+    <a href="/" class="nav-logo">
+      CALNIO
+    </a>
+    
+    <!-- Desktop Menu -->
+    <div class="nav-menu hide-mobile">
+      <a href="/#features" class="nav-link">FEATURES</a>
+      <a href="/#pricing" class="nav-link">PRICING</a>
+      <a href="/about" class="nav-link">ABOUT</a>
+      <a href="/contact" class="nav-link">CONTACT</a>
+    </div>
+    
+    <!-- Actions -->
+    <div class="nav-actions">
+      <button class="theme-toggle" aria-label="Toggle theme">DARK</button>
+      {% if user %}
+      <a href="/dashboard" class="btn btn-primary">DASHBOARD</a>
+      {% else %}
+      <a href="/login" class="btn hide-mobile">LOGIN</a>
+      <a href="/signup" class="btn btn-primary">SIGN UP</a>
+      {% endif %}
+      
+      <!-- Burger Menu (always visible for dashboard navigation) -->
+      <button class="burger-menu" aria-label="Toggle menu">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Navigation Overlay with Dashboard Navigation -->
+<div class="nav-mobile-overlay">
+  <!-- Dashboard Navigation Section -->
+  <div class="nav-mobile-section">
+    <div class="nav-mobile-section-title">NAVIGATION</div>
+    <a href="/dashboard" class="nav-mobile-link">OVERVIEW</a>
+    <a href="/dashboard/tasks" class="nav-mobile-link">TASKS</a>
+    <a href="/dashboard/conflicts" class="nav-mobile-link">CONFLICTS</a>
+    <a href="/dashboard/logs" class="nav-mobile-link">SYNC LOGS</a>
+  </div>
+  
+  <!-- Account Section -->
+  <div class="nav-mobile-section">
+    <div class="nav-mobile-section-title">ACCOUNT</div>
+    <a href="/dashboard/profile" class="nav-mobile-link">PROFILE</a>
+    <a href="/dashboard/settings" class="nav-mobile-link">SETTINGS</a>
+    <a href="/auth/logout" class="nav-mobile-link">LOGOUT</a>
+  </div>
+  
+  <!-- Public Pages -->
+  <div class="nav-mobile-section">
+    <div class="nav-mobile-section-title">PAGES</div>
+    <a href="/#features" class="nav-mobile-link">FEATURES</a>
+    <a href="/#pricing" class="nav-mobile-link">PRICING</a>
+    <a href="/about" class="nav-mobile-link">ABOUT</a>
+    <a href="/contact" class="nav-mobile-link">CONTACT</a>
+  </div>
+</div>
+{% endblock %}
+
 {% block content %}
 
 <div class="dashboard">
-  <!-- Sidebar -->
-  <aside class="dashboard-sidebar">
-    <div class="dashboard-sidebar-content">
-      <div class="sidebar-section">
-        <div class="sidebar-title">NAVIGATION</div>
-        <nav class="sidebar-menu">
-          <a href="/dashboard" class="sidebar-link active">OVERVIEW</a>
-          <a href="/dashboard/tasks" class="sidebar-link">TASKS</a>
-          <a href="/dashboard/conflicts" class="sidebar-link">CONFLICTS</a>
-          <a href="/dashboard/logs" class="sidebar-link">SYNC LOGS</a>
-        </nav>
-      </div>
-      
-      <div class="sidebar-section">
-        <div class="sidebar-title">ACCOUNT</div>
-        <nav class="sidebar-menu">
-          <a href="/dashboard/profile" class="sidebar-link">PROFILE</a>
-          <a href="/dashboard/settings" class="sidebar-link">SETTINGS</a>
-          <a href="/auth/logout" class="sidebar-link">LOGOUT</a>
-        </nav>
-      </div>
-    </div>
-  </aside>
-  
   <!-- Main Content -->
-  <main class="dashboard-main">
+  <main class="dashboard-main-fullwidth">
     <!-- Dashboard Header -->
     <div class="dashboard-header">
       <h1 class="dashboard-title">DASHBOARD</h1>
@@ -153,6 +196,61 @@
           </div>
         </div>
       </div>
+    </div>
+    
+    <!-- My Tasks Section -->
+    <div class="content-section">
+      <h2 class="content-title">MY TASKS</h2>
+      
+      {% if tasks %}
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>TITLE</th>
+              <th>DESCRIPTION</th>
+              <th>PRIORITY</th>
+              <th>STATUS</th>
+              <th>DUE DATE</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for task in tasks %}
+            <tr>
+              <td><a href="{{ task.notion_url }}" target="_blank" rel="noopener">{{ task.title }}</a></td>
+              <td>{{ task.description or 'N/A' }}</td>
+              <td>
+                {% if task.priority %}
+                <span class="badge badge-inverse">{{ task.priority }}</span>
+                {% else %}
+                N/A
+                {% endif %}
+              </td>
+              <td>
+                {% if task.done %}
+                <span class="badge badge-inverse">DONE</span>
+                {% elif task.status %}
+                <span class="badge badge-inverse">{{ task.status }}</span>
+                {% else %}
+                <span class="badge badge-inverse">PENDING</span>
+                {% endif %}
+              </td>
+              <td>{{ task.end_date.strftime('%Y-%m-%d') if task.end_date else 'N/A' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="card">
+        <div class="card-body">
+          <p>No tasks found. Connect your Notion workspace to sync your tasks.</p>
+          {% if OAuth_url %}
+          <a href="{{ OAuth_url }}" class="btn btn-primary">CONNECT NOTION</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
     </div>
     
     <!-- Quick Actions -->
