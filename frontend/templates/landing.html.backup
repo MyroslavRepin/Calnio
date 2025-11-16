@@ -1,18 +1,66 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0130/7009.js" async="async" ></script>
 
-{% block title %}Calnio - Your Apple Tools Meet Notion{% endblock %}
+    <title>Calnio</title>
+    <!-- Fonts -->
+    <link rel="stylesheet" href="/font/fonts.css" />
 
-{% block styles %}
-<!-- Page-specific CSS -->
-<link rel="stylesheet" href="/static/css/main.css" />
-<link rel="stylesheet" href="/static/css/layout.css" />
-<link rel="stylesheet" href="/static/css/components.css" />
-<link rel="stylesheet" href="/static/css/landing.css" />
-{% endblock %}
+    <!-- Styles -->
+    <link rel="stylesheet" href="../static/css/main.css" />
+    <link rel="stylesheet" href="../static/css/layout.css" />
+    <link rel="stylesheet" href="../static/css/components.css" />
+    <script defer src="https://analytics.calnio.com/script.js" data-website-id="4c81d3ea-9951-4d28-b426-129f058ec90e"></script>
 
-{% block content %}
-<!-- Navigation -->
-{% include "components/navbar.html" %}
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="site-header">
+      <div class="header-container">
+        <!-- Logo -->
+        <div class="header-logo">
+          <a href="/" class="logo-link">
+            <span class="logo-text">Calnio</span>
+          </a>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <nav class="header-nav-desktop">
+          <a href="/features" class="nav-link">Features</a>
+          <a href="/pricing" class="nav-link">Pricing</a>
+          <a href="/about" class="nav-link">About</a>
+          <a href="/contact" class="nav-link">Contact</a>
+          <div class="nav-buttons">
+            <a href="/login" class="btn-login">Log In</a>
+            <a href="/signup" class="btn-signup">Sign Up</a>
+          </div>
+        </nav>
+        
+        <!-- Mobile Menu Button -->
+        <button class="header-burger-menu" id="header-burger-menu" aria-label="Toggle navigation menu">
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+        </button>
+      </div>
+      
+      <!-- Mobile Navigation Overlay -->
+      <div class="header-mobile-overlay" id="header-mobile-overlay">
+        <nav class="header-nav-mobile">
+          <a href="/features" class="mobile-nav-link">Features</a>
+          <a href="/pricing" class="mobile-nav-link">Pricing</a>
+          <a href="/about" class="mobile-nav-link">About</a>
+          <a href="/contact" class="mobile-nav-link">Contact</a>
+          <div class="mobile-nav-buttons">
+            <a href="/login" class="mobile-btn-login">Log In</a>
+            <a href="/signup" class="mobile-btn-signup">Sign Up</a>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <section class="section-header">
       <div class="container">
@@ -318,6 +366,111 @@ Choose the plan that fits your productivity needs. Upgrade or downgrade anytime.
         </div>
       </div>
     </section>
-<!-- Footer -->
-{% include "components/footer.html" %}
-{% endblock %}
+    <section class="footer">
+      <div class="container">
+        <div class="footer-wrap">
+          <div class="collumn-1">
+            <h1>Calnio</h1>
+            <p>The smart synchronization platform that connects your Apple Calendar, Apple Reminders, and Notion for seamless productivity across all your devices.</p>
+            <a href="mailto:myroslavrepin@gmail.com">Contact Us</a>
+          </div>
+          <div class="collumn-2">
+            <h2>Company</h2>
+            <div class="link-list">
+              <a href="/404">About</a>
+              <a href="/404">Privacy Policy</a>
+              <a href="/404">Terms of use</a>
+              <a href="/404">Support</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Version Block - Full width at bottom -->
+    <div class="container">
+      <div class="version-footer">
+        <div class="version-content">
+          <span class="version-text">{{version}}</span>
+          <span class="version-separator">•</span>
+          <span class="copyright-text">© 2025 Calnio. All rights reserved.</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Header JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const burgerMenu = document.getElementById('header-burger-menu');
+        const mobileOverlay = document.getElementById('header-mobile-overlay');
+        const body = document.body;
+        
+        if (!burgerMenu || !mobileOverlay) {
+          console.warn('Header menu elements not found');
+          return;
+        }
+        
+        // Toggle menu function
+        function toggleMenu() {
+          const isActive = burgerMenu.classList.contains('active');
+          
+          if (isActive) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        }
+        
+        // Open menu function
+        function openMenu() {
+          burgerMenu.classList.add('active');
+          mobileOverlay.classList.add('active');
+          body.classList.add('menu-open');
+          body.style.overflow = 'hidden';
+        }
+        
+        // Close menu function
+        function closeMenu() {
+          burgerMenu.classList.remove('active');
+          mobileOverlay.classList.add('closing');
+          
+          setTimeout(() => {
+            mobileOverlay.classList.remove('active', 'closing');
+            body.classList.remove('menu-open');
+            body.style.overflow = '';
+          }, 300);
+        }
+        
+        // Event listeners
+        burgerMenu.addEventListener('click', toggleMenu);
+        
+        // Close menu when clicking on overlay
+        mobileOverlay.addEventListener('click', function(e) {
+          if (e.target === mobileOverlay) {
+            closeMenu();
+          }
+        });
+        
+        // Close menu when clicking on navigation links
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link, .mobile-btn-login, .mobile-btn-signup');
+        mobileNavLinks.forEach(link => {
+          link.addEventListener('click', closeMenu);
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && mobileOverlay.classList.contains('active')) {
+            closeMenu();
+          }
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+          if (window.innerWidth > 768 && mobileOverlay.classList.contains('active')) {
+            closeMenu();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

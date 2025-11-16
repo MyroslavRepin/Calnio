@@ -1,0 +1,69 @@
+<!-- Navigation Bar Component -->
+<header class="site-header">
+  <div class="header-container">
+    <!-- Logo -->
+    <div class="header-logo">
+      <a href="/" class="logo-link">
+        <span class="logo-text">Calnio</span>
+      </a>
+    </div>
+    
+    <!-- Desktop Navigation -->
+    <nav class="header-nav-desktop">
+      <a href="/features" class="nav-link">Features</a>
+      <a href="/pricing" class="nav-link">Pricing</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+      <div class="nav-buttons">
+        <a href="/login" class="btn-login">Log In</a>
+        <a href="/signup" class="btn-signup">Sign Up</a>
+      </div>
+    </nav>
+    
+    <!-- Mobile Menu Button -->
+    <button class="header-burger-menu" id="header-burger-menu" aria-label="Toggle navigation menu">
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+    </button>
+  </div>
+  
+  <!-- Mobile Navigation Overlay -->
+  <div class="header-mobile-overlay" id="header-mobile-overlay">
+    <nav class="header-nav-mobile">
+      <a href="/features" class="mobile-nav-link">Features</a>
+      <a href="/pricing" class="mobile-nav-link">Pricing</a>
+      <a href="/about" class="mobile-nav-link">About</a>
+      <a href="/contact" class="mobile-nav-link">Contact</a>
+      <div class="mobile-nav-buttons">
+        <a href="/login" class="mobile-btn-login">Log In</a>
+        <a href="/signup" class="mobile-btn-signup">Sign Up</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const burgerMenu = document.getElementById('header-burger-menu');
+    const mobileOverlay = document.getElementById('header-mobile-overlay');
+    
+    if (burgerMenu && mobileOverlay) {
+      burgerMenu.addEventListener('click', function() {
+        burgerMenu.classList.toggle('active');
+        mobileOverlay.classList.toggle('active');
+        document.body.style.overflow = mobileOverlay.classList.contains('active') ? 'hidden' : '';
+      });
+      
+      // Close mobile menu when clicking outside
+      mobileOverlay.addEventListener('click', function(e) {
+        if (e.target === mobileOverlay) {
+          burgerMenu.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+  });
+</script>
