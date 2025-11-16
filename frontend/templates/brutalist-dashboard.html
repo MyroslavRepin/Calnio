@@ -21,9 +21,9 @@
     
     <!-- Actions -->
     <div class="nav-actions">
-      <button class="theme-toggle" aria-label="Toggle theme">DARK</button>
+      <button class="theme-toggle hide-mobile" aria-label="Toggle theme">DARK</button>
       {% if user %}
-      <a href="/dashboard" class="btn btn-primary">DASHBOARD</a>
+      <a href="/dashboard" class="btn btn-primary hide-mobile">DASHBOARD</a>
       {% else %}
       <a href="/login" class="btn hide-mobile">LOGIN</a>
       <a href="/signup" class="btn btn-primary">SIGN UP</a>
@@ -50,6 +50,14 @@
     <a href="/dashboard/logs" class="nav-mobile-link">SYNC LOGS</a>
   </div>
   
+  <!-- Quick Actions Section -->
+  <div class="nav-mobile-section">
+    <div class="nav-mobile-section-title">QUICK ACTIONS</div>
+    <button class="btn btn-primary nav-mobile-link" style="text-align: left;">SYNC NOW</button>
+    <button class="btn nav-mobile-link" style="text-align: left;">VIEW LOGS</button>
+    <button class="btn nav-mobile-link" style="text-align: left;">CONFIGURE RULES</button>
+  </div>
+  
   <!-- Account Section -->
   <div class="nav-mobile-section">
     <div class="nav-mobile-section-title">ACCOUNT</div>
@@ -65,6 +73,11 @@
     <a href="/#pricing" class="nav-mobile-link">PRICING</a>
     <a href="/about" class="nav-mobile-link">ABOUT</a>
     <a href="/contact" class="nav-mobile-link">CONTACT</a>
+  </div>
+  
+  <!-- Theme Toggle in Mobile Menu -->
+  <div class="nav-mobile-section">
+    <button class="theme-toggle nav-mobile-link" aria-label="Toggle theme" style="text-align: left;">DARK MODE</button>
   </div>
 </div>
 {% endblock %}
@@ -254,7 +267,7 @@
     </div>
     
     <!-- Quick Actions -->
-    <div class="content-section">
+    <div class="content-section hide-mobile">
       <h2 class="content-title">QUICK ACTIONS</h2>
       
       <div class="flex gap-md">
