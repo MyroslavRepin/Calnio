@@ -1,12 +1,21 @@
-{% extends "base.html" %}
-
-{% block title %}Sign Up - Calnio{% endblock %}
-
-{% block styles %}
-<link rel="stylesheet" href="/static/css/auth.css" />
-{% endblock %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <link rel="stylesheet" href="/static/css/login.css" />
+    <title>Sign Up - Calnio</title>
+    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0130/7009.js" async="async" ></script>
+    <script
+      defer
+      src="https://analytics.calnio.com/script.js"
+      data-website-id="4c81d3ea-9951-4d28-b426-129f058ec90e"
+    ></script>
+  </head>
+  <body>
     <div class="login-container">
       <div class="login-card">
         <div class="login-header">
@@ -99,20 +108,21 @@
             <button type="submit" class="signin-btn">Create Account</button>
           </form>
 
-      <a href="/login">Already have an account? <b>Sign In Now</b></a>
+          <a href="/login">Already have an account? <b>Sign In Now</b></a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<script>
-  function validatePasswords() {
-    const password = document.getElementById("password").value;
-    const confirm = document.getElementById("confirm_password").value;
-    if (password !== confirm) {
-      alert("Passwords don't match! Please try again.");
-      return false;
-    }
-    return true;
-  }
-</script>
-{% endblock %}
+    <script>
+      function validatePasswords() {
+        const password = document.getElementById("password").value;
+        const confirm = document.getElementById("confirm_password").value;
+        if (password !== confirm) {
+          alert("Passwords don't match! Please try again.");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,121 @@
+/* Landing page specific styles */
+
+.landing-page {
+  min-height: 100vh;
+}
+
+/* Hero section */
+.section-header {
+  padding: var(--spacing-2xl) 0;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.blue-txt {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.beta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(37, 99, 235, 0.1);
+  border-radius: var(--radius-full);
+  color: var(--primary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.btn-center {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.substitle-div {
+  max-width: 700px;
+  margin: 0 auto var(--spacing-xl);
+}
+
+.substitle {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.btn-section {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.start-free-tria-btn,
+.watch-demo-btn {
+  padding: 0.875rem 2rem;
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.start-free-tria-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: var(--text-inverse);
+}
+
+.start-free-tria-btn:hover {
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-blue);
+}
+
+.watch-demo-btn {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+}
+
+.watch-demo-btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-secondary);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .substitle {
+    font-size: var(--text-base);
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .btn-section {
+    flex-direction: column;
+  }
+  
+  .start-free-tria-btn,
+  .watch-demo-btn {
+    width: 100%;
+  }
+}

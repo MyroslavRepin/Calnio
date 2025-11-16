@@ -1,0 +1,110 @@
+/* Dashboard page specific styles */
+
+/* Mobile menu animation */
+.mobile-menu {
+  transform: translateX(-100%);
+  transition: transform var(--transition-base);
+}
+
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
+/* Overlay */
+.overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hamburger menu animation */
+.hamburger {
+  transition: all var(--transition-base);
+}
+
+.hamburger span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px 0;
+  background: var(--text-primary);
+  transition: all var(--transition-base);
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Sidebar styles */
+.sidebar-link {
+  position: relative;
+  transition: all var(--transition-base);
+}
+
+.sidebar-link:hover {
+  padding-left: 1.5rem;
+}
+
+.sidebar-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--primary);
+  transition: height var(--transition-base);
+}
+
+.sidebar-link:hover::before {
+  height: 100%;
+}
+
+/* Active nav item */
+.nav-active {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: var(--text-inverse);
+}
+
+/* Success alert animation */
+.alert-success {
+  animation: slideIn var(--transition-base);
+}
+
+/* Task status colors */
+.status-planning {
+  background-color: var(--status-planning);
+}
+
+.status-in-progress {
+  background-color: var(--status-in-progress);
+}
+
+.status-done {
+  background-color: var(--status-done);
+}
+
+/* Responsive text utilities for dashboard */
+@media (max-width: 640px) {
+  .text-responsive-lg {
+    font-size: var(--text-2xl);
+  }
+  
+  .text-responsive-xl {
+    font-size: var(--text-xl);
+  }
+}
