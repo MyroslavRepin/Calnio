@@ -63,7 +63,12 @@
   function updateToggleButtons() {
     const toggleButtons = document.querySelectorAll(THEME_TOGGLE_SELECTOR);
     toggleButtons.forEach(button => {
-      button.textContent = isDarkMode ? 'LIGHT' : 'DARK';
+      // Check if button is in mobile nav (has nav-mobile-link class)
+      if (button.classList.contains('nav-mobile-link')) {
+        button.textContent = isDarkMode ? 'LIGHT MODE' : 'DARK MODE';
+      } else {
+        button.textContent = isDarkMode ? 'LIGHT' : 'DARK';
+      }
       button.setAttribute('aria-label', `Switch to ${isDarkMode ? 'light' : 'dark'} mode`);
     });
   }

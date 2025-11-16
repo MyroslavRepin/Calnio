@@ -174,9 +174,23 @@
   margin-bottom: var(--space-xs);
   transition: var(--transition-colors);
   display: block;
+  width: 100%;
+  cursor: pointer;
 }
 
 .nav-mobile-link:hover {
+  background-color: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* Ensure buttons in mobile nav adopt nav-mobile-link styles */
+button.nav-mobile-link {
+  background-color: var(--color-bg);
+  text-align: left;
+  font-family: var(--font-body);
+}
+
+button.nav-mobile-link:hover {
   background-color: var(--color-text);
   color: var(--color-bg);
 }
@@ -488,6 +502,25 @@
     font-size: var(--font-size-body-xs);
   }
   
+  /* Mobile navigation enhancements for better UX */
+  .nav-mobile-link {
+    /* Ensure minimum touch target of 44px */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: var(--space-md);
+  }
+  
+  .nav-mobile-section {
+    margin-bottom: var(--space-md);
+  }
+  
+  .nav-mobile-section-title {
+    font-size: var(--font-size-body-xs);
+    padding-left: var(--space-md);
+    padding-bottom: var(--space-sm);
+  }
+  
   /* Hero */
   .hero {
     min-height: auto;
@@ -560,11 +593,15 @@
   
   .dashboard-main {
     padding: var(--space-md);
-    margin-bottom: 70px; /* Space for fixed sidebar */
+    margin-bottom: 0; /* Removed fixed sidebar space since we're using burger menu */
+  }
+  
+  .dashboard-main-fullwidth {
+    padding: var(--space-md);
   }
   
   .dashboard-header {
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-lg);
     padding-bottom: var(--space-md);
   }
   
@@ -578,7 +615,7 @@
   }
   
   .content-section {
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-lg);
     padding-bottom: var(--space-xl);
   }
   
