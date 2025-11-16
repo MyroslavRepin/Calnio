@@ -34,7 +34,7 @@
       "id": 101,
       "targets": [
         {
-          "expr": "sum(litestar_requests_total)"
+          "expr": "sum(litestar_http_requests_total)"
         }
       ],
       "fieldConfig": {
@@ -51,7 +51,7 @@
       "id": 102,
       "targets": [
         {
-          "expr": "sum by (path, method) (litestar_requests_total)"
+          "expr": "sum by (route, method) (litestar_http_requests_total)"
         }
       ],
       "options": {
@@ -71,7 +71,7 @@
       "id": 103,
       "targets": [
         {
-          "expr": "sum(rate(litestar_requests_total[2m])) by (path)"
+          "expr": "sum(rate(litestar_http_requests_total[2m])) by (route)"
         }
       ],
       "fieldConfig": {
@@ -88,7 +88,7 @@
       "id": 104,
       "targets": [
         {
-          "expr": "sum(litestar_requests_in_progress) by (path)"
+          "expr": "sum(litestar_http_requests_in_progress) by (route)"
         }
       ],
       "fieldConfig": {
@@ -105,7 +105,7 @@
       "id": 105,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(litestar_request_duration_seconds_bucket[5m])))"
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(litestar_http_request_duration_seconds_bucket[5m])))"
         }
       ],
       "fieldConfig": {
@@ -122,7 +122,7 @@
       "id": 106,
       "targets": [
         {
-          "expr": "sum(rate(litestar_request_duration_seconds_sum[5m])) / sum(rate(litestar_request_duration_seconds_count[5m]))"
+          "expr": "sum(rate(litestar_http_request_duration_seconds_sum[5m])) / sum(rate(litestar_http_request_duration_seconds_count[5m]))"
         }
       ],
       "fieldConfig": {
@@ -139,7 +139,7 @@
       "id": 107,
       "targets": [
         {
-          "expr": "((sum(rate(litestar_requests_total{status_code=~\"5..\"}[5m])) or 0) / (sum(rate(litestar_requests_total[5m])) or 1)) * 100"
+          "expr": "((sum(rate(litestar_http_requests_total{status=~\"5..\"}[5m])) or 0) / (sum(rate(litestar_http_requests_total[5m])) or 1)) * 100"
         }
       ],
       "fieldConfig": {
@@ -156,7 +156,7 @@
       "id": 108,
       "targets": [
         {
-          "expr": "(sum(rate(litestar_requests_total{status_code=~\"5..\"}[5m])) by (status_code)) or vector(0)"
+          "expr": "(sum(rate(litestar_http_requests_total{status=~\"5..\"}[5m])) by (route, status)) or vector(0)"
         }
       ],
       "fieldConfig": {
@@ -249,7 +249,7 @@
         "name": "app_name",
         "type": "query",
         "datasource": "Prometheus",
-        "query": "label_values(litestar_requests_total, app_name)",
+        "query": "label_values(litestar_http_requests_total, app)",
         "refresh": 1,
         "includeAll": true
       },
@@ -257,7 +257,7 @@
         "name": "status_code",
         "type": "query",
         "datasource": "Prometheus",
-        "query": "label_values(litestar_requests_total, status_code)",
+        "query": "label_values(litestar_http_requests_total, status)",
         "refresh": 1,
         "includeAll": true
       },
@@ -296,5 +296,5 @@
     "to": "now"
   },
   "title": "Calnio",
-  "version": 4
+  "version": 5
 }

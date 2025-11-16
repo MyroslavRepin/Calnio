@@ -111,7 +111,8 @@ Calnio/
 │   │   │   ├── enums.py
 │   │   │   ├── notion_integration.py
 │   │   │   ├── tasks.py
-│   │   │   └── users.py
+│   │   │   ├── users.py
+│   │   │   └── waitlist.py
 │   │   ├── repositories/
 │   │   │   ├── caldav_events.py
 │   │   │   ├── notion_tasks.py

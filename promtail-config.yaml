@@ -5,7 +5,6 @@ server:
 positions:
   filename: /tmp/positions.yaml
 
-# Ускоряем доставку логов и уменьшаем задержки при сетевых бэкоффах
 clients:
   - url: http://loki:3100/loki/api/v1/push
     batchwait: 250ms
@@ -16,7 +15,6 @@ clients:
       max_period: 2s
       max_retries: 10
 
-# Более частое обновление целей
 target_config:
   sync_period: 2s
 
@@ -39,19 +37,19 @@ scrape_configs:
           format: '2006-01-02 15:04:05'
           timezone: UTC
       - labels:
-        level:
-        module:
-        func:
-        line:
+          level: ""
+          module: ""
+          func: ""
+          line: ""
       - regex:
           source: msg
           expression: '(?P<remote_ip>\d+\.\d+\.\d+\.\d+):\d+ - "(?P<method>[A-Z]+) (?P<path>[^" ]+) (?P<protocol>HTTP/[0-9.]+)" (?P<status_code>\d{3})'
       - labels:
-          remote_ip:
-          method:
-          path:
-          protocol:
-          status_code:
+          remote_ip: ""
+          method: ""
+          path: ""
+          protocol: ""
+          status_code: ""
       - output:
           source: msg
 
@@ -78,12 +76,10 @@ scrape_configs:
     pipeline_stages:
       - docker: {}
       - labels:
-          container_name:
-          image_name:
+          container_name: ""
+          image_name: ""
       - match:
           selector: '{container_name="calnio"}'
           stages:
-            - multiline:
-                firstline: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T'
             - output:
                 source: log
