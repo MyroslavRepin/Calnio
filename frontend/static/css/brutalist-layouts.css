@@ -703,6 +703,10 @@ button.nav-mobile-link:hover {
     padding: var(--space-sm);
   }
   
+  .dashboard-main-fullwidth {
+    padding: var(--space-sm);
+  }
+  
   .dashboard-title {
     font-size: var(--font-size-h4);
   }
@@ -717,5 +721,16 @@ button.nav-mobile-link:hover {
   
   .auth-container {
     padding: var(--space-md);
+  }
+  
+  /* More compact mobile nav links for very small screens */
+  .nav-mobile-link {
+    font-size: var(--font-size-h5);
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .nav-mobile-section-title {
+    font-size: var(--font-size-body-xs);
+    padding-left: var(--space-md);
   }
 }
