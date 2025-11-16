@@ -462,20 +462,23 @@
     grid-template-columns: 1fr;
   }
   
-  /* Buttons more compact */
+  /* Buttons more compact but maintain minimum touch target */
   .btn {
     padding: var(--space-sm) var(--space-md);
     font-size: var(--font-size-body-sm);
+    min-height: 44px; /* Ensure minimum touch target size */
   }
   
   .btn-large {
     padding: var(--space-md) var(--space-lg);
     font-size: var(--font-size-body);
+    min-height: 48px;
   }
   
   .btn-small {
     padding: var(--space-xs) var(--space-sm);
     font-size: var(--font-size-body-xs);
+    min-height: 40px;
   }
   
   /* Forms more compact */
