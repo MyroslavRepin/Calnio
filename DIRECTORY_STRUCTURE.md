@@ -1,13 +1,7 @@
 Calnio/
-├── backend/
-│   └── app/
-│       └── tools/
-│           ├── caldav/
-│           │   ├── __init__.py
-│           │   ├── models.py
-│           │   ├── orm.py
-│           │   └── README.md
-│           └── __init__.py
+├── docs/
+│   ├── EXAMPLE_TRIGGERS_WITH_ENUM.py
+│   └── POSTGRESQL_ENUM_GUIDE.md
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -18,25 +12,34 @@ Calnio/
 │   │   └── notion_app_logo.png
 │   ├── static/
 │   │   ├── css/
+│   │   │   ├── base.css
+│   │   │   ├── brutalist-components.css
+│   │   │   ├── brutalist-layouts.css
 │   │   │   ├── components.css
 │   │   │   ├── fonts.css
 │   │   │   ├── layout.css
 │   │   │   ├── login.css
-│   │   │   └── main.css
+│   │   │   ├── main.css
+│   │   │   └── variables.css
 │   │   └── js/
 │   │       ├── api.js
+│   │       ├── brutalist-nav.js
 │   │       ├── burger-menu.js
 │   │       ├── dashboard.js
 │   │       ├── header.js
-│   │       └── refreshThenDashboard.js
+│   │       ├── refreshThenDashboard.js
+│   │       └── theme-toggle.js
 │   └── templates/
 │       ├── 404.html
 │       ├── 500.html
-│       ├── burger-menu-example.html
+│       ├── base.html
+│       ├── brutalist-dashboard.html
+│       ├── brutalist-landing.html
+│       ├── brutalist-login.html
+│       ├── brutalist-signup.html
 │       ├── dashboard.html
 │       ├── error.html
 │       ├── landing.html
-│       ├── load_dashboard.html
 │       ├── login.html
 │       ├── signup.html
 │       ├── tasks.html
@@ -45,10 +48,13 @@ Calnio/
 ├── generated_docs/
 │   ├── WEBHOOK_QUICK_REFERENCE.md
 │   └── WEBHOOK_TESTING.md
-├── logs/
+├── grafana/
+│   ├── calnio_litestar_dashboard.json
+│   └── datasources.yaml
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
+│   ├── check_notion_access.py
 │   ├── cleanup_duplicates.py
 │   ├── generate_tree.py
 │   ├── migrate_normalize_ids.py
@@ -57,8 +63,25 @@ Calnio/
 ├── server/
 │   ├── alembic/
 │   │   ├── versions/
+│   │   │   ├── 040918af799d_rename_column.py
+│   │   │   ├── 086698cdd088_drop_default_values_from_string_to_enum.py
+│   │   │   ├── 0dcff28cb147_change_column_type.py
+│   │   │   ├── 19fc4fe2811f_change_column_type.py
+│   │   │   ├── 23502f720669_add_default_pending_to_sync_status.py
+│   │   │   ├── 346bc90683e4_merge_heads_after_branch_merge.py
 │   │   │   ├── 4192080716ba_add_calendars_table.py
-│   │   │   └── 868c1b1fb071_init_fresh_migration.py
+│   │   │   ├── 569210df4a2b_rename_caldav_uid_to_caldav_id.py
+│   │   │   ├── 589f8fa06ba0_update_syncstatus_to_enum_manually.py
+│   │   │   ├── 665c6414c6ba_make_icloud_email_nullable.py
+│   │   │   ├── 7a35541b1b09_add_default_false_to_deleted_column.py
+│   │   │   ├── 868c1b1fb071_init_fresh_migration.py
+│   │   │   ├── a4ab66b804c6_convert_sync_status_to_postgresql_enum.py
+│   │   │   ├── b9853889096e_add_new_collumn.py
+│   │   │   ├── d93d7ae96ef5_auto_generated_migration.py
+│   │   │   ├── dc86913f74d2_add_timezone_to_caldavevents_datetimes.py
+│   │   │   ├── eca87c3e846a_add_deletede_to_usernotointasks_and_.py
+│   │   │   ├── f0995c8c6da0_update_syncstatus_enum_values.py
+│   │   │   └── fed31d6be9ea_auto_generated_migration.py
 │   │   ├── __init__.py
 │   │   ├── env.py
 │   │   ├── README
@@ -72,6 +95,7 @@ Calnio/
 │   │   │   │   └── notion_webhooks.py
 │   │   │   ├── __init__.py
 │   │   │   ├── auth.py
+│   │   │   ├── brutalist.py
 │   │   │   ├── dashboard.py
 │   │   │   ├── landing.py
 │   │   │   └── refresh_cookies.py
@@ -89,6 +113,7 @@ Calnio/
 │   │   │   └── users.py
 │   │   ├── __init__.py
 │   │   ├── main.py
+│   │   ├── main_litestar.py
 │   │   └── version.py
 │   ├── config/
 │   ├── db/
@@ -96,13 +121,18 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
 │   │   │   ├── calendars.py
+│   │   │   ├── enums.py
 │   │   │   ├── notion_integration.py
 │   │   │   ├── tasks.py
-│   │   │   └── users.py
+│   │   │   ├── users.py
+│   │   │   └── waitlist.py
 │   │   ├── repositories/
+│   │   │   ├── caldav_events.py
+│   │   │   ├── notion_tasks.py
 │   │   │   └── user.py
 │   │   ├── tools/
 │   │   │   ├── __init__.py
+│   │   │   ├── create_all_tables.py
 │   │   │   ├── create_missing_tables.py
 │   │   │   └── recreate_tables.py
 │   │   ├── __init__.py
@@ -122,7 +152,6 @@ Calnio/
 │   │   │   │   └── notion_callback.py
 │   │   │   └── __init__.py
 │   │   └── __init__.py
-│   ├── logs/
 │   ├── middleware/
 │   │   ├── __init__.py
 │   │   └── ignore_logging.py
@@ -130,18 +159,19 @@ Calnio/
 │   │   ├── caldav/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_client.py
-│   │   │   ├── caldav_fetch.py
 │   │   │   ├── caldav_orm.py
-│   │   │   └── playground.py
+│   │   │   ├── playground.py
+│   │   │   ├── user_calendars.py
+│   │   │   └── user_events.py
 │   │   ├── crud/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
-│   │   │   ├── tasks.py
 │   │   │   └── users.py
 │   │   ├── notion_syncing/
 │   │   │   ├── __init__.py
 │   │   │   ├── notion_integrations.py
 │   │   │   ├── notion_sync.py
+│   │   │   ├── webhook_handler.py
 │   │   │   └── webhook_service.py
 │   │   ├── redis/
 │   │   │   ├── __init__.py
@@ -150,6 +180,7 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   └── scheduler_service.py
 │   │   ├── sync/
+│   │   │   └── sync_manager.py
 │   │   ├── __init__.py
 │   │   └── postgres_trigger.py
 │   ├── utils/
@@ -170,22 +201,33 @@ Calnio/
 │   └── __init__.py
 ├── services/
 │   └── sync/
-│       └── server/
-│           └── app/
-│               ├── api/
-│               ├── core/
-│               └── schemas/
+│       ├── server/
+│       │   └── app/
+│       │       ├── api/
+│       │       ├── core/
+│       │       └── schemas/
+│       └── Dockerfile
 ├── .gitignore
 ├── alembic.ini
+├── caldav_events.sql
+├── calnio_backup.dump
 ├── CHANGELOG.md
+├── db_schema.sql
 ├── DIRECTORY_STRUCTURE.md
+├── docker-compose.yml
+├── Dockerfile
 ├── LICENSE
+├── loki-config.yaml
 ├── main.py
 ├── manage.py
+├── ngrok.yml
 ├── Procfile
+├── prometheus.yml
+├── promtail-config.yaml
 ├── railway.json
 ├── README.md
-├── redis_test.py
 ├── requirements.txt
 ├── robots.txt
-└── START_SERVER.sh
+├── START_SERVER.sh
+├── SYNCSTATUS_ENUM_FIX.md
+└── verify_enum_fix.py

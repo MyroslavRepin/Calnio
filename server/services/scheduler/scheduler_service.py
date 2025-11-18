@@ -7,6 +7,7 @@ from server.db.models import User
 from server.integrations.notion.notion_client import get_notion_client
 from server.services.notion_syncing.notion_sync import notion_sync_background
 from server.app.core.logging_config import logger
+from server.services.caldav.user_calendars import sync_user_calendars
 
 # Scheduler config, can be extended for custom intervals
 scheduler = AsyncIOScheduler()
@@ -33,7 +34,7 @@ def start_scheduler():
     if not scheduler.running:
         scheduler.start()
 
-# scheduler.add_job(sync_service, 'interval', minutes = 5, coalesce=False)
+scheduler.add_job(sync_user_calendars, 'interval', minutes = 5, coalesce=False)
 
 # Function to shutdown the scheduler
 def shutdown_scheduler(wait=True):

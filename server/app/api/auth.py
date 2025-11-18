@@ -9,6 +9,7 @@ from server.app.core.config import config, security
 from server.db.models import User
 from server.db.deps import async_get_db
 from server.utils.security.utils import verify_password, check_if_user_authorized
+from server.app.core.logging_config import logger
 
 from server.services.crud.users import async_create_user
 from server.app.schemas.users import UserCreate
@@ -120,6 +121,7 @@ async def signup_post(
 # Logout API
 @router.post("/logout")
 async def logout(response: Response):
+    logger.debug("logout POST triggered")
     response = RedirectResponse("/", status_code=303)
     response.delete_cookie(
         key=config.JWT_ACCESS_COOKIE_NAME,

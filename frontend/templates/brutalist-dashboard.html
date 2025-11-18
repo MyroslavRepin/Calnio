@@ -63,7 +63,9 @@
     <div class="nav-mobile-section-title">ACCOUNT</div>
     <a href="/dashboard/profile" class="nav-mobile-link">PROFILE</a>
     <a href="/dashboard/settings" class="nav-mobile-link">SETTINGS</a>
-    <a href="/auth/logout" class="nav-mobile-link">LOGOUT</a>
+    <form action="/logout" method="post">
+        <button type="submit" class="nav-mobile-link">LOGOUT</button>
+    </form>
   </div>
   
   <!-- Public Pages -->
@@ -117,104 +119,60 @@
         <div class="card-stat-label">STATUS</div>
       </div>
     </div>
-    
-    <!-- Recent Activity Section -->
-    <div class="content-section">
-      <h2 class="content-title">RECENT ACTIVITY</h2>
-      
-      <div class="table-container">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>TIME</th>
-              <th>EVENT</th>
-              <th>SOURCE</th>
-              <th>STATUS</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>10:34 AM</td>
-              <td>Meeting with Team</td>
-              <td>APPLE CALENDAR</td>
-              <td><span class="badge badge-inverse">SYNCED</span></td>
-            </tr>
-            <tr>
-              <td>10:12 AM</td>
-              <td>Review Project Docs</td>
-              <td>NOTION</td>
-              <td><span class="badge badge-inverse">SYNCED</span></td>
-            </tr>
-            <tr>
-              <td>09:45 AM</td>
-              <td>Weekly Planning</td>
-              <td>APPLE REMINDERS</td>
-              <td><span class="badge badge-inverse">SYNCED</span></td>
-            </tr>
-            <tr>
-              <td>09:30 AM</td>
-              <td>Code Review</td>
-              <td>NOTION</td>
-              <td><span class="badge badge-inverse">SYNCED</span></td>
-            </tr>
-            <tr>
-              <td>08:15 AM</td>
-              <td>Morning Standup</td>
-              <td>APPLE CALENDAR</td>
-              <td><span class="badge badge-inverse">SYNCED</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Connected Services Section -->
-    <div class="content-section">
-      <h2 class="content-title">CONNECTED SERVICES</h2>
-      
-      <div class="grid-3 grid-lg">
-        <div class="card">
-          <div class="card-header">NOTION</div>
-          <div class="card-body">
-            <p class="mb-md">
-              <strong>Workspace:</strong> My Workspace<br>
-              <strong>Status:</strong> Connected<br>
-              <strong>Last Sync:</strong> 2 mins ago
-            </p>
-            <button class="btn btn-small">DISCONNECT</button>
-          </div>
-        </div>
-        
-        <div class="card">
-          <div class="card-header">APPLE CALENDAR</div>
-          <div class="card-body">
-            <p class="mb-md">
-              <strong>Account:</strong> iCloud<br>
-              <strong>Status:</strong> Connected<br>
-              <strong>Last Sync:</strong> 2 mins ago
-            </p>
-            <button class="btn btn-small">DISCONNECT</button>
-          </div>
-        </div>
-        
-        <div class="card">
-          <div class="card-header">APPLE REMINDERS</div>
-          <div class="card-body">
-            <p class="mb-md">
-              <strong>Account:</strong> iCloud<br>
-              <strong>Status:</strong> Connected<br>
-              <strong>Last Sync:</strong> 2 mins ago
-            </p>
-            <button class="btn btn-small">DISCONNECT</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    
+      <!-- Recent Activity Section -->
+        <!--    <div class="content-section">-->
+        <!--      <h2 class="content-title">RECENT ACTIVITY</h2>-->
+        <!--      -->
+        <!--      <div class="table-container">-->
+        <!--        <table class="table">-->
+        <!--          <thead>-->
+        <!--            <tr>-->
+        <!--              <th>TIME</th>-->
+        <!--              <th>EVENT</th>-->
+        <!--              <th>SOURCE</th>-->
+        <!--              <th>STATUS</th>-->
+        <!--            </tr>-->
+        <!--          </thead>-->
+        <!--          <tbody>-->
+        <!--            <tr>-->
+        <!--              <td>10:34 AM</td>-->
+        <!--              <td>Meeting with Team</td>-->
+        <!--              <td>APPLE CALENDAR</td>-->
+        <!--              <td><span class="badge badge-inverse">SYNCED</span></td>-->
+        <!--            </tr>-->
+        <!--            <tr>-->
+        <!--              <td>10:12 AM</td>-->
+        <!--              <td>Review Project Docs</td>-->
+        <!--              <td>NOTION</td>-->
+        <!--              <td><span class="badge badge-inverse">SYNCED</span></td>-->
+        <!--            </tr>-->
+        <!--            <tr>-->
+        <!--              <td>09:45 AM</td>-->
+        <!--              <td>Weekly Planning</td>-->
+        <!--              <td>APPLE REMINDERS</td>-->
+        <!--              <td><span class="badge badge-inverse">SYNCED</span></td>-->
+        <!--            </tr>-->
+        <!--            <tr>-->
+        <!--              <td>09:30 AM</td>-->
+        <!--              <td>Code Review</td>-->
+        <!--              <td>NOTION</td>-->
+        <!--              <td><span class="badge badge-inverse">SYNCED</span></td>-->
+        <!--            </tr>-->
+        <!--            <tr>-->
+        <!--              <td>08:15 AM</td>-->
+        <!--              <td>Morning Standup</td>-->
+        <!--              <td>APPLE CALENDAR</td>-->
+        <!--              <td><span class="badge badge-inverse">SYNCED</span></td>-->
+        <!--            </tr>-->
+        <!--          </tbody>-->
+        <!--        </table>-->
+        <!--      </div>-->
+        <!--    </div>-->
+
     <!-- My Tasks Section -->
     <div class="content-section">
       <h2 class="content-title">MY TASKS</h2>
-      
+
       {% if tasks %}
       <div class="table-container">
         <table class="table">
@@ -264,6 +222,49 @@
         </div>
       </div>
       {% endif %}
+    </div>
+
+    <!-- Connected Services Section -->
+    <div class="content-section">
+      <h2 class="content-title">CONNECTED SERVICES</h2>
+      
+      <div class="grid-3 grid-lg">
+        <div class="card">
+          <div class="card-header">NOTION</div>
+          <div class="card-body">
+            <p class="mb-md">
+              <strong>Workspace:</strong> My Workspace<br>
+              <strong>Status:</strong> Connected<br>
+              <strong>Last Sync:</strong> 2 mins ago
+            </p>
+            <button class="btn btn-small">DISCONNECT</button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">APPLE CALENDAR</div>
+          <div class="card-body">
+            <p class="mb-md">
+              <strong>Account:</strong> iCloud<br>
+              <strong>Status:</strong> Connected<br>
+              <strong>Last Sync:</strong> 2 mins ago
+            </p>
+            <button class="btn btn-small">DISCONNECT</button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">APPLE REMINDERS</div>
+          <div class="card-body">
+            <p class="mb-md">
+              <strong>Account:</strong> iCloud<br>
+              <strong>Status:</strong> Connected<br>
+              <strong>Last Sync:</strong> 2 mins ago
+            </p>
+            <button class="btn btn-small">DISCONNECT</button>
+          </div>
+        </div>
+      </div>
     </div>
     
     <!-- Quick Actions -->

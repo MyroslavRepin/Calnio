@@ -4,7 +4,17 @@ import sys
 import logging
 from loguru import logger
 
-# === 🔧 Intercept standard logging and redirect to Loguru ===
+from server.services.scheduler.scheduler_service import shutdown_scheduler, start_scheduler
+
+from litestar import Litestar, get
+from litestar.plugins.prometheus import PrometheusConfig, PrometheusController
+from litestar.openapi.config import OpenAPIConfig
+from litestar.openapi.plugins import ScalarRenderPlugin
+from litestar.exceptions import HTTPException
+
+
+
+# === Intercept standard logging and redirect to Loguru ===
 class InterceptHandler(logging.Handler):
     """Intercept standard logging messages and redirect them to Loguru."""
     def emit(self, record):
@@ -31,8 +41,18 @@ logger.add(
            "<level>{level: <8}</level> | "
            "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
            "<level>{message}</level>",
-    level="INFO",
+    level="DEBUG",
 )
+
+os.makedirs("logs", exist_ok=True)
+logger.add("logs/app_{time:YYYY-MM-DD}.log",
+           rotation="1 day",
+           retention="14 days",
+           compression="zip",
+           format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
+           level="DEBUG",
+           backtrace=True,
+           diagnose=True)
 
 # Intercept all standard logging and redirect to Loguru
 logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
@@ -42,6 +62,11 @@ for logger_name in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
     logging_logger = logging.getLogger(logger_name)
     logging_logger.handlers = [InterceptHandler()]
     logging_logger.propagate = False
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
 
 logger.info("Loguru initialized")
 
@@ -63,9 +88,12 @@ from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.services.postgres_trigger import listen_to_postgres
+from server.services.caldav.user_calendars import sync_user_calendars
 
 # Creating Main App
 app = FastAPI()
+
+from prometheus_fastapi_instrumentator import Instrumentator
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "frontend"))
@@ -102,9 +130,9 @@ app.include_router(pages.router)
 app.include_router(notion_webhook_router)
 
 
+
 class UserAdmin(ModelView, model=user_models.User):
     column_list = [user_models.User.id, user_models.User.email, user_models.User.username, user_models.User.is_superuser]
-
 
 admin = Admin(app, async_engine)
 admin.add_view(UserAdmin)
@@ -113,12 +141,11 @@ admin.add_view(UserAdmin)
 @app.on_event("startup")
 def on_startup():
     asyncio.create_task(listen_to_postgres("notion_tasks_channel"))
-    # start_scheduler()
+    start_scheduler()
 
 @app.on_event("shutdown")
 def on_shutdown():
-    # shutdown_scheduler()
-    pass
+    shutdown_scheduler()
 
 
 @app.on_event("startup")
