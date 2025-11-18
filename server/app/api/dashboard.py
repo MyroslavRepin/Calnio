@@ -7,7 +7,7 @@ from server.app.core.config import settings
 from server.db.models import UserNotionTask, User
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
 
 from fastapi import APIRouter, Request, Form, Depends, status, Query, Response
 from fastapi.templating import Jinja2Templates
@@ -44,7 +44,10 @@ async def dashboard(
         raise HTTPException(status_code=404, detail="User not found")
 
     # Select users tasks via user_id
-    stmt = select(UserNotionTask).where(UserNotionTask.user_id == user_id)
+    stmt = select(UserNotionTask).where(
+        UserNotionTask.user_id == user_id,
+        or_(UserNotionTask.deleted.is_(False), UserNotionTask.deleted.is_(None))
+    )
 
     result = await db.execute(stmt)
     tasks = result.scalars().all()

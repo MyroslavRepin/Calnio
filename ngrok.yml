@@ -1,0 +1,20 @@
+#version: 2
+#
+#authtoken: "30yfUeunkQtrivsTQb1ZubXStt3_ULkbxYtBYchAUnG9bqtN"
+#
+#tunnels:
+#  web:
+#    addr: calnio:8000
+#    proto: http
+#    inspect: false
+#    hostname: splendid-frog-caring.ngrok-free.app
+
+version: 3
+agent:
+  authtoken: 30yfUeunkQtrivsTQb1ZubXStt3_ULkbxYtBYchAUnG9bqtN
+endpoints:
+  - name: calnio
+    url: calnio.ngrok.dev
+    upstream:
+      # This is the port of your local server to be forwarded
+      url: calnio:8000

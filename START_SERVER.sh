@@ -63,7 +63,7 @@ else
   uvicorn server.app.main:app \
     --host $HOST \
     --port 8000 \
-    --log-level info \
+    --log-level debug \
     --reload \
     --timeout-keep-alive 60
 fi

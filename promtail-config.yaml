@@ -1,0 +1,85 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    batchwait: 250ms
+    batchsize: 131072
+    timeout: 10s
+    backoff_config:
+      min_period: 250ms
+      max_period: 2s
+      max_retries: 10
+
+target_config:
+  sync_period: 2s
+
+scrape_configs:
+  - job_name: calnio-file-logs
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: calnio-app
+          app: calnio
+          env: prod
+          __path__: /var/log/calnio/*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^[0-9]{4}-[0-9]{2}-[0-9]{2} '
+      - regex:
+          expression: '^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \| (?P<level>[A-Z]+) \| (?P<module>[A-Za-z0-9_.-]+):(?P<func>[A-Za-z0-9_<>-]+):(?P<line>\d+) - (?P<msg>.*)$'
+      - timestamp:
+          source: ts
+          format: '2006-01-02 15:04:05'
+          timezone: UTC
+      - labels:
+          level: ""
+          module: ""
+          func: ""
+          line: ""
+      - regex:
+          source: msg
+          expression: '(?P<remote_ip>\d+\.\d+\.\d+\.\d+):\d+ - "(?P<method>[A-Z]+) (?P<path>[^" ]+) (?P<protocol>HTTP/[0-9.]+)" (?P<status_code>\d{3})'
+      - labels:
+          remote_ip: ""
+          method: ""
+          path: ""
+          protocol: ""
+          status_code: ""
+      - output:
+          source: msg
+
+  - job_name: calnio-file-raw
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: calnio-file-raw
+          app: calnio
+          source: file-raw
+          __path__: /var/log/calnio/*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^[0-9]{4}-[0-9]{2}-[0-9]{2} '
+
+  - job_name: calnio-stdout
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: calnio-stdout
+          app: calnio
+          source: docker-stdout
+          __path__: /var/lib/docker/containers/*/*-json.log
+    pipeline_stages:
+      - docker: {}
+      - labels:
+          container_name: ""
+          image_name: ""
+      - match:
+          selector: '{container_name="calnio"}'
+          stages:
+            - output:
+                source: log

@@ -1,0 +1,300 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 0,
+  "links": [],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Requests",
+      "datasource": "Prometheus",
+      "id": 101,
+      "targets": [
+        {
+          "expr": "sum(litestar_http_requests_total)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Requests Count per Path",
+      "datasource": "Prometheus",
+      "id": 102,
+      "targets": [
+        {
+          "expr": "sum by (route, method) (litestar_http_requests_total)"
+        }
+      ],
+      "options": {
+        "textMode": "value_and_name"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests per Second",
+      "datasource": "Prometheus",
+      "id": 103,
+      "targets": [
+        {
+          "expr": "sum(rate(litestar_http_requests_total[2m])) by (route)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "req/s",
+          "decimals": 2
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests In Progress",
+      "datasource": "Prometheus",
+      "id": 104,
+      "targets": [
+        {
+          "expr": "sum(litestar_http_requests_in_progress) by (route)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "P99 Request Duration",
+      "datasource": "Prometheus",
+      "id": 105,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(litestar_http_request_duration_seconds_bucket[5m])))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Average Request Duration (rate)",
+      "datasource": "Prometheus",
+      "id": 106,
+      "targets": [
+        {
+          "expr": "sum(rate(litestar_http_request_duration_seconds_sum[5m])) / sum(rate(litestar_http_request_duration_seconds_count[5m]))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Error Rate (5xx %)",
+      "datasource": "Prometheus",
+      "id": 107,
+      "targets": [
+        {
+          "expr": "((sum(rate(litestar_http_requests_total{status=~\"5..\"}[5m])) or 0) / (sum(rate(litestar_http_requests_total[5m])) or 1)) * 100"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 2
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "5xx Requests per Second",
+      "datasource": "Prometheus",
+      "id": 108,
+      "targets": [
+        {
+          "expr": "(sum(rate(litestar_http_requests_total{status=~\"5..\"}[5m])) by (route, status)) or vector(0)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "req/s",
+          "decimals": 2
+        }
+      }
+    },
+    {
+      "type": "logs",
+      "title": "Calnio Structured Logs",
+      "datasource": "Loki",
+      "id": 109,
+      "targets": [
+        {"expr": "{job=\"calnio-app\", level=~\"$log_level\"} |= \"$log_keyword\""}
+      ],
+      "options": {"showLabels": true, "wrapLogMessage": true, "dedupStrategy": "none", "showTime": true}
+    },
+    {
+      "type": "logs",
+      "title": "Calnio HTTP Access Logs",
+      "datasource": "Loki",
+      "id": 110,
+      "targets": [
+        {"expr": "{job=\"calnio-app\", module=~\"uvicorn.*\"} |= \"$log_keyword\""}
+      ],
+      "options": {"showLabels": true, "wrapLogMessage": true, "dedupStrategy": "none", "showTime": true}
+    },
+    {
+      "type": "logs",
+      "title": "Calnio All Logs (Structured + Raw + Stdout)",
+      "datasource": "Loki",
+      "id": 111,
+      "targets": [
+        {"expr": "({job=\"calnio-app\"} |= \"$log_keyword\") OR ({job=\"calnio-file-raw\"} |= \"$log_keyword\") OR ({job=\"calnio-stdout\",container_name=\"calnio\"} |= \"$log_keyword\")"}
+      ],
+      "options": {"showLabels": true, "wrapLogMessage": true, "dedupStrategy": "none", "showTime": true}
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Requests per Second (from logs)",
+      "datasource": "Loki",
+      "id": 112,
+      "targets": [
+        {"expr": "sum by (path)(count_over_time({job=\"calnio-app\", module=~\"uvicorn.*\", path=~\"$http_path\"}[1m])) / 60"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "req/s", "decimals": 2}},
+      "options": {"legend": {"showLegend": true}}
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Status Code Rate (from logs)",
+      "datasource": "Loki",
+      "id": 113,
+      "targets": [
+        {"expr": "sum by (status_code)(count_over_time({job=\"calnio-app\", module=~\"uvicorn.*\", status_code=~\"$http_status\"}[1m])) / 60"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "req/s", "decimals": 2}},
+      "options": {"legend": {"showLegend": true}}
+    },
+    {
+      "type": "stat",
+      "title": "Log Throughput (lines/sec, 1m)",
+      "datasource": "Loki",
+      "id": 114,
+      "targets": [
+        {"expr": "count_over_time({job=\"calnio-app\"}[1m]) / 60"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "req/s", "decimals": 2}}
+    },
+    {
+      "type": "stat",
+      "title": "Logs Last 5m Count",
+      "datasource": "Loki",
+      "id": 115,
+      "targets": [
+        {"expr": "count_over_time({job=\"calnio-app\"}[5m])"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "none", "decimals": 0}}
+    }
+  ],
+  "preload": false,
+  "refresh": "5s",
+  "schemaVersion": 42,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "name": "app_name",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(litestar_http_requests_total, app)",
+        "refresh": 1,
+        "includeAll": true
+      },
+      {
+        "name": "status_code",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(litestar_http_requests_total, status)",
+        "refresh": 1,
+        "includeAll": true
+      },
+      {
+        "name": "log_level",
+        "type": "query",
+        "datasource": "Loki",
+        "query": "label_values({job=\"calnio-app\"}, level)",
+        "refresh": 2,
+        "includeAll": true
+      },
+      {
+        "name": "log_keyword",
+        "type": "textbox"
+      },
+      {
+        "name": "http_path",
+        "type": "query",
+        "datasource": "Loki",
+        "query": "label_values({job=\"calnio-app\", module=~\"uvicorn.*\"}, path)",
+        "includeAll": true,
+        "refresh": 2
+      },
+      {
+        "name": "http_status",
+        "type": "query",
+        "datasource": "Loki",
+        "query": "label_values({job=\"calnio-app\", module=~\"uvicorn.*\"}, status_code)",
+        "includeAll": true,
+        "refresh": 2
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "title": "Calnio",
+  "version": 5
+}
