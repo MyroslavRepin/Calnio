@@ -9,6 +9,8 @@ services:
       - ./logs:/calnio/logs
     ports:
      - "8000:8000"
+    networks:
+      - calnio_network
     logging:
       driver: json-file
       options:
