@@ -1,4 +1,5 @@
 services:
+  # Main server
   calnio:
     image: calnio:latest
     container_name: calnio
@@ -73,6 +74,25 @@ services:
       - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
       - grafanadata:/var/lib/grafana
 
+  nginx:
+    image: nginx:latest
+    container_name: calnio_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - calnio
+    networks:
+      - calnio_network
+
 volumes:
   grafanadata:
   prometheusdata:
+
+networks:
+  calnio_network:
+    driver: bridge
