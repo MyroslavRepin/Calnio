@@ -76,6 +76,7 @@ from fastapi.templating import Jinja2Templates
 from sqladmin import Admin
 from sqladmin import ModelView
 
+from server.app.api.add_waitlist import router as add_waitlist_email
 from server.app.api import dashboard, landing, refresh_cookies, brutalist
 from server.app.api.auth import router as auth_router
 from server.app.api.errors import error_404
@@ -128,6 +129,7 @@ app.include_router(notion_callback.router)
 app.include_router(error_404.router)
 app.include_router(pages.router)
 app.include_router(notion_webhook_router)
+app.include_router(add_waitlist_email)
 
 
 

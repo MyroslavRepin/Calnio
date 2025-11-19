@@ -1,4 +1,5 @@
 Calnio/
+├── calnio/
 ├── certbot/
 │   ├── conf/
 │   └── www/
@@ -47,7 +48,8 @@ Calnio/
 │       ├── signup.html
 │       ├── tasks.html
 │       ├── unauthorized.html
-│       └── users.html
+│       ├── users.html
+│       └── waitlist.html
 ├── generated_docs/
 │   ├── WEBHOOK_QUICK_REFERENCE.md
 │   └── WEBHOOK_TESTING.md
@@ -100,6 +102,7 @@ Calnio/
 │   │   │   ├── webhooks/
 │   │   │   │   └── notion_webhooks.py
 │   │   │   ├── __init__.py
+│   │   │   ├── add_waitlist.py
 │   │   │   ├── auth.py
 │   │   │   ├── brutalist.py
 │   │   │   ├── dashboard.py
@@ -116,7 +119,8 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
 │   │   │   ├── notion_pages.py
-│   │   │   └── users.py
+│   │   │   ├── users.py
+│   │   │   └── waitlist.py
 │   │   ├── __init__.py
 │   │   ├── main.py
 │   │   ├── main_litestar.py
