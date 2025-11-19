@@ -5,7 +5,9 @@ Calnio/
 │   └── www/
 ├── docs/
 │   ├── EXAMPLE_TRIGGERS_WITH_ENUM.py
-│   └── POSTGRESQL_ENUM_GUIDE.md
+│   ├── POSTGRESQL_ENUM_GUIDE.md
+│   ├── WEBHOOK_QUICK_REFERENCE.md
+│   └── WEBHOOK_TESTING.md
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -50,9 +52,6 @@ Calnio/
 │       ├── unauthorized.html
 │       ├── users.html
 │       └── waitlist.html
-├── generated_docs/
-│   ├── WEBHOOK_QUICK_REFERENCE.md
-│   └── WEBHOOK_TESTING.md
 ├── grafana/
 │   ├── calnio_litestar_dashboard.json
 │   └── datasources.yaml
@@ -210,6 +209,16 @@ Calnio/
 │   │   └── utils.py
 │   └── __init__.py
 ├── services/
+│   ├── email/
+│   │   ├── app/
+│   │   ├── db/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── worker/
+│   │   ├── Dockerfile
+│   │   └── main.py
 │   └── sync/
 │       ├── server/
 │       │   └── app/

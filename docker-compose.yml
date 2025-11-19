@@ -28,6 +28,8 @@ services:
     container_name: "ngrok"
     depends_on:
       - calnio
+    networks:
+      - calnio_network
     volumes:
       - ./ngrok.yml:/ngrok.yml
     command: start --all --config /ngrok.yml --log=stdout --log-level=info
