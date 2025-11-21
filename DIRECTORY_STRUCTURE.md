@@ -4,6 +4,7 @@ Calnio/
 │   ├── conf/
 │   └── www/
 ├── docs/
+│   ├── CELERY_REDIS_DIAGNOSTICS.md
 │   ├── EXAMPLE_TRIGGERS_WITH_ENUM.py
 │   ├── POSTGRESQL_ENUM_GUIDE.md
 │   ├── WEBHOOK_QUICK_REFERENCE.md
@@ -36,22 +37,25 @@ Calnio/
 │   │       ├── refreshThenDashboard.js
 │   │       └── theme-toggle.js
 │   └── templates/
-│       ├── 404.html
-│       ├── 500.html
-│       ├── base.html
-│       ├── brutalist-dashboard.html
-│       ├── brutalist-landing.html
-│       ├── brutalist-login.html
-│       ├── brutalist-signup.html
-│       ├── dashboard.html
-│       ├── error.html
-│       ├── landing.html
-│       ├── login.html
-│       ├── signup.html
-│       ├── tasks.html
-│       ├── unauthorized.html
-│       ├── users.html
-│       └── waitlist.html
+│       ├── email/
+│       ├── errors/
+│       │   ├── 404.html
+│       │   ├── error.html
+│       │   └── unauthorized.html
+│       └── routes/
+│           ├── 500.html
+│           ├── base.html
+│           ├── brutalist-dashboard.html
+│           ├── brutalist-landing.html
+│           ├── brutalist-login.html
+│           ├── brutalist-signup.html
+│           ├── dashboard.html
+│           ├── landing.html
+│           ├── login.html
+│           ├── signup.html
+│           ├── tasks.html
+│           ├── users.html
+│           └── waitlist.html
 ├── grafana/
 │   ├── calnio_litestar_dashboard.json
 │   └── datasources.yaml
@@ -210,22 +214,35 @@ Calnio/
 │   └── __init__.py
 ├── services/
 │   ├── email/
-│   │   ├── app/
-│   │   ├── db/
-│   │   ├── models/
 │   │   ├── schemas/
-│   │   ├── services/
+│   │   ├── templates/
+│   │   │   ├── account_created.html
+│   │   │   ├── password_reset.html
+│   │   │   ├── product_updates.html
+│   │   │   └── requirements.txt
 │   │   ├── utils/
+│   │   │   ├── __init__.py
+│   │   │   └── emails.py
 │   │   ├── worker/
+│   │   │   ├── __init__.py
+│   │   │   └── auth.py
+│   │   ├──  requirements.txt
+│   │   ├── __init__.py
+│   │   ├── celery_app.py
 │   │   ├── Dockerfile
 │   │   └── main.py
-│   └── sync/
-│       ├── server/
-│       │   └── app/
-│       │       ├── api/
-│       │       ├── core/
-│       │       └── schemas/
-│       └── Dockerfile
+│   ├── sync/
+│   │   ├── server/
+│   │   │   └── app/
+│   │   │       ├── api/
+│   │   │       ├── core/
+│   │   │       └── schemas/
+│   │   └── Dockerfile
+│   └── __init__.py
+├── tests/
+│   └── load/
+│       ├── load_test.js
+│       └── playground.js
 ├── .gitignore
 ├── alembic.ini
 ├── caldav_events.sql
@@ -240,6 +257,7 @@ Calnio/
 ├── main.py
 ├── manage.py
 ├── ngrok.yml
+├── plan-calnioCompletionRoadmap.prompt.md
 ├── Procfile
 ├── prometheus.yml
 ├── promtail-config.yaml
@@ -248,5 +266,4 @@ Calnio/
 ├── requirements.txt
 ├── robots.txt
 ├── START_SERVER.sh
-├── SYNCSTATUS_ENUM_FIX.md
 └── verify_enum_fix.py

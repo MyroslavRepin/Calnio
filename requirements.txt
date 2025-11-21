@@ -18,6 +18,7 @@ greenlet==3.2.3
 SQLAlchemy==2.0.41
 sqladmin==0.21.0
 redis
+celery
 
 # FastAPI + Starlette
 fastapi==0.115.14

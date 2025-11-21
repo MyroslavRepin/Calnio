@@ -19,6 +19,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+from services.email.worker.auth import send_welcome_email
+
 router = APIRouter()
 
 
@@ -26,7 +28,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(
     BASE_DIR, "..", "..", "..", "frontend"))
 
-templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
+templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates/routes"))
 
 # Login API
 @router.get("/login", response_class=HTMLResponse)
@@ -111,6 +113,13 @@ async def signup_post(
             hashed_password=create_hash(password)
         )
         await async_create_user(db=db, user=user)
+        # Send welcome email
+        try:
+            send_welcome_email.delay(to_email=email, username=username)
+            logger.debug(f"Welcome email sent to {email}")
+        except Exception as e:
+            logger.error(f"Failed to send welcome email: {e}")
+
         return RedirectResponse('/login', status_code=303)
     except IntegrityError:
         return RedirectResponse("/signup?error=Email+or+username+already+exists!&username=" + username + "&email=" + email, status_code=303)
