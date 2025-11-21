@@ -18,7 +18,7 @@ logger.add(sys.stdout, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <leve
 # os.makedirs(LOG_DIR, exist_ok=True)
 
 # File - full traceback
-logger.add("/calnio/logs/app_{time:YYYY-MM-DD}.log",
+logger.add("./calnio/logs/app_{time:YYYY-MM-DD}.log",
            rotation="1 day",
            retention="14 days",
            compression="zip",
