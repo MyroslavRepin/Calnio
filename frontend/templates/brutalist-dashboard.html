@@ -267,6 +267,79 @@
       </div>
     </div>
     
+    <!-- CalDAV Integration Section -->
+    <div class="content-section">
+      <h2 class="content-title">APPLE CALENDAR INTEGRATION (CALDAV)</h2>
+
+      <!-- Info Card with Instructions -->
+      <div class="card mb-lg">
+        <div class="card-header">HOW TO GET YOUR APPLE APP-SPECIFIC PASSWORD</div>
+        <div class="card-body">
+          <ol style="line-height: 1.8; padding-left: 1.5rem;">
+            <li>Go to <a href="https://appleid.apple.com" target="_blank" rel="noopener" style="text-decoration: underline; font-weight: 600;">appleid.apple.com</a></li>
+            <li>Sign in with your Apple ID</li>
+            <li>In the "Sign-In and Security" section, select "App-Specific Passwords"</li>
+            <li>Click "Generate an app-specific password" or click the Add button (+)</li>
+            <li>Enter a name (e.g., "Calnio") and click "Create"</li>
+            <li>Copy the generated password and paste it below</li>
+          </ol>
+          <p style="margin-top: 1rem; font-weight: 600;">
+            ⚠️ NOTE: You'll only see this password once, so make sure to copy it before closing the window.
+          </p>
+        </div>
+      </div>
+
+      <!-- Success Alert -->
+      <div id="caldav-success-alert" class="card mb-lg" style="display: none; border-width: 3px;">
+        <div class="card-body">
+          <p style="font-weight: 600;">✓ CALDAV INTEGRATION CONFIGURED SUCCESSFULLY!</p>
+        </div>
+      </div>
+
+      <!-- Error Alert -->
+      <div id="caldav-error-alert" class="card mb-lg" style="display: none; border-width: 3px;">
+        <div class="card-body">
+          <p style="font-weight: 600;">✗ <span id="caldav-error-message">AN ERROR OCCURRED. PLEASE TRY AGAIN.</span></p>
+        </div>
+      </div>
+
+      <!-- CalDAV Form -->
+      <form id="caldav-form" class="form">
+        <div class="form-group">
+          <label for="caldav-email" class="form-label">APPLE EMAIL ADDRESS</label>
+          <input
+            type="email"
+            id="caldav-email"
+            name="email"
+            class="form-input"
+            placeholder="your.email@icloud.com"
+            value="{{ user_obj.caldav_email or '' }}"
+            required
+          />
+          <small style="display: block; margin-top: 0.5rem; opacity: 0.7;">Your iCloud email address</small>
+        </div>
+
+        <div class="form-group">
+          <label for="caldav-password" class="form-label">APP-SPECIFIC PASSWORD</label>
+          <input
+            type="password"
+            id="caldav-password"
+            name="specific_password"
+            class="form-input"
+            placeholder="xxxx-xxxx-xxxx-xxxx"
+            style="font-family: monospace;"
+            required
+          />
+          <small style="display: block; margin-top: 0.5rem; opacity: 0.7;">The 16-character password from Apple</small>
+        </div>
+
+        <div class="flex gap-md">
+          <button type="submit" id="caldav-submit-btn" class="btn btn-primary">CONNECT CALENDAR</button>
+          <button type="button" id="caldav-cancel-btn" class="btn">CLEAR</button>
+        </div>
+      </form>
+    </div>
+
     <!-- Quick Actions -->
     <div class="content-section hide-mobile">
       <h2 class="content-title">QUICK ACTIONS</h2>
@@ -280,4 +353,93 @@
   </main>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // CalDAV form handling
+  document.addEventListener('DOMContentLoaded', function() {
+    const caldavForm = document.getElementById('caldav-form');
+    const caldavSubmitBtn = document.getElementById('caldav-submit-btn');
+    const caldavCancelBtn = document.getElementById('caldav-cancel-btn');
+    const caldavSuccessAlert = document.getElementById('caldav-success-alert');
+    const caldavErrorAlert = document.getElementById('caldav-error-alert');
+    const caldavErrorMessage = document.getElementById('caldav-error-message');
+    const caldavEmail = document.getElementById('caldav-email');
+    const caldavPassword = document.getElementById('caldav-password');
+
+    // Clear form
+    if (caldavCancelBtn) {
+      caldavCancelBtn.addEventListener('click', function() {
+        caldavEmail.value = '';
+        caldavPassword.value = '';
+        caldavSuccessAlert.style.display = 'none';
+        caldavErrorAlert.style.display = 'none';
+      });
+    }
+
+    // Form submission
+    if (caldavForm) {
+      caldavForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Hide previous alerts
+        caldavSuccessAlert.style.display = 'none';
+        caldavErrorAlert.style.display = 'none';
+
+        const email = caldavEmail.value;
+        const specificPassword = caldavPassword.value;
+
+        // Disable submit button
+        caldavSubmitBtn.disabled = true;
+        const originalText = caldavSubmitBtn.textContent;
+        caldavSubmitBtn.textContent = 'CONNECTING...';
+
+        try {
+          const response = await fetch('/api/v1/integrations/caldav/connect', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include', // Send cookies for authentication
+            body: JSON.stringify({
+              email: email,
+              specific_password: specificPassword,
+            }),
+          });
+
+          if (response.ok) {
+            // Success
+            caldavSuccessAlert.style.display = 'block';
+
+            // Clear password field for security
+            caldavPassword.value = '';
+
+            // Scroll to success message
+            caldavSuccessAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } else {
+            // Error
+            const errorData = await response.json().catch(() => ({}));
+            caldavErrorMessage.textContent = (errorData.detail || 'FAILED TO CONNECT. PLEASE CHECK YOUR CREDENTIALS AND TRY AGAIN.').toUpperCase();
+            caldavErrorAlert.style.display = 'block';
+
+            // Scroll to error message
+            caldavErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        } catch (error) {
+          console.error('Error connecting CalDAV:', error);
+          caldavErrorMessage.textContent = 'NETWORK ERROR. PLEASE CHECK YOUR CONNECTION AND TRY AGAIN.';
+          caldavErrorAlert.style.display = 'block';
+
+          // Scroll to error message
+          caldavErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } finally {
+          // Re-enable submit button
+          caldavSubmitBtn.disabled = false;
+          caldavSubmitBtn.textContent = originalText;
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}

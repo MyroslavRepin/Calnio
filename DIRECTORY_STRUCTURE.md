@@ -34,6 +34,7 @@ Calnio/
 │   │       ├── refreshThenDashboard.js
 │   │       └── theme-toggle.js
 │   └── templates/
+│       ├── email/
 │       ├── 404.html
 │       ├── 500.html
 │       ├── base.html
@@ -99,6 +100,7 @@ Calnio/
 │   │   │   │   ├── __init__.py
 │   │   │   │   └── error_404.py
 │   │   │   ├── webhooks/
+│   │   │   │   ├── caldav_integrations.py
 │   │   │   │   └── notion_webhooks.py
 │   │   │   ├── __init__.py
 │   │   │   ├── auth.py
@@ -208,11 +210,7 @@ Calnio/
 │   └── __init__.py
 ├── services/
 │   ├── email/
-│   │   ├── app/
-│   │   ├── db/
-│   │   ├── models/
 │   │   ├── schemas/
-│   │   ├── services/
 │   │   ├── utils/
 │   │   └── worker/
 │   └── sync/

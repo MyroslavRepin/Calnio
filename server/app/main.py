@@ -89,6 +89,7 @@ from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.services.postgres_trigger import listen_to_postgres
 from server.services.caldav.user_calendars import sync_user_calendars
+from server.app.api.webhooks.caldav_integrations import router as caldav_router
 
 # Creating Main App
 app = FastAPI()
@@ -128,7 +129,7 @@ app.include_router(notion_callback.router)
 app.include_router(error_404.router)
 app.include_router(pages.router)
 app.include_router(notion_webhook_router)
-
+app.include_router(caldav_router)
 
 
 class UserAdmin(ModelView, model=user_models.User):

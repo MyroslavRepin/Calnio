@@ -61,6 +61,24 @@ async def refresh_access_token(request: Request, response: Response) -> dict:
             status_code=401, detail="Invalid refresh token or expired")
 
 async def check_if_user_authorized(request: Request) -> dict:
+    """
+    Checks if a user is authorized by verifying their access token or refreshing it if expired.
+
+    This function attempts to determine if a user is authorized by first validating
+    the provided access token. If the token is invalid or expired, it will attempt
+    to refresh the token. If both attempts fail, the user is deemed unauthorized.
+
+    Arguments:
+        request (Request): The incoming HTTP request containing the token to
+        validate or refresh.
+
+    Returns:
+        dict: A dictionary containing the following keys:
+            - authorized (bool): Indicates whether the user is authorized.
+            - user_id (int or None): The user's ID if authorization is successful,
+              otherwise None.
+            - payload (dict or None): The token payload if available, otherwise None.
+    """
     try:
         payload = await access_token_required(request)
         user_id = int(payload["sub"])
