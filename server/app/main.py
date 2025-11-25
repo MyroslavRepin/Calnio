@@ -3,6 +3,10 @@ import os
 import sys
 import logging
 from loguru import logger
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from server.services.scheduler.scheduler_service import shutdown_scheduler, start_scheduler
 
@@ -69,6 +73,12 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 logger.info("Loguru initialized")
+
+# Log email configuration
+email_host = os.getenv("EMAIL_HOST")
+email_user = os.getenv("EMAIL_USER")
+email_password_set = "SET" if os.getenv("EMAIL_PASSWORD") else "NOT SET"
+logger.info(f"Email config loaded: HOST={email_host}, USER={email_user}, PASSWORD={email_password_set}")
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
