@@ -1,54 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Access Denied | Calnio</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNAUTHORIZED — ACCESS DENIED</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+  <script
+    defer
+    src="https://analytics.calnio.com/script.js"
+    data-website-id="4c81d3ea-9951-4d28-b426-129f058ec90e"
+  ></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script
-      type="module"
-      src="{{ url_for('static', path='js/dashboard.js') }}"
-    ></script>
-    <script
-      defer
-      src="https://analytics.calnio.com/script.js"
-      data-website-id="4c81d3ea-9951-4d28-b426-129f058ec90e"
-    ></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #FFFFFF;
+      color: #000000;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
 
-    <style>
-      body {
-        font-family: "Montserrat", sans-serif;
-        background: linear-gradient(135deg, #c9b89e, #f4f1ed, #d4c5a3);
-        min-height: 100vh;
+    .error-container {
+      text-align: center;
+      padding: 48px;
+      border: 3px solid #000000;
+      max-width: 800px;
+      margin: 0 24px;
+    }
+
+    .error-code {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(80px, 15vw, 120px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      background: #000000;
+      color: #FFFFFF;
+      padding: 16px 32px;
+      display: inline-block;
+    }
+
+    .error-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .error-description {
+      font-size: 18px;
+      line-height: 1.5;
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    .error-meta {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      padding: 16px;
+      border: 1px solid #000000;
+      background: #FFFFFF;
+    }
+
+    .btn-home {
+      display: inline-block;
+      padding: 16px 32px;
+      background: #000000;
+      color: #FFFFFF;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 3px solid #000000;
+      transition: all 0.2s ease-in-out;
+      margin-right: 16px;
+      margin-bottom: 16px;
+    }
+
+    .btn-home:hover {
+      background: #FFFFFF;
+      color: #000000;
+    }
+
+    .btn-home:active {
+      transform: translate(2px, 2px);
+    }
+
+    .btn-secondary {
+      background: #FFFFFF;
+      color: #000000;
+    }
+
+    .btn-secondary:hover {
+      background: #000000;
+      color: #FFFFFF;
+    }
+
+    @media (max-width: 768px) {
+      .error-container {
+        padding: 32px 24px;
+        border-width: 2px;
       }
-      h1 {
-        font-family: "DM Serif Display", serif;
+
+      .error-code {
+        padding: 12px 24px;
       }
-      .glass {
-        background: rgba(255 255 255 / 0.2);
-        border-radius: 1.5rem;
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid rgba(255 255 255 / 0.3);
-        box-shadow: 0 8px 32px rgb(117 96 72 / 0.3);
+
+      .error-description {
+        font-size: 16px;
       }
-      ::selection {
-        background-color: #b89e7dcc;
-        color: white;
+
+      .btn-home {
+        margin-right: 0;
+        display: block;
+        width: 100%;
       }
-    </style>
-  </head>
-  <body class="flex items-center justify-center p-6">
-    <div class="glass max-w-lg w-full p-10 text-center">
-      <h1 class="text-4xl text-coffee-900 mb-6">Access Denied</h1>
-      <p class="text-base text-coffee-800 mb-8">
-        You must be logged in to access this page.
-      </p>
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-code">DENIED</div>
+    <h1 class="error-title">ACCESS DENIED</h1>
+    <p class="error-description">
+      You must be logged in to access this page.<br>
+      Please sign in to continue.
+    </p>
+    <div class="error-meta">
+      AUTHENTICATION REQUIRED — SIGN IN TO PROCEED
+    </div>
+    <a href="/login" class="btn-home">SIGN IN</a>
+    <a href="/" class="btn-home btn-secondary">GO TO HOME</a>
+  </div>
+</body>
+</html>
       <a
         href="/login"
         class="inline-block bg-coffee-700 text-black px-6 py-3 rounded-xl font-semibold hover:bg-coffee-800 transition hover:scale-105"

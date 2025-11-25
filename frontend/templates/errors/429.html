@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ERROR — SOMETHING WENT WRONG</title>
+  <title>429 — TOO MANY REQUESTS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Space+Grotesk:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
   <script
     defer
     src="https://analytics.calnio.com/script.js"
@@ -23,24 +23,24 @@
       font-family: 'Inter', sans-serif;
       background: #FFFFFF;
       color: #000000;
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      overflow: hidden;
     }
 
     .error-container {
       text-align: center;
       padding: 48px;
       border: 3px solid #000000;
-      max-width: 900px;
-      width: 100%;
+      max-width: 800px;
+      margin: 0 24px;
     }
 
     .error-code {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(60px, 12vw, 100px);
+      font-size: clamp(120px, 20vw, 200px);
       font-weight: 700;
       line-height: 1;
       letter-spacing: -0.02em;
@@ -53,25 +53,18 @@
 
     .error-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(24px, 4vw, 40px);
+      font-size: clamp(32px, 5vw, 48px);
       font-weight: 700;
       letter-spacing: 0.05em;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
       text-transform: uppercase;
     }
 
-    .error-message {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      line-height: 1.6;
+    .error-description {
+      font-size: 18px;
+      line-height: 1.5;
       margin-bottom: 32px;
-      padding: 24px;
-      border: 1px solid #000000;
-      background: #FFFFFF;
-      text-align: left;
-      white-space: pre-wrap;
-      word-break: break-word;
-      overflow-x: auto;
+      font-weight: 400;
     }
 
     .error-meta {
@@ -118,22 +111,25 @@
         padding: 12px 24px;
       }
 
-      .error-message {
-        font-size: 12px;
-        padding: 16px;
+      .error-description {
+        font-size: 16px;
       }
     }
   </style>
 </head>
 <body>
   <div class="error-container">
-    <div class="error-code">ERROR</div>
-    <h1 class="error-title">SOMETHING WENT WRONG</h1>
-    <div class="error-message">{{ ERROR_MESSAGE if ERROR_MESSAGE else "An unexpected error occurred." }}</div>
+    <div class="error-code">429</div>
+    <h1 class="error-title">TOO MANY REQUESTS</h1>
+    <p class="error-description">
+      You've sent too many requests in a short period.<br>
+      Please wait a moment and try again.
+    </p>
     <div class="error-meta">
-      ERROR OCCURRED — PLEASE TRY AGAIN
+      RATE LIMIT EXCEEDED — SLOW DOWN
     </div>
     <a href="/" class="btn-home">GO TO HOME</a>
   </div>
 </body>
 </html>
+

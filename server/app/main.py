@@ -15,6 +15,7 @@ from litestar.plugins.prometheus import PrometheusConfig, PrometheusController
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.exceptions import HTTPException
+from fastapi.exceptions import HTTPException as StarletteHTTPException
 
 
 
@@ -110,13 +111,64 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "frontend"))
 templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
 
-# Setting up handler 500 error
+# ==================== ERROR HANDLERS ====================
+# Custom error page handlers for different HTTP status codes
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    """Handle all HTTP exceptions and route to appropriate error pages"""
+    status_code = exc.status_code
+
+    # Map status codes to their respective templates
+    error_templates = {
+        400: "errors/400.html",
+        401: "errors/401.html",
+        403: "errors/403.html",
+        404: "errors/404.html",
+        429: "errors/429.html",
+        500: "errors/500.html",
+        503: "errors/503.html",
+    }
+
+    # Get the appropriate template or default to generic error page
+    template = error_templates.get(status_code, "errors/error.html")
+
+    # Log based on severity
+    if status_code >= 500:
+        logger.error(f"HTTP {status_code} error at {request.url}: {exc.detail}")
+    elif status_code >= 400:
+        logger.warning(f"HTTP {status_code} error at {request.url}: {exc.detail}")
+
+    # Return the appropriate error page
+    return templates.TemplateResponse(
+        template,
+        {
+            "request": request,
+            "ERROR_MESSAGE": exc.detail if hasattr(exc, 'detail') else str(exc)
+        },
+        status_code=status_code
+    )
+
+@app.exception_handler(404)
+async def not_found_error_handler(request, exc):
+    """Handle 404 Not Found errors"""
+    logger.warning(f"Page not found: {request.url}")
+    return templates.TemplateResponse(
+        "errors/404.html",
+        {"request": request},
+        status_code=404
+    )
+
 @app.exception_handler(Exception)
 async def internal_server_error_handler(request, exc):
-    logger.error(f"Internal server error: {exc}")
+    """Handle all unhandled exceptions as 500 errors"""
+    logger.error(f"Internal server error: {exc}", exc_info=True)
     return templates.TemplateResponse(
-        "500.html",
-        {"request": request},
+        "errors/500.html",
+        {
+            "request": request,
+            "ERROR_MESSAGE": str(exc) if os.getenv("DEBUG") == "True" else None
+        },
         status_code=500
     )
 
