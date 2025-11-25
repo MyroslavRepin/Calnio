@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Request, Depends, Form
+from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
 from server.db.deps import async_get_db
@@ -10,6 +10,7 @@ from server.app.core.logging_config import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
+from services.email.utils.email_sender import send_waitlist_email
 
 router = APIRouter()
 
@@ -44,11 +45,31 @@ async def add_waitlist_email(
 ):
     try:
         waitlist = Waitlist(
-            email=request.email,
+            email=str(request.email),
         )
         db.add(waitlist)
         await db.commit()
-        logger.debug(f"Added email {request.email} to waitlist.")
+        await db.refresh(waitlist)
+
+        # Get the current position in waitlist
+        result = await db.execute(select(func.count()).select_from(Waitlist))
+        position = result.scalar()
+
+        logger.debug(f"Added email {request.email} to waitlist at position {position}.")
+
+        # Send confirmation email
+        try:
+            await send_waitlist_email(
+                destination=str(request.email),
+                name=str(request.email).split("@")[0].capitalize(),
+                position=position,
+                discount_amount=10,
+            )
+            logger.info(f"Sent waitlist confirmation email to {request.email}")
+        except Exception as email_error:
+            # Log the error but don't fail the request
+            logger.error(f"Failed to send email to {request.email}: {email_error}")
+
         return JSONResponse({"message": "Successfully added to waitlist"}, status_code=200)
 
     except IntegrityError:

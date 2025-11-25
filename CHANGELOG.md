@@ -25,6 +25,20 @@ and adheres to [Semantic Versioning](https://semver.org/)
 ### Known Issue
 
 - Anything still broken or limitations users should know -->
+
+## v1.16.0 - 2025-10-24
+
+### Added
+
+- New table 'waitlist' for waiting list of users
+- Button and logics to let users join waiting list
+- Email notifications to users when they join waiting list
+
+### Changed
+
+- Removed some unused docs files
+
+
 ## 1.15.4 - 2025-11-06
 
 ### Fixed
