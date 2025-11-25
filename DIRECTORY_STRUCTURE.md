@@ -4,6 +4,7 @@ Calnio/
 │   ├── conf/
 │   └── www/
 ├── docs/
+│   └── CELERY_REDIS_DIAGNOSTICS.md
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -34,22 +35,24 @@ Calnio/
 │   └── templates/
 │       ├── email/
 │       │   └── waitlist_confirmation.html
-│       ├── 404.html
-│       ├── 500.html
-│       ├── base.html
-│       ├── brutalist-dashboard.html
-│       ├── brutalist-landing.html
-│       ├── brutalist-login.html
-│       ├── brutalist-signup.html
-│       ├── dashboard.html
-│       ├── error.html
-│       ├── landing.html
-│       ├── login.html
-│       ├── signup.html
-│       ├── tasks.html
-│       ├── unauthorized.html
-│       ├── users.html
-│       └── waitlist.html
+│       ├── errors/
+│       │   ├── 404.html
+│       │   ├── error.html
+│       │   └── unauthorized.html
+│       └── routes/
+│           ├── 500.html
+│           ├── base.html
+│           ├── brutalist-dashboard.html
+│           ├── brutalist-landing.html
+│           ├── brutalist-login.html
+│           ├── brutalist-signup.html
+│           ├── dashboard.html
+│           ├── landing.html
+│           ├── login.html
+│           ├── signup.html
+│           ├── tasks.html
+│           ├── users.html
+│           └── waitlist.html
 ├── grafana/
 │   ├── calnio_litestar_dashboard.json
 │   └── datasources.yaml
@@ -209,22 +212,36 @@ Calnio/
 │   └── __init__.py
 ├── services/
 │   ├── email/
-│   │   ├── app/
-│   │   ├── db/
-│   │   ├── models/
 │   │   ├── schemas/
+│   │   ├── templates/
+│   │   │   ├── account_created.html
+│   │   │   ├── password_reset.html
+│   │   │   ├── product_updates.html
+│   │   │   └── requirements.txt
 │   │   ├── utils/
-│   │   │   └── email_sender.py
+│   │   │   ├── __init__.py
+│   │   │   ├── email_sender.py
+│   │   │   └── emails.py
 │   │   ├── worker/
+│   │   │   ├── __init__.py
+│   │   │   └── auth.py
+│   │   ├──  requirements.txt
+│   │   ├── __init__.py
+│   │   ├── celery_app.py
 │   │   ├── Dockerfile
 │   │   └── main.py
-│   └── sync/
-│       ├── server/
-│       │   └── app/
-│       │       ├── api/
-│       │       ├── core/
-│       │       └── schemas/
-│       └── Dockerfile
+│   ├── sync/
+│   │   ├── server/
+│   │   │   └── app/
+│   │   │       ├── api/
+│   │   │       ├── core/
+│   │   │       └── schemas/
+│   │   └── Dockerfile
+│   └── __init__.py
+├── tests/
+│   └── load/
+│       ├── load_test.js
+│       └── playground.js
 ├── .gitignore
 ├── alembic.ini
 ├── caldav_events.sql
