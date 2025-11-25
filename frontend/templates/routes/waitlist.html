@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Waitlist — Calnio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+
+        /* Container */
+        .container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow: hidden;
+        }
+
+        /* Waitlist Form */
+        .waitlist-box {
+            width: 100%;
+            max-width: 900px;
+            border: 1px solid #FFFFFF;
+            padding: 32px;
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border: 1px solid #FFFFFF;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .description {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .features-info {
+            display: none;
+        }
+
+        /* Discount Counter */
+        .discount-section {
+            margin-bottom: 24px;
+            padding: 20px;
+            border: 2px solid #FFFFFF;
+            background: #FFFFFF;
+            color: #000000;
+            text-align: center;
+        }
+
+        .discount-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .discount-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .discount-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .discount-offer {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #000000;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .form-input {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            padding: 12px;
+            background: #000000;
+            color: #FFFFFF;
+            border: 1px solid #FFFFFF;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: 2px solid #FFFFFF;
+            outline-offset: -2px;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .submit-button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            padding: 14px 28px;
+            background: #FFFFFF;
+            color: #000000;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .submit-button:hover {
+            background: #000000;
+            color: #FFFFFF;
+            outline: 2px solid #FFFFFF;
+            outline-offset: -2px;
+        }
+
+        .submit-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .back-link a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 11px;
+            transition: color 0.2s;
+        }
+
+        .back-link a:hover {
+            color: #FFFFFF;
+        }
+
+        /* Success Page */
+        .success-box {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid #FFFFFF;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .success-box.active {
+            display: block;
+        }
+
+        .success-icon {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 20px;
+        }
+
+        .success-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .success-message {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .discount-info-box {
+            padding: 20px;
+            border: 2px solid #FFFFFF;
+            background: #FFFFFF;
+            color: #000000;
+            margin-bottom: 20px;
+        }
+
+        .discount-info-box h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .discount-info-box p {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #000000;
+        }
+
+        .user-email {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin: 16px 0;
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            padding: 10px;
+            border: 1px solid #FFFFFF;
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            margin-bottom: 12px;
+            font-size: 11px;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 14px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        @media (max-width: 968px) {
+            .waitlist-box {
+                grid-template-columns: 1fr;
+                padding: 24px 20px;
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .discount-number {
+                font-size: 40px;
+            }
+
+            .success-title {
+                font-size: 28px;
+            }
+
+            .success-box {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Waitlist Form -->
+        <div class="waitlist-box" id="waitlistForm">
+            <div class="left-column">
+                <div>
+                    <div class="logo">CALNIO</div>
+                    <div class="status-badge">⚠ In Development</div>
+                </div>
+                
+                <h1>Join the Waitlist</h1>
+                
+                <p class="description">
+                    Get early access to seamless calendar sync between Notion and Apple Calendar. 
+                    We'll notify you about launch date, new features, and exclusive updates.
+                </p>
+            </div>
+
+            <div class="right-column">
+                <!-- Discount Counter -->
+                <div class="discount-section">
+                    <div class="discount-title">Limited Time Offer</div>
+                    <div class="discount-number" id="spotsLeft">{{ remaining }}</div>
+                    <div class="discount-label">Spots Remaining</div>
+                    <div class="discount-offer">
+                        First {{ discount_amount }} members get <strong>40% OFF LIFETIME</strong>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message" id="errorMessage"></div>
+
+                <!-- Form -->
+                <form id="waitlistFormElement" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Your Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="you@example.com"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="submit-button" id="submitButton">
+                        Join Waitlist
+                    </button>
+                </form>
+
+                <div class="loading" id="loadingState">
+                    Submitting...
+                </div>
+
+                <div class="back-link">
+                    <a href="/frontend/static">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-box" id="successPage">
+            <div class="success-icon">✓</div>
+            
+            <h2 class="success-title">You're on the list!</h2>
+            
+            <p class="success-message">
+                Thank you for joining the Calnio waitlist. We've sent a confirmation to:
+            </p>
+
+            <div class="user-email" id="userEmail"></div>
+
+            <p class="success-message">
+                You're one of the first {{ discount_amount }} members! You'll receive <strong>40% off lifetime access</strong> when we launch.
+            </p>
+
+            <button class="submit-button" onclick="window.location.href='/'">
+                Back to Home
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Update spots counter (you can replace this with real data from DB)
+        const SPOTS_LEFT = {{ remaining }} // Connect this to your database
+        document.getElementById('spotsLeft').textContent = SPOTS_LEFT;
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const submitButton = document.getElementById('submitButton');
+            const errorMessage = document.getElementById('errorMessage');
+            const loadingState = document.getElementById('loadingState');
+            const waitlistForm = document.getElementById('waitlistForm');
+            const successPage = document.getElementById('successPage');
+            
+            // Hide error message
+            errorMessage.classList.remove('active');
+            
+            // Show loading state
+            submitButton.style.display = 'none';
+            loadingState.classList.add('active');
+            
+            try {
+                const response = await fetch('/api/waitlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                if (response.ok) {
+                    // Success - show success page
+                    document.getElementById('userEmail').textContent = email;
+                    waitlistForm.style.display = 'none';
+                    successPage.classList.add('active');
+                } else {
+                    // Error from server
+                    const data = await response.json();
+                    throw new Error(data.message || 'Something went wrong. Please try again.');
+                }
+            } catch (error) {
+                // Show error message
+                errorMessage.textContent = error.message;
+                errorMessage.classList.add('active');
+                
+                // Reset button
+                submitButton.style.display = 'block';
+                loadingState.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -16,13 +16,7 @@ services:
       options:
         tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
 
-  litestar:
-    build: .
-    container_name: litestar
-    command: uvicorn server.app.main_litestar:app --host 0.0.0.0 --port 8010
-    ports:
-      - "8010:8010"
-
+  # Port forwarding
   ngrok:
     image: ngrok/ngrok:latest
     container_name: "ngrok"
@@ -35,6 +29,28 @@ services:
     command: start --all --config /ngrok.yml --log=stdout --log-level=info
     restart: always
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - calnio
+    networks:
+      - calnio_network
+
+  # Metrics
+  litestar:
+    build: .
+    container_name: litestar
+    command: uvicorn server.app.main_litestar:app --host 0.0.0.0 --port 8010
+    ports:
+      - "8010:8010"
 
   promtail:
     image: grafana/promtail:latest
@@ -94,26 +110,53 @@ services:
           memory: 200M
           cpus: "0.25"
 
-
-  nginx:
-    image: nginx:latest
-    container_name: calnio_nginx
+  # Cache / Workers
+  redis:
+    image: redis:7
+    container_name: redis
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certbot/www:/var/www/certbot
-      - ./certbot/conf:/etc/letsencrypt
-    depends_on:
-      - calnio
+      - "6379:6379"
     networks:
       - calnio_network
 
+#  celery_worker:
+#    build: .
+#    container_name: celery
+#    command: celery -A services.email.celery_app worker --loglevel=info
+#    depends_on:
+#      - redis
+#    networks:
+#      - calnio_network
+#    volumes:
+#      - .:/calnio
+#      - ./logs:/calnio/logs
+#    environment:
+#      - REDIS_HOST=redis
+#      - REDIS_PORT=6379
+#      - REDIS_DB_BROKER=0
+#      - REDIS_DB_BACKEND=1
+
+  email_worker:
+    build:
+      context: ./services/email
+    container_name: email_worker
+    command: celery -A celery_app worker --loglevel=info
+    depends_on:
+      - redis
+    networks:
+      - calnio_network
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB_BROKER=0
+      - REDIS_DB_BACKEND=1
+
+# Volumes
 volumes:
   grafanadata:
   prometheusdata:
 
+# Networks
 networks:
   calnio_network:
     driver: bridge

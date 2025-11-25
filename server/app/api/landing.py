@@ -16,7 +16,7 @@ router.mount(
 router.mount(
     "/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
 
-templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates"))
+templates = Jinja2Templates(directory=os.path.join(FRONTEND_DIR, "templates/routes"))
 
 
 @router.get("/", response_class=HTMLResponse)

@@ -37,6 +37,11 @@ class Settings(BaseSettings):
     redis_url: str
     redis_public_url: str
 
+    email_host: str
+    email_port: int
+    email_user: str
+    email_password: str
+
     @property
     def database_url(self):
         if self.env == "prod":

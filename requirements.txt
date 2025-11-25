@@ -18,6 +18,7 @@ greenlet==3.2.3
 SQLAlchemy==2.0.41
 sqladmin==0.21.0
 redis
+celery
 
 # FastAPI + Starlette
 fastapi==0.115.14
@@ -35,6 +36,7 @@ bcrypt==4.0.1
 email_validator==2.2.0
 idna==3.10
 dnspython==2.7.0
+aiosmtplib==3.0.2
 
 # Jinja2 templates
 Jinja2==3.1.6

@@ -4,7 +4,7 @@
 # from server.db.models.calendars import Calendar
 # from sqlalchemy import select
 # from server.app.core.logging_config import logger
-# from server.services.caldav.caldav_orm import CalDavORM
+# from server.worker.caldav.caldav_orm import CalDavORM
 # from server.utils.utils import extract_uid
 #
 # async def sync_user_events():

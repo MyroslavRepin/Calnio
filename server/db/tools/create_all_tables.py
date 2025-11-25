@@ -11,6 +11,7 @@ from server.db.models.caldav_events import CalDavEvent
 from server.db.models.tasks import UserNotionTask
 from server.db.models.notion_integration import UserNotionIntegration
 from server.db.models.calendars import Calendar
+from server.db.models.waitlist import Waitlist
 
 from server.db.database import Base
 from server.db.database import async_engine

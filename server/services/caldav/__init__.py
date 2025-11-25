@@ -1,2 +1,2 @@
-# CalDAV services package
+# CalDAV worker package
 

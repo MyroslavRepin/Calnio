@@ -4,8 +4,6 @@ Calnio/
 │   ├── conf/
 │   └── www/
 ├── docs/
-│   ├── EXAMPLE_TRIGGERS_WITH_ENUM.py
-│   └── POSTGRESQL_ENUM_GUIDE.md
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -34,6 +32,8 @@ Calnio/
 │   │       ├── refreshThenDashboard.js
 │   │       └── theme-toggle.js
 │   └── templates/
+│       ├── email/
+│       │   └── waitlist_confirmation.html
 │       ├── 404.html
 │       ├── 500.html
 │       ├── base.html
@@ -48,10 +48,8 @@ Calnio/
 │       ├── signup.html
 │       ├── tasks.html
 │       ├── unauthorized.html
-│       └── users.html
-├── generated_docs/
-│   ├── WEBHOOK_QUICK_REFERENCE.md
-│   └── WEBHOOK_TESTING.md
+│       ├── users.html
+│       └── waitlist.html
 ├── grafana/
 │   ├── calnio_litestar_dashboard.json
 │   └── datasources.yaml
@@ -66,7 +64,8 @@ Calnio/
 │   ├── generate_tree.py
 │   ├── migrate_normalize_ids.py
 │   ├── playground.py
-│   └── setup_precommit.py
+│   ├── setup_precommit.py
+│   └── test_waitlist_email.py
 ├── server/
 │   ├── alembic/
 │   │   ├── versions/
@@ -101,6 +100,7 @@ Calnio/
 │   │   │   ├── webhooks/
 │   │   │   │   └── notion_webhooks.py
 │   │   │   ├── __init__.py
+│   │   │   ├── add_waitlist.py
 │   │   │   ├── auth.py
 │   │   │   ├── brutalist.py
 │   │   │   ├── dashboard.py
@@ -117,7 +117,8 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
 │   │   │   ├── notion_pages.py
-│   │   │   └── users.py
+│   │   │   ├── users.py
+│   │   │   └── waitlist.py
 │   │   ├── __init__.py
 │   │   ├── main.py
 │   │   ├── main_litestar.py
@@ -212,9 +213,11 @@ Calnio/
 │   │   ├── db/
 │   │   ├── models/
 │   │   ├── schemas/
-│   │   ├── services/
 │   │   ├── utils/
-│   │   └── worker/
+│   │   │   └── email_sender.py
+│   │   ├── worker/
+│   │   ├── Dockerfile
+│   │   └── main.py
 │   └── sync/
 │       ├── server/
 │       │   └── app/
@@ -236,6 +239,7 @@ Calnio/
 ├── main.py
 ├── manage.py
 ├── ngrok.yml
+├── plan-calnioCompletionRoadmap.prompt.md
 ├── Procfile
 ├── prometheus.yml
 ├── promtail-config.yaml
@@ -243,6 +247,4 @@ Calnio/
 ├── README.md
 ├── requirements.txt
 ├── robots.txt
-├── START_SERVER.sh
-├── SYNCSTATUS_ENUM_FIX.md
-└── verify_enum_fix.py
+└── START_SERVER.sh
