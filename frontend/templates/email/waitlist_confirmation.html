@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waitlist Confirmation - Calnio</title>
+    <style>
+        /* BRUTALIST MINIMALISM EMAIL STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background-color: #FFFFFF;
+            color: #000000;
+            line-height: 1.5;
+        }
+
+        .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #FFFFFF;
+        }
+
+        .email-container {
+            border: 2px solid #000000;
+            padding: 0;
+        }
+
+        .email-header {
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 32px 24px;
+            border-bottom: 2px solid #000000;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .email-body {
+            padding: 32px 24px;
+            background-color: #FFFFFF;
+        }
+
+        .success-badge {
+            display: inline-block;
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            border: 2px solid #000000;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            color: #000000;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            color: #000000;
+        }
+
+        .content-text {
+            font-size: 16px;
+            line-height: 1.75;
+            margin-bottom: 16px;
+            color: #000000;
+        }
+
+        .info-box {
+            border: 2px solid #000000;
+            padding: 24px;
+            margin: 24px 0;
+            background-color: #FFFFFF;
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            color: #000000;
+        }
+
+        .info-value {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: #000000;
+        }
+
+        .divider {
+            height: 2px;
+            background-color: #000000;
+            margin: 24px 0;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0;
+        }
+
+        .benefits-list li {
+            padding: 12px 0;
+            padding-left: 32px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #000000;
+        }
+
+        .benefits-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .email-footer {
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 24px;
+            font-size: 12px;
+            line-height: 1.5;
+            border-top: 2px solid #000000;
+        }
+
+        .footer-text {
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .footer-link {
+            color: #FFFFFF;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .social-links {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .social-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            margin-right: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="email-container">
+            <!-- Header -->
+            <div class="email-header">
+                <div class="logo">CALNIO</div>
+                <div class="tagline">Apple Tools × Notion</div>
+            </div>
+
+            <!-- Body -->
+            <div class="email-body">
+                <div class="success-badge">✓ CONFIRMED</div>
+
+                <h1 class="title">YOU'RE ON THE WAITLIST</h1>
+
+                <p class="subtitle">Welcome, {{ name }}!</p>
+
+                <p class="content-text">
+                    You've successfully joined the Calnio waitlist. We're building something extraordinary—a seamless bridge between your Apple ecosystem and Notion.
+                </p>
+
+                <div class="info-box">
+                    <div class="info-label">YOUR POSITION</div>
+                    <div class="info-value">#{{ position }}</div>
+                </div>
+
+                <div class="divider"></div>
+
+                <p class="subtitle">What happens next?</p>
+
+                <ul class="benefits-list">
+                    <li>We'll notify you as soon as Calnio launches</li>
+                    <li>Early access to all premium features</li>
+                    <li>Exclusive {{ discount_amount }}% lifetime discount</li>
+                    <li>Direct line to our team for feedback and support</li>
+                </ul>
+
+                <div class="divider"></div>
+
+                <p class="content-text">
+                    <strong>Why Calnio?</strong><br>
+                    Intelligent two-way sync between Apple Calendar, Reminders, and Notion. Real-time updates, conflict resolution, and enterprise-grade security. All wrapped in a brutalist design that respects your time.
+                </p>
+
+                <p class="content-text">
+                    Stay tuned—we're launching soon.
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="email-footer">
+                <p class="footer-text">
+                    This email was sent to <strong>{{ email }}</strong> because you joined the Calnio waitlist.
+                </p>
+
+                <p class="footer-text">
+                    Questions? Reply to this email or visit <a href="https://calnio.com" class="footer-link">calnio.com</a>
+                </p>
+
+                <div class="social-links">
+                    <a href="https://twitter.com/calnio" class="social-link">Twitter</a>
+                    <a href="https://github.com/calnio" class="social-link">GitHub</a>
+                </div>
+
+                <p class="footer-text" style="margin-top: 16px; font-size: 11px; opacity: 0.6;">
+                    © 2025 Calnio. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
