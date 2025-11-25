@@ -30,7 +30,7 @@ async def waitlist(request: Request, db = Depends(async_get_db)):
 
     remaining = max(0, 10 - current)
     return templates.TemplateResponse(
-        "waitlist.html",
+        "routes/waitlist.html",
         {
             "request": request,
             "remaining": remaining,

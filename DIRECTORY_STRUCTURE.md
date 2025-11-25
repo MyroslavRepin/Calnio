@@ -4,7 +4,6 @@ Calnio/
 │   ├── conf/
 │   └── www/
 ├── docs/
-│   └── CELERY_REDIS_DIAGNOSTICS.md
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -36,11 +35,16 @@ Calnio/
 │       ├── email/
 │       │   └── waitlist_confirmation.html
 │       ├── errors/
+│       │   ├── 400.html
+│       │   ├── 401.html
+│       │   ├── 403.html
 │       │   ├── 404.html
+│       │   ├── 429.html
+│       │   ├── 500.html
+│       │   ├── 503.html
 │       │   ├── error.html
 │       │   └── unauthorized.html
 │       └── routes/
-│           ├── 500.html
 │           ├── base.html
 │           ├── brutalist-dashboard.html
 │           ├── brutalist-landing.html
@@ -116,6 +120,7 @@ Calnio/
 │   │   ├── dops/
 │   │   ├── middleware/
 │   │   │   └── ignore_logging.py
+│   │   ├── routes/
 │   │   ├── schemas/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
@@ -208,6 +213,7 @@ Calnio/
 │   │   │   └── utils.py
 │   │   ├── __init__.py
 │   │   ├── decorators.py
+│   │   ├── exceptions.py
 │   │   └── utils.py
 │   └── __init__.py
 ├── services/

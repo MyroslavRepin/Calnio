@@ -1,241 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>404</title>
-    <script
-      defer
-      src="https://analytics.calnio.com/script.js"
-      data-website-id="4c81d3ea-9951-4d28-b426-129f058ec90e"
-    ></script>
-  </head>
-  <body>
-    <style>
-      @import url("https://fonts.googleapis.com/css?family=Montserrat:400,600,700");
-      @import url("https://fonts.googleapis.com/css?family=Catamaran:400,800");
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — PAGE NOT FOUND</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+  <script
+    defer
+    src="https://analytics.calnio.com/script.js"
+    data-website-id="4c81d3ea-9951-4d28-b426-129f058ec90e"
+  ></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #FFFFFF;
+      color: #000000;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .error-container {
+      text-align: center;
+      padding: 48px;
+      border: 3px solid #000000;
+      max-width: 800px;
+      margin: 0 24px;
+    }
+
+    .error-code {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(120px, 20vw, 200px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      background: #000000;
+      color: #FFFFFF;
+      padding: 16px 32px;
+      display: inline-block;
+    }
+
+    .error-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .error-description {
+      font-size: 18px;
+      line-height: 1.5;
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    .error-meta {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      padding: 16px;
+      border: 1px solid #000000;
+      background: #FFFFFF;
+    }
+
+    .btn-home {
+      display: inline-block;
+      padding: 16px 32px;
+      background: #000000;
+      color: #FFFFFF;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 3px solid #000000;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn-home:hover {
+      background: #FFFFFF;
+      color: #000000;
+    }
+
+    .btn-home:active {
+      transform: translate(2px, 2px);
+    }
+
+    @media (max-width: 768px) {
       .error-container {
-        text-align: center;
-        font-size: 106px;
-        font-family: "Catamaran", sans-serif;
-        font-weight: 800;
-        margin: 70px 15px;
-      }
-      .error-container > span {
-        display: inline-block;
-        position: relative;
-      }
-      .error-container > span.four {
-        width: 136px;
-        height: 43px;
-        border-radius: 999px;
-        background: linear-gradient(
-            140deg,
-            rgba(0, 0, 0, 0.1) 0%,
-            rgba(0, 0, 0, 0.07) 43%,
-            transparent 44%,
-            transparent 100%
-          ),
-          linear-gradient(
-            105deg,
-            transparent 0%,
-            transparent 40%,
-            rgba(0, 0, 0, 0.06) 41%,
-            rgba(0, 0, 0, 0.07) 76%,
-            transparent 77%,
-            transparent 100%
-          ),
-          linear-gradient(to right, #d89ca4, #e27b7e);
-      }
-      .error-container > span.four:before,
-      .error-container > span.four:after {
-        content: "";
-        display: block;
-        position: absolute;
-        border-radius: 999px;
-      }
-      .error-container > span.four:before {
-        width: 43px;
-        height: 156px;
-        left: 60px;
-        bottom: -43px;
-        background: linear-gradient(
-            128deg,
-            rgba(0, 0, 0, 0.1) 0%,
-            rgba(0, 0, 0, 0.07) 40%,
-            transparent 41%,
-            transparent 100%
-          ),
-          linear-gradient(
-            116deg,
-            rgba(0, 0, 0, 0.1) 0%,
-            rgba(0, 0, 0, 0.07) 50%,
-            transparent 51%,
-            transparent 100%
-          ),
-          linear-gradient(to top, #99749d, #b895ab, #cc9aa6, #d7969e, #e0787f);
-      }
-      .error-container > span.four:after {
-        width: 137px;
-        height: 43px;
-        transform: rotate(-49.5deg);
-        left: -18px;
-        bottom: 36px;
-        background: linear-gradient(
-          to right,
-          #99749d,
-          #b895ab,
-          #cc9aa6,
-          #d7969e,
-          #e0787f
-        );
+        padding: 32px 24px;
+        border-width: 2px;
       }
 
-      .error-container > span.zero {
-        vertical-align: text-top;
-        width: 156px;
-        height: 156px;
-        border-radius: 999px;
-        background: linear-gradient(
-            -45deg,
-            transparent 0%,
-            rgba(0, 0, 0, 0.06) 50%,
-            transparent 51%,
-            transparent 100%
-          ),
-          linear-gradient(
-            to top right,
-            #99749d,
-            #99749d,
-            #b895ab,
-            #cc9aa6,
-            #d7969e,
-            #ed8687,
-            #ed8687
-          );
-        overflow: hidden;
-        animation: bgshadow 5s infinite;
-      }
-      .error-container > span.zero:before {
-        content: "";
-        display: block;
-        position: absolute;
-        transform: rotate(45deg);
-        width: 90px;
-        height: 90px;
-        background-color: transparent;
-        left: 0px;
-        bottom: 0px;
-        background: linear-gradient(
-            95deg,
-            transparent 0%,
-            transparent 8%,
-            rgba(0, 0, 0, 0.07) 9%,
-            transparent 50%,
-            transparent 100%
-          ),
-          linear-gradient(
-            85deg,
-            transparent 0%,
-            transparent 19%,
-            rgba(0, 0, 0, 0.05) 20%,
-            rgba(0, 0, 0, 0.07) 91%,
-            transparent 92%,
-            transparent 100%
-          );
-      }
-      .error-container > span.zero:after {
-        content: "";
-        display: block;
-        position: absolute;
-        border-radius: 999px;
-        width: 70px;
-        height: 70px;
-        left: 43px;
-        bottom: 43px;
-        background: #fdfaf5;
-        box-shadow: -2px 2px 2px 0px rgba(0, 0, 0, 0.1);
+      .error-code {
+        padding: 12px 24px;
       }
 
-      .screen-reader-text {
-        position: absolute;
-        top: -9999em;
-        left: -9999em;
+      .error-description {
+        font-size: 16px;
       }
-
-      @keyframes bgshadow {
-        0% {
-          box-shadow: inset -160px 160px 0px 5px rgba(0, 0, 0, 0.4);
-        }
-        45% {
-          box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
-        }
-        55% {
-          box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
-        }
-        100% {
-          box-shadow: inset 160px -160px 0px 5px rgba(0, 0, 0, 0.4);
-        }
-      }
-
-      /* demo stuff */
-      * {
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-      }
-      body {
-        background-color: #fdfaf5;
-        margin-bottom: 50px;
-      }
-      html,
-      button,
-      input,
-      select,
-      textarea {
-        font-family: "Montserrat", Helvetica, sans-serif;
-        color: #bbb;
-      }
-      h1 {
-        text-align: center;
-        margin: 30px 15px;
-      }
-      .zoom-area {
-        max-width: 490px;
-        margin: 30px auto 30px;
-        font-size: 19px;
-        text-align: center;
-      }
-      .link-container {
-        text-align: center;
-      }
-      a.more-link {
-        text-transform: uppercase;
-        font-size: 13px;
-        background-color: #de7e85;
-        padding: 10px 15px;
-        border-radius: 0;
-        color: #fff;
-        display: inline-block;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        line-height: 1.5;
-        text-decoration: none;
-        margin-top: 50px;
-        letter-spacing: 1px;
-      }
-    </style>
-    <h1>404 Error Page</h1>
-    <p class="zoom-area"><b>Calnio</b> works to bring back this page</p>
-    <section class="error-container">
-      <span class="four"><span class="screen-reader-text">4</span></span>
-      <span class="zero"><span class="screen-reader-text">0</span></span>
-      <span class="four"><span class="screen-reader-text">4</span></span>
-    </section>
-    <div class="link-container">
-      <a target="_blank" href="https://calnio.com" class="more-link"
-        >Visit home page</a
-      >
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-code">404</div>
+    <h1 class="error-title">PAGE NOT FOUND</h1>
+    <p class="error-description">
+      The page you're looking for doesn't exist.<br>
+      It may have been moved or deleted.
+    </p>
+    <div class="error-meta">
+      NOT FOUND — CHECK THE URL AND TRY AGAIN
     </div>
-  </body>
+    <a href="/" class="btn-home">GO TO HOME</a>
+  </div>
+</body>
 </html>
