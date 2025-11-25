@@ -26,6 +26,12 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.16.1 - 2025-10-24
+
+### Fixed
+- Removed unused docker container which caused issues with docker-compose
+
+
 ## v1.16.0 - 2025-10-24
 
 ### Added

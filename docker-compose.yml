@@ -136,20 +136,20 @@ services:
 #      - REDIS_DB_BROKER=0
 #      - REDIS_DB_BACKEND=1
 
-  email_worker:
-    build:
-      context: ./services/email
-    container_name: email_worker
-    command: celery -A celery_app worker --loglevel=info
-    depends_on:
-      - redis
-    networks:
-      - calnio_network
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_DB_BROKER=0
-      - REDIS_DB_BACKEND=1
+#  email_worker:
+#    build:
+#      context: ./services/email
+#    container_name: email_worker
+#    command: celery -A celery_app worker --loglevel=info
+#    depends_on:
+#      - redis
+#    networks:
+#      - calnio_network
+#    environment:
+#      - REDIS_HOST=redis
+#      - REDIS_PORT=6379
+#      - REDIS_DB_BROKER=0
+#      - REDIS_DB_BACKEND=1
 
 # Volumes
 volumes:
