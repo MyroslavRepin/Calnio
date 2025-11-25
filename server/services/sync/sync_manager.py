@@ -22,10 +22,7 @@ class SyncService:
         self.notion_orm = NotionTaskRepository()
 
     async def sync_db_to_caldav(self):
-        """
-        Синхронизация задач из базы данных на CalDAV.
-        Пропускаем задачи без полного времени начала и окончания.
-        """
+
         await self.caldav_orm.authenticate()
 
         calendar = await self.caldav_orm.Calendar.get_by_name("Personal")
@@ -203,17 +200,15 @@ class SyncService:
 
         logger.info("CalDAV ↔ Notion sync finished successfully")
 
-    async def sync_user_events(self):
+    async def sync_user_events(self, user_id: int, calendar_name: str = "Personal", db: AsyncSession = None):
         await self.caldav_orm.authenticate()
 
         calendar = await self.caldav_orm.Calendar.get_by_name("Personal")
-        caldav_events = await self.caldav_orm.Event.all(calendar_uid=extract_uid(calendar.uid))
+        caldav_events = await self.caldav_orm.Event.all(calendar_uid=extract_uid(calendar.id))
 
-        db_events = await self.notion_orm.get_all_tasks(user_id=self.user_id)
+        logger.info(f"Syncing events for user ID: {self.user_id}")
 
-
-        # 1. Sync all events from caldav to db
-        await self.repo.sync_caldav_to_db(user_id=self.user_id, calendar_name="Personal")
-
-        # 2. Sync all events from db to caldav
-        await self.sync_db_to_caldav()
+        for event in caldav_events:
+            # Step 1: Check if event exists in caldav_events table
+            event_uid = extract_uid(event.url)
+            logger.debug(f"Event UID: {event_uid}")

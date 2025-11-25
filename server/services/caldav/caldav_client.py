@@ -30,20 +30,37 @@ async def get_caldav_client(user_id):
         specified user's iCloud account.
     """
     async with async_get_db_cm() as db:
+        logger.info(f"Fetching user data for user ID {user_id}")
         stmt = select(User).where(User.id == user_id)
         result = await db.execute(stmt)
         user = result.scalars().first()
+    if not user:
+        logger.error(f"User with id {user_id} not found")
+        raise ValueError("User not found")
 
     icloud_username = str(user.icloud_email)
     icloud_password = str(user.app_specific_password)
-    # Sync layer
+
+    # Auth layer
     def _get_caldav_client():
-        client = DAVClient(
-            url="https://caldav.icloud.com/",
-            username=icloud_username,
-            password=icloud_password
-        )
-        logger.debug("CalDav client initialized")
-        return client
+        logger.debug("Initializing CalDav client...")
+        try:
+            client = DAVClient(
+                url="https://caldav.icloud.com/",
+                username=icloud_username,
+                password=icloud_password
+            )
+            # Force a simple request to validate credentials
+            try:
+                client.principal()
+            except Exception:
+                logger.error(f"CalDav authentication failed for user ID {user_id} email: {icloud_username}, password: {icloud_password}")
+                raise ValueError("CalDAV authentication failed")
+            logger.debug("CalDav client initialized and authenticated")
+            return client
+        except Exception as e:
+            logger.error("Failed to initialize CalDav client")
+            raise e
+
     # Running as async not blocking the main thread
     return await asyncio.to_thread(_get_caldav_client)

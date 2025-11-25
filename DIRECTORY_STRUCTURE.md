@@ -169,6 +169,7 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_client.py
 │   │   │   ├── caldav_orm.py
+│   │   │   ├── play.py
 │   │   │   ├── playground.py
 │   │   │   ├── user_calendars.py
 │   │   │   └── user_events.py
@@ -229,11 +230,13 @@ Calnio/
 ├── DIRECTORY_STRUCTURE.md
 ├── docker-compose.yml
 ├── Dockerfile
+├── icloud_sync_token.pkl
 ├── LICENSE
 ├── loki-config.yaml
 ├── main.py
 ├── manage.py
 ├── ngrok.yml
+├── plan-bidirectionalCaldavNotionSync.prompt.md
 ├── Procfile
 ├── prometheus.yml
 ├── promtail-config.yaml

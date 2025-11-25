@@ -17,29 +17,15 @@ from server.app.core.logging_config import logger
 async def main():
     # Создаем репозитории и сервисы
     notion_task_repo = NotionTaskRepository()
-    sync_service = SyncService(user_id=7)
-    orm = CalDavORM(user_id=7)
+    sync_service = SyncService(user_id=3)
+    orm = CalDavORM(user_id=3)
     await orm.authenticate()
 
     # Получаем календарь
     calendar = await orm.Calendar.get_by_name("Personal")
 
-    # Весь async код выполняем внутри одной сессии
-    # Пример soft-delete задачи
-    try:
-        result = await notion_task_repo.delete(
-            user_id=7,
-            page_id="64f90cc8-6926-4dcf-b9da-13a8c145936c"
-        )
-        if result:
-            logger.info("Task soft-deleted successfully")
-        else:
-            logger.info("Task not found for soft-deletion")
-    except Exception as e:
-        logger.error(f"Failed to delete task: {e}")
-
-        # Пример синхронизации CalDAV (можешь раскомментировать)
-        # await sync_service.sync_caldav_to_db(user_id=7, calendar_name="Personal", db=db)
+    async with async_get_db_cm() as db:
+        await sync_service.sync_user_events(user_id=3, calendar_name="Personal", db=db)
 
 if __name__ == "__main__":
     asyncio.run(main())
