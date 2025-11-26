@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, BackgroundTasks
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
 from server.db.deps import async_get_db
@@ -41,7 +41,8 @@ async def waitlist(request: Request, db = Depends(async_get_db)):
 @router.post('/api/waitlist')
 async def add_waitlist_email(
     request: WaitlistRequest,
-    db: AsyncSession = Depends(async_get_db)
+    db: AsyncSession = Depends(async_get_db),
+    background_tasks: BackgroundTasks = BackgroundTasks,
 ):
     try:
         waitlist = Waitlist(
@@ -59,13 +60,26 @@ async def add_waitlist_email(
 
         # Send confirmation email
         try:
-            await send_waitlist_email(
-                destination=str(request.email),
-                name=str(request.email).split("@")[0].capitalize(),
-                position=position,
-                discount_amount=10,
-            )
-            logger.info(f"Sent waitlist confirmation email to {request.email}")
+            logger.info(f"Sending waitlist confirmation email to {request.email}")
+            try:
+                background_tasks.add_task(
+                    send_waitlist_email,
+                    destination=str(request.email),
+                    name=str(request.email).split("@")[0].capitalize(),
+                    position=position,
+                    discount_amount=10
+                )
+                logger.info(f"Sent waitlist confirmation email to {request.email}")
+            except Exception as bg_error:
+                logger.error(f"Background task error for email {request.email}: {bg_error}")
+
+
+            # await send_waitlist_email(
+            #     destination=str(request.email),
+            #     name=str(request.email).split("@")[0].capitalize(),
+            #     position=position,
+            #     discount_amount=10,
+            # )
         except Exception as email_error:
             # Log the error but don't fail the request
             logger.error(f"Failed to send email to {request.email}: {email_error}")

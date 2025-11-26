@@ -3,7 +3,6 @@ Calnio/
 ├── certbot/
 │   ├── conf/
 │   └── www/
-├── docs/
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
