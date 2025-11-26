@@ -33,7 +33,7 @@ async def send_email(
     """
     # Get email config from environment
     smtp_host = os.getenv("EMAIL_HOST", "smtp.zohocloud.ca")
-    smtp_port = int(os.getenv("EMAIL_PORT", "465"))
+    smtp_port = int(os.getenv("EMAIL_PORT", "587"))
     smtp_user = os.getenv("EMAIL_USER", "dev@calnio.com")
     smtp_password = os.getenv("EMAIL_PASSWORD")
 
@@ -61,10 +61,12 @@ async def send_email(
         await aiosmtplib.send(
             message,
             hostname=smtp_host,
-            port=smtp_port,
+            port=587,
             username=smtp_user,
             password=smtp_password,
-            use_tls=True,
+            use_tls=False,
+            start_tls=True,
+            timeout=30,
         )
         logger.info(f"Email sent successfully to {destination}")
     except Exception as e:
