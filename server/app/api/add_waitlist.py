@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, BackgroundTasks
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
 from server.db.deps import async_get_db
@@ -42,6 +42,7 @@ async def waitlist(request: Request, db = Depends(async_get_db)):
 async def add_waitlist_email(
     request: WaitlistRequest,
     db: AsyncSession = Depends(async_get_db)
+
 ):
     try:
         waitlist = Waitlist(
@@ -59,6 +60,8 @@ async def add_waitlist_email(
 
         # Send confirmation email
         try:
+            # Todo: Put this in a background task, to avoid blocking the request
+
             await send_waitlist_email(
                 destination=str(request.email),
                 name=str(request.email).split("@")[0].capitalize(),
