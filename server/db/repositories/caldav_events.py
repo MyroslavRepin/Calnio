@@ -1,12 +1,10 @@
-from zoneinfo import ZoneInfo
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.db.deps import async_get_db_cm
 from server.db.models import UserNotionTask, User
 from server.db.models.caldav_events import CalDavEvent
-from server.services.caldav.caldav_orm import CalDavORM
+from server.services.caldav.utils.caldav_orm import CalDavORM
 from server.app.core.logging_config import logger
 from server.utils.utils import extract_uid
 import aiohttp

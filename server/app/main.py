@@ -10,11 +10,6 @@ load_dotenv()
 
 from server.services.scheduler.scheduler_service import shutdown_scheduler, start_scheduler
 
-from litestar import Litestar, get
-from litestar.plugins.prometheus import PrometheusConfig, PrometheusController
-from litestar.openapi.config import OpenAPIConfig
-from litestar.openapi.plugins import ScalarRenderPlugin
-from litestar.exceptions import HTTPException
 from fastapi.exceptions import HTTPException as StarletteHTTPException
 
 
@@ -100,12 +95,9 @@ from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.services.postgres_trigger import listen_to_postgres
-from server.services.caldav.user_calendars import sync_user_calendars
 
 # Creating Main App
 app = FastAPI()
-
-from prometheus_fastapi_instrumentator import Instrumentator
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "frontend"))

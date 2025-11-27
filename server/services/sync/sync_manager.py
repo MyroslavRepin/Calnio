@@ -2,12 +2,11 @@ import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.db.deps import async_get_db_cm
 from server.db.models import UserNotionTask
 from server.db.models.enums import SyncStatus
 from server.db.repositories.caldav_events import CaldavEventsRepository
-from server.services.caldav.caldav_orm import CalDavORM
-from server.utils.utils import extract_uid, ensure_datetime_with_tz, is_timezone_aware
+from server.services.caldav.utils.caldav_orm import CalDavORM
+from server.utils.utils import extract_uid, ensure_datetime_with_tz
 from server.db.repositories.notion_tasks import NotionTaskRepository
 from server.db.models.caldav_events import CalDavEvent
 from server.app.core.logging_config import logger
@@ -60,26 +59,40 @@ class SyncService:
             else:
                 logger.info(f"Task with title: {task.title} does not exist in CalDav")
 
-    async def sync_caldav_to_db(self, user_id: int, calendar_name: str, db: AsyncSession):
-        await self.caldav_orm.authenticate()
-        calendar = await self.caldav_orm.Calendar.get_by_name(calendar_name)
-        events = await self.caldav_orm.Event.all(calendar_uid=extract_uid(calendar.id))
+    async def sync_caldav_to_db(self, user_id: int, calendar, db: AsyncSession):
+        """
+        This function is only syncing events from CalDAV to caldav_events. It inlcudes:
+        - Updating already existing events in caldav_events (but update only if last_modified is more fresh from remote)
+        - Creating new events in caldav_events if they do not exist
+        - Marking events as deleted=True in caldav_events if they are deleted in CalDAV
+        """
+        # await self.caldav_orm.authenticate()
 
-        deleted_events = await self.caldav_orm.Event.get_deleted_events(calendar=calendar, db=db, user_id=user_id)
+        # CalDav events
+        events = calendar.events()
 
+        # deleted_events = await self.caldav_orm.Event.get_deleted_events(calendar=calendar, db=db, user_id=user_id)
+
+        """
+        Roadmap:
+            1. Delete events from caldav_events if they are deleted in CalDAV
+        """
+        logger.info(f"Events: {events}")
         for event in events:
+
+            # CalDav constants
             event_uid = extract_uid(event.url)
             ical_url = str(event.url).strip()
 
-            # Get RAW event datas
+            # Get RAW event data from CalDAV
             event_raw = await self.repo.fetch_ical_event(
                 user_id=user_id,
                 calendar=calendar,
                 event_url=ical_url,
                 db=db
             )
-            parsed_data = await self.repo.parse_ical_full(event_raw)
-            title = parsed_data[0]["title"]
+            parsed_parsed_ical_dataata = await self.repo.parse_ical_full(event_raw)
+            title = parsed_parsed_ical_dataata[0]["title"]
 
             # Check if event exists in both CalDAV and Notion
             stmt_caldav = select(CalDavEvent).where(
@@ -96,44 +109,9 @@ class SyncService:
 
             new_notion_id = str(uuid.uuid4())
 
-            # NOTE: If event does not exist in both CalDAV and Notion, create new records
-            if not existing_caldav_event and not existing_notion_event:
-                logger.info(f"Creating new event '{event.title}' (UID: {event_uid})")
-                new_event = CalDavEvent(
-                    user_id=user_id,
-                    caldav_uid=event_uid,
-                    title=event.title,
-                    description=event.description,
-                    start_time=ensure_datetime_with_tz(event.start),
-                    end_time=ensure_datetime_with_tz(event.end),
-                    caldav_url=ical_url,
-                    sync_source="caldav",
-                    notion_page_id=new_notion_id,
-                )
-                new_event_notion = UserNotionTask(
-                    user_id=user_id,
-                    title=event.title,
-                    description=event.description,
-                    start_date=ensure_datetime_with_tz(event.start),
-                    end_date=ensure_datetime_with_tz(event.end),
-                    notion_page_id=new_notion_id,
-                    notion_url=None, # Should save notion url
-                    status=None,
-                    priority=None,
-                    select_option=None,
-                    done=False,
-                    sync_source="caldav",
-                    last_modified_source="caldav",
-                    caldav_id=event_uid,
-                    sync_status=SyncStatus.pending
-                )
-                db.add(new_event)
-                db.add(new_event_notion)
-                await db.commit()
-                continue  # Move to next event
 
             # Determine last modified date
-            raw_last_modified = parsed_data[0].get("last_modified") or parsed_data[0].get("created")
+            raw_last_modified = parsed_parsed_ical_dataata[0].get("last_modified") or parsed_parsed_ical_dataata[0].get("created")
             last_modified_caldav = ensure_datetime_with_tz(raw_last_modified)
 
             notion_updated_at = None
@@ -142,66 +120,10 @@ class SyncService:
                 if notion_updated_at is None:
                     notion_updated_at = ensure_datetime_with_tz(existing_notion_event.created_at)
 
-            # logger.debug(
-            #     "Sync debug: existing_caldav=%s, existing_notion=%s, last_modified_caldav=%s, notion_updated_at=%s, UID=%s",
-            #     bool(existing_caldav_event), bool(existing_notion_event),
-            #     last_modified_caldav, notion_updated_at, event_uid
-            # )
+            logger.info(f"Event title: {title}")
+            logger.info(f"Last modified date: {last_modified_caldav}")
 
 
-            # Todo: Add functional to delete events from Notion if they are deleted in CalDAV
-            if existing_caldav_event and existing_notion_event and last_modified_caldav and notion_updated_at:
-
-                # =======================
-                # Sync CalDAV → Notion
-                # =======================
-                if last_modified_caldav > notion_updated_at:
-                    logger.info(f"[CalDAV → Notion] Updating Notion task '{event.title}' (UID: {event_uid})")
-                    existing_notion_event.title = event.title
-                    existing_notion_event.description = event.description
-                    existing_notion_event.start_date = ensure_datetime_with_tz(event.start)
-                    existing_notion_event.end_date = ensure_datetime_with_tz(event.end)
-                    existing_notion_event.caldav_id = event_uid
-                    existing_notion_event.sync_status = SyncStatus.pending
-                    existing_notion_event.last_modified_source = "caldav"
-                    existing_notion_event.updated_at = last_modified_caldav
-
-                    existing_caldav_event.sync_source = "caldav"
-                    existing_caldav_event.last_modified_source = "caldav"
-                    existing_caldav_event.title = event.title
-                    existing_caldav_event.description = event.description
-                    existing_caldav_event.start_time = ensure_datetime_with_tz(event.start)
-                    existing_caldav_event.end_time = ensure_datetime_with_tz(event.end)
-                    existing_caldav_event.caldav_url = ical_url
-                    await db.commit()
-
-                # =======================
-                # Sync Notion → CalDAV
-                # =======================
-                elif notion_updated_at > last_modified_caldav:
-                    logger.info(f"[Notion → CalDAV] Updating CalDAV event '{event.title}' (UID: {event_uid})")
-                    existing_caldav_event.title = existing_notion_event.title
-                    existing_caldav_event.description = existing_notion_event.description
-                    existing_caldav_event.start_time = ensure_datetime_with_tz(existing_notion_event.start_date)
-                    existing_caldav_event.end_time = ensure_datetime_with_tz(existing_notion_event.end_date)
-                    existing_caldav_event.caldav_url = ical_url
-                    existing_caldav_event.sync_source = "notion"
-                    existing_caldav_event.last_modified_source = "notion"
-                    existing_caldav_event.updated_at = notion_updated_at
-
-                    existing_notion_event.sync_status = SyncStatus.pending
-                    existing_notion_event.last_modified_source = "notion"
-                    if existing_notion_event.deleted == True:
-                        existing_caldav_event.deleted = True
-                        logger.debug("Marking CalDAV event as deleted")
-
-                    await db.commit()
-            else:
-                logger.debug(
-                    "Skipping sync for UID=%s: missing CalDAV or Notion record, or timestamps", event_uid
-                )
-
-        logger.info("CalDAV ↔ Notion sync finished successfully")
 
     async def sync_user_events(self):
         await self.caldav_orm.authenticate()

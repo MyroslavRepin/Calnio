@@ -34,6 +34,11 @@ async def get_caldav_client(user_id):
         result = await db.execute(stmt)
         user = result.scalars().first()
 
+    if not user:
+        logger.error(f"User with id {user_id} not found")
+        raise ValueError(f"User with id {user_id} not found")
+
+
     icloud_username = str(user.icloud_email)
     icloud_password = str(user.app_specific_password)
     # Sync layer

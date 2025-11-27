@@ -172,12 +172,14 @@ Calnio/
 │   │   └── ignore_logging.py
 │   ├── services/
 │   │   ├── caldav/
+│   │   │   ├── utils/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── caldav_orm.py
+│   │   │   │   ├── user_calendars.py
+│   │   │   │   └── user_events.py
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_client.py
-│   │   │   ├── caldav_orm.py
-│   │   │   ├── playground.py
-│   │   │   ├── user_calendars.py
-│   │   │   └── user_events.py
+│   │   │   └── playground.py
 │   │   ├── crud/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
