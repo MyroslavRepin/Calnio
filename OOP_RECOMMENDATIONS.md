@@ -216,10 +216,14 @@ class NotionSyncService:
 
 ## 3. Какие методы нужны
 
-### 3.1 BaseRepository[T] (абстрактный базовый репозиторий)
+### 3.1 BaseRepository (абстрактный базовый репозиторий)
 
 ```python
-class BaseRepository[T]:
+from typing import TypeVar, Generic
+
+T = TypeVar("T")
+
+class BaseRepository(Generic[T]):
     async def get_by_id(self, id: int) -> T | None
     async def get_all(self, filters: dict = None) -> list[T]
     async def create(self, entity: T) -> T
@@ -566,8 +570,9 @@ class BaseRepository(ABC, Generic[T]):
 ### 5.2 Конкретная реализация: TaskRepository
 
 ```python
-from datetime import datetime
+from datetime import datetime, UTC
 from sqlalchemy import select, and_, or_
+from sqlalchemy.ext.asyncio import AsyncSession
 from server.db.models.tasks import UserNotionTask
 from server.db.models.enums import SyncStatus
 
