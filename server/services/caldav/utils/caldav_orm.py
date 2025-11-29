@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+from typing import List, Dict, Any
 from uuid import uuid4
 from types import SimpleNamespace
 from sqlalchemy import select
@@ -10,7 +11,14 @@ from icalendar import Calendar as ICalCalendar
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.util import await_only
 
+import aiohttp
+from icalendar import Calendar
+from zoneinfo import ZoneInfo
+from datetime import datetime
+from typing import List, Dict, Any
+
 from server.db.deps import async_get_db_cm
+from server.db.models import User
 from server.db.models.caldav_events import CalDavEvent
 from server.utils.utils import extract_uid
 from server.app.core.logging_config import logger
@@ -33,7 +41,6 @@ class CalDavORM:
         # Initializing inner ORM models
         self.Calendar = self.Calendar(self)
         self.Event = self.Event(self)
-
 
     # ========================
     # ==   CALENDAR MODEL   ==
@@ -242,7 +249,6 @@ class CalDavORM:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
             pass
 
-
     # =====================
     # ==   EVENT MODEL   ==
     # =====================
@@ -421,135 +427,251 @@ class CalDavORM:
 
         # --- UPDATE ---
         async def update(self, uid: str, **kwargs):
-            """Обновить событие"""
+            """Update a CalDAV event by its UID.
+
+            Supported kwargs:
+                title / summary: str
+                description: str
+                location: str
+                start / dtstart: datetime | ISO8601 str
+                end / dtend: datetime | ISO8601 str
+
+            Returns:
+                Updated event object (library-specific instance).
+
+            Raises:
+                RuntimeError: If not authenticated.
+                ValueError: If event not found or VEVENT inaccessible.
+            """
+
             client = self.orm.client
             if not client:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
-            pass
+
+            def _parse_dt(value):
+                from datetime import datetime as _dt
+                if value is None:
+                    return None
+                if isinstance(value, _dt):
+                    return value
+                try:
+                    return _dt.fromisoformat(str(value))
+                except Exception:
+                    return None
+
+            def _update_event():
+                principal = client.principal()
+                target_event = None
+
+                # Search across all calendars
+                for cal in principal.calendars():
+                    try:
+                        for ev in cal.events():
+                            try:
+                                ev_uid = extract_uid(ev.url)
+                            except Exception:
+                                continue
+                            if ev_uid == uid:
+                                target_event = ev
+                                break
+                        if target_event:
+                            break
+                    except Exception:
+                        continue
+
+                if not target_event:
+                    raise ValueError(f"Event with UID {uid} not found.")
+
+                # Access VEVENT structure
+                try:
+                    vevent = target_event.vobject_instance.vevent
+                except AttributeError as e:
+                    raise ValueError(f"Unable to access VEVENT for UID {uid}: {e}")
+
+                # Title / Summary
+                new_title = kwargs.get("title") or kwargs.get("summary")
+                if new_title:
+                    if hasattr(vevent, "summary"):
+                        vevent.summary.value = new_title
+                    else:
+                        vevent.add("summary").value = new_title
+
+                # Description
+                if "description" in kwargs:
+                    if hasattr(vevent, "description"):
+                        vevent.description.value = kwargs["description"]
+                    else:
+                        vevent.add("description").value = kwargs["description"]
+
+                # Location
+                if "location" in kwargs:
+                    if hasattr(vevent, "location"):
+                        vevent.location.value = kwargs["location"]
+                    else:
+                        vevent.add("location").value = kwargs["location"]
+
+                # Datetimes
+                start_val = kwargs.get("start") or kwargs.get("dtstart")
+                end_val = kwargs.get("end") or kwargs.get("dtend")
+                start_dt = _parse_dt(start_val)
+                end_dt = _parse_dt(end_val)
+
+                if start_dt:
+                    if hasattr(vevent, "dtstart"):
+                        vevent.dtstart.value = start_dt
+                    else:
+                        vevent.add("dtstart").value = start_dt
+                if end_dt:
+                    if hasattr(vevent, "dtend"):
+                        vevent.dtend.value = end_dt
+                    else:
+                        vevent.add("dtend").value = end_dt
+
+                # Increment SEQUENCE
+                try:
+                    if hasattr(vevent, "sequence"):
+                        vevent.sequence.value = int(vevent.sequence.value) + 1
+                    else:
+                        vevent.add("sequence").value = 1
+                except Exception:
+                    pass
+
+                # LAST-MODIFIED
+                from datetime import datetime as _dt
+                try:
+                    now_utc = _dt.utcnow().replace(tzinfo=None)
+                    if hasattr(vevent, "last_modified"):
+                        vevent.last_modified.value = now_utc
+                    else:
+                        vevent.add("last-modified").value = now_utc
+                except Exception:
+                    pass
+
+                # Persist
+                target_event.save()
+                return target_event
+
+            try:
+                updated = await asyncio.to_thread(_update_event)
+                logger.info(f"Updated event UID={uid}")
+                return updated
+            except Exception as e:
+                logger.error(f"Failed to update event {uid}: {e}")
+                raise
 
         # --- DELETE ---
         async def delete(self, uid: str):
-            """Удалить событие"""
+            """Delete a CalDAV event by its UID.
+
+            Returns:
+                True if deletion succeeded.
+
+            Raises:
+                RuntimeError: If not authenticated.
+                ValueError: If event not found.
+            """
             client = self.orm.client
             if not client:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
-            pass
 
-        # --- SAVE EVENTS TO DB ---
+            def _delete_event():
+                principal = client.principal()
+                target_event = None
 
-        async def save_from_caldav(self, calendar_uid: str, user_id):
-            """Save events from CalDAV to the database."""
-            client = self.orm.client
-            if not client:
-                logger.error("Client not authenticated. Call orm.authenticate() first.")
-                raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
-
-            calendar = await self.orm.Calendar.get(event_uid=calendar_uid)
-            if not calendar:
-                logger.warning(f"Calendar with UID {calendar_uid} not found.")
-                raise ValueError(f"Calendar with UID {calendar_uid} not found.")
-            try:
-                events = await self.orm.Event.all(calendar_uid)
-            except Exception as e:
-                logger.warning(f"Failed to get events from CalDAV: {e}")
-                return
-            try:
-                for event in events:
+                for cal in principal.calendars():
                     try:
-                        uid = event.uid
-                        url = event.url
-                        title = event.title
-                        start = event.start
-                        end = event.end
-                        description = event.description
-
-                        logger.info(f"{title}")
-                    except Exception as e:
-                        logger.warning(f"Failed to parse event: {e}")
+                        for ev in cal.events():
+                            try:
+                                ev_uid = extract_uid(ev.url)
+                            except Exception:
+                                continue
+                            if ev_uid == uid:
+                                target_event = ev
+                                break
+                        if target_event:
+                            break
+                    except Exception:
                         continue
 
-                    # TODO: Here I need to saved parsed data to the database
-                    await CalDavEvent.create(
-                        user_id=user_id,
-                        caldav_uid=uid,
-                        title=title,
-                        description=description,
-                        start_date=start,
-                        end_date=end,
-                        last_modified_source="caldav"
-                    )
+                if not target_event:
+                    raise ValueError(f"Event with UID {uid} not found.")
 
-            except Exception as e:
-                logger.warning(f"Failed to get events: {e}")
+                target_event.delete()
+                return True
 
-            return True
-
-        async def exists(self, calendar, event_uid: str):
-            """
-            Check if an event with the specified UID exists in the calendar.
-            Returns the event object if found, None otherwise.
-            """
-            client = self.orm.client
-            if not client:
-                raise RuntimeError("Client not authenticated.")
-            if calendar is None:
-                return None
-
-            # events = await self.orm.Event.all(calendar_uid=calendar.id)
             try:
-                ev = await self.orm.Event.get(calendar, event_uid)
+                await asyncio.to_thread(_delete_event)
+                logger.info(f"Deleted event UID={uid}")
+                return True
             except Exception as e:
-                logger.error(f"Failed to get event: {e}")
-                return None
+                logger.error(f"Failed to delete event {uid}: {e}")
+                raise
 
-            def _get_event_by_uid():
+        # --- EXTRA ---
+        async def fetch_ical_event(self, user_id, calendar, event_url, db: AsyncSession):
+            """
+            Fetches the event in iCalendar format from the CalDAV server.
+
+            Args:
+                user_id: ID of the user to authenticate with
+                calendar: Calendar object containing authentication details
+                event_url: URL of the event to fetch
+
+            Returns:
+                str: iCalendar data for the event, or None if fetch fails
+            """
+            async with aiohttp.ClientSession() as session:
+                stmt = select(User.icloud_email, User.app_specific_password).where(User.id == user_id)
+                result = await db.execute(stmt)
+                user_credentials = result.one_or_none()
+                if not user_credentials:
+                    logger.error(f"No user credentials found for user ID: {user_id}")
+                    return None
+                else:
+                    icloud_email = str(user_credentials.icloud_email)
+                    app_specific_password = str(user_credentials.app_specific_password)
                 try:
-                    if ev:
-                        logger.info(f"Found event by UID: {event_uid}")
-                    else:
-                        logger.info(f"No event found with UID: {event_uid}")
-                    return ev
+                    async with session.get(
+                            str(event_url),
+                            auth=aiohttp.BasicAuth(icloud_email, app_specific_password),
+                    ) as resp:
+                        ics_data = await resp.text()
+                        # logger.debug(ics_data)
+                        return ics_data
                 except Exception as e:
-                    logger.error(f"Error getting event by UID: {e}")
+                    logger.error(f"Failed to fetch event as ical: {e}")
                     return None
 
-            return await asyncio.to_thread(_get_event_by_uid)
+        async def parse_ical_full(self, ics_data: str) -> List[Dict[str, Any]]:
+            events = []
+            cal = Calendar.from_ical(ics_data)
 
-        async def get_deleted_events(self, db: AsyncSession, user_id: int, calendar: Calendar, events=None):
-            """Get deleted events by comparing local DB and remote CalDAV events."""
-            stmt = select(CalDavEvent.caldav_uid).where(CalDavEvent.user_id == user_id)
-            result = await db.execute(stmt)
+            for component in cal.walk():
+                if component.name != "VEVENT":
+                    continue
 
-            # LIST OF EVENTS UID'S FROM REMOTE / LOCAL
-            local_events = result.scalars().all()
+                dtstart = component.get("DTSTART").dt
+                dtend = component.get("DTEND").dt
+                tzinfo = None
+                if hasattr(dtstart, "tzinfo") and dtstart.tzinfo:
+                    tzinfo = dtstart.tzinfo
+                elif "TZID" in component.get("DTSTART").params:
+                    tzinfo = ZoneInfo(component.get("DTSTART").params["TZID"])
 
-            # Optimized structure to reduce number of calls to CalDAV server
-            if events:
-                remote_events = events
-            else:
-                remote_events = await self.orm.Event.all(calendar_uid=calendar.id)
+                event_data = {
+                    "uid": str(component.get("UID")),
+                    "title": str(component.get("SUMMARY", "")),
+                    "description": str(component.get("DESCRIPTION", "")),
+                    "created": component.get("CREATED").dt if component.get("CREATED") else None,
+                    "last_modified": component.get("LAST-MODIFIED").dt if component.get("LAST-MODIFIED") else None,
+                    "start": dtstart if isinstance(dtstart, datetime) else None,
+                    "end": dtend if isinstance(dtend, datetime) else None,
+                    "sequence": int(component.get("SEQUENCE", 0)),
+                    "url": str(component.get("URL")) if component.get("URL") else None,
+                    "timezone": str(tzinfo) if tzinfo else None,
+                    "raw_component": component,  # на всякий случай, если надо будет что-то ещё
+                }
 
-            local_events_uids = []
-            remote_events_uids = []
+                events.append(event_data)
 
-            # Making list of events UIDs from remote and local servers
-            for local_event in local_events:
-                local_events_uids.append(local_event)
-
-            for remote_event in remote_events:
-                remote_events_uids.append(extract_uid(remote_event.url))
-
-            deleted_events_local = list(set(remote_events_uids) - set(local_events_uids))
-            deleted_events_remote = list(set(local_events_uids) - set(remote_events_uids))
-
-            time_now = datetime.datetime.now()
-            time_now = dict(
-                estimate_deleted_at=time_now,
-            )
-            deleted_events_remote.append(time_now)
-
-            deleted_events_total = {
-                "remote": deleted_events_remote,
-                "local": deleted_events_local,
-            }
-            return deleted_events_total
+            return events

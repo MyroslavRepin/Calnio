@@ -142,7 +142,6 @@ Calnio/
 │   │   │   ├── users.py
 │   │   │   └── waitlist.py
 │   │   ├── repositories/
-│   │   │   ├── caldav_events.py
 │   │   │   ├── notion_tasks.py
 │   │   │   └── user.py
 │   │   ├── tools/
@@ -197,6 +196,7 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   └── scheduler_service.py
 │   │   ├── sync/
+│   │   │   ├── DELETED_EVENTS_USAGE.md
 │   │   │   └── sync_manager.py
 │   │   ├── __init__.py
 │   │   └── postgres_trigger.py

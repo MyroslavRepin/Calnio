@@ -19,6 +19,21 @@ def add_dashes_to_uuid(raw_uid: str) -> str:
     return f"{raw_uid[:8]}-{raw_uid[8:12]}-{raw_uid[12:16]}-{raw_uid[16:20]}-{raw_uid[20:]}"
 
 def extract_uid(url: str) -> Optional[str]:
+    """
+    Extract the unique identifier (UID) from the given URL.
+
+    This function parses the input URL and extracts the last path segment, which is
+    assumed to be the unique identifier. If the input URL is empty or invalid, the
+    function returns None.
+
+    Parameters:
+    url: str
+        The input URL from which the UID is to be extracted.
+
+    Returns:
+    Optional[str]
+        The extracted UID as a string if present, otherwise None.
+    """
     if not url:
         return None
     url = str(url)
