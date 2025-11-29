@@ -232,8 +232,9 @@ class SyncService:
                 # Step 2.3: Update remote event only if local last_modified is newer (LWW)
                 if local_caldav_event.updated_at > remote_last_modified:
                     # Todo: Update event in CalDav server
-                    await self.caldav_orm.Event.update(event, title=title, description=parsed_ical_data[0]["description"])
-                    logger.debug(f"Updating remote event: {title}")
+                    local_title = local_caldav_event.title
+                    await self.caldav_orm.Event.update(event, title=local_title)
+                    logger.debug(f"Updating remote event: {local_title}")
 
     async def get_deleted_events_from_caldav(self, calendar, db: AsyncSession) -> list[dict]:
         """

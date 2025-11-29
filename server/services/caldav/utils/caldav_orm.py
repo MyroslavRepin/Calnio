@@ -300,7 +300,35 @@ class CalDavORM:
                 raise e
         # --- READ ---
         async def get(self, calendar, event_uid: str = None, name: str = None):
-            """Get one event by UID or name. Returns the event object if found, None otherwise."""
+            """
+            Asynchronous function to retrieve an event from a calendar either by UID or by name.
+
+            This function allows fetching a specific event from a CalDAV-compatible calendar. It searches
+            for an event based on either its unique identifier (UID) or its name. If neither a UID nor a
+            name is provided, an error is raised.
+
+            Parameters:
+            calendar : Any
+                The CalDAV calendar object to search within.
+            event_uid : str, optional
+                The unique identifier of the event to find. If provided, the function will
+                search for this specific event using its UID.
+            name : str, optional
+                The name or summary of the event to search for. If provided, the function
+                will search for events that match this name.
+
+            Returns:
+            Union[Any, List[Any], None]
+                Returns a single event, a list of events matching the given name, or None
+                if no matching events are found.
+
+            Raises:
+            ValueError
+                If neither `event_uid` nor `name` is provided.
+            RuntimeError
+                If the client is not authenticated.
+
+            """
             if not event_uid and not name:
                 logger.error("Provide either event_uid or name")
                 raise ValueError("Provide either event_uid or name")
@@ -365,7 +393,6 @@ class CalDavORM:
 
                 return await asyncio.to_thread(_get_event_by_name)
 
-
         async def all(self, calendar_uid: str, calendar_name: str = None):
             """Get all events from a CalDAV calendar, returning simple objects."""
             client = self.orm.client
@@ -426,137 +453,42 @@ class CalDavORM:
             return await asyncio.to_thread(_get_all_events, calendar)
 
         # --- UPDATE ---
-        async def update(self, uid: str, **kwargs):
-            """Update a CalDAV event by its UID.
-
-            Supported kwargs:
-                title / summary: str
-                description: str
-                location: str
-                start / dtstart: datetime | ISO8601 str
-                end / dtend: datetime | ISO8601 str
-
-            Returns:
-                Updated event object (library-specific instance).
-
-            Raises:
-                RuntimeError: If not authenticated.
-                ValueError: If event not found or VEVENT inaccessible.
-            """
-
+        async def update(self, event, **kwargs):
             client = self.orm.client
             if not client:
                 raise RuntimeError("Client not authenticated. Call orm.authenticate() first.")
 
-            def _parse_dt(value):
-                from datetime import datetime as _dt
-                if value is None:
-                    return None
-                if isinstance(value, _dt):
-                    return value
-                try:
-                    return _dt.fromisoformat(str(value))
-                except Exception:
-                    return None
-
-            def _update_event():
-                principal = client.principal()
-                target_event = None
-
-                # Search across all calendars
-                for cal in principal.calendars():
-                    try:
-                        for ev in cal.events():
-                            try:
-                                ev_uid = extract_uid(ev.url)
-                            except Exception:
-                                continue
-                            if ev_uid == uid:
-                                target_event = ev
-                                break
-                        if target_event:
-                            break
-                    except Exception:
-                        continue
-
-                if not target_event:
-                    raise ValueError(f"Event with UID {uid} not found.")
-
-                # Access VEVENT structure
-                try:
-                    vevent = target_event.vobject_instance.vevent
-                except AttributeError as e:
-                    raise ValueError(f"Unable to access VEVENT for UID {uid}: {e}")
-
-                # Title / Summary
-                new_title = kwargs.get("title") or kwargs.get("summary")
-                if new_title:
-                    if hasattr(vevent, "summary"):
-                        vevent.summary.value = new_title
-                    else:
-                        vevent.add("summary").value = new_title
-
-                # Description
-                if "description" in kwargs:
-                    if hasattr(vevent, "description"):
-                        vevent.description.value = kwargs["description"]
-                    else:
-                        vevent.add("description").value = kwargs["description"]
-
-                # Location
-                if "location" in kwargs:
-                    if hasattr(vevent, "location"):
-                        vevent.location.value = kwargs["location"]
-                    else:
-                        vevent.add("location").value = kwargs["location"]
-
-                # Datetimes
-                start_val = kwargs.get("start") or kwargs.get("dtstart")
-                end_val = kwargs.get("end") or kwargs.get("dtend")
-                start_dt = _parse_dt(start_val)
-                end_dt = _parse_dt(end_val)
-
-                if start_dt:
-                    if hasattr(vevent, "dtstart"):
-                        vevent.dtstart.value = start_dt
-                    else:
-                        vevent.add("dtstart").value = start_dt
-                if end_dt:
-                    if hasattr(vevent, "dtend"):
-                        vevent.dtend.value = end_dt
-                    else:
-                        vevent.add("dtend").value = end_dt
-
-                # Increment SEQUENCE
-                try:
-                    if hasattr(vevent, "sequence"):
-                        vevent.sequence.value = int(vevent.sequence.value) + 1
-                    else:
-                        vevent.add("sequence").value = 1
-                except Exception:
-                    pass
-
-                # LAST-MODIFIED
-                from datetime import datetime as _dt
-                try:
-                    now_utc = _dt.utcnow().replace(tzinfo=None)
-                    if hasattr(vevent, "last_modified"):
-                        vevent.last_modified.value = now_utc
-                    else:
-                        vevent.add("last-modified").value = now_utc
-                except Exception:
-                    pass
-
-                # Persist
-                target_event.save()
-                return target_event
+            if not event:
+                raise ValueError("Event object is required for update.")
 
             try:
-                updated = await asyncio.to_thread(_update_event)
-                logger.info(f"Updated event UID={uid}")
-                return updated
+                """
+                Note: CalDav does not have PUT, the only way to do 
+                it is to delete the compononet and then add new component again
+                """
+                vobj = event.vobject_instance
+
+                vevent = vobj.vevent
+
+                # Пример обновления полей
+                vevent.summary.value = kwargs.get("title")
+
+                event.vobject_instance = vobj
+                event.save()
+                #
+                # event.component.del_component('summary')
+                # event.component.del_component('dtstart')
+                #
+                # event.component.add('summary', 'Updated Event Summary')
+                # event.component.add('dtstart', datetime(2025, 11, 29, 10, 0, 0))  # New start time
+                #
+                # # Save the updated event back to the server
+                # event.save()
+
+                logger.info(f"Updated event UID={extract_uid(event.url)}")
+                return event
             except Exception as e:
-                logger.error(f"Failed to update event {uid}: {e}")
+                logger.error(f"Failed to update event: {e}")
                 raise
 
         # --- DELETE ---

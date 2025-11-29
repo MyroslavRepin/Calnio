@@ -279,9 +279,15 @@ async def main():
     await orm.authenticate()
     calendar = await orm.Calendar.get_by_name("Calnio")
 
+    event = await orm.Event.get(calendar=calendar, event_uid="E53A8B96-3E3B-4A95-8FAF-588CE201AB0E.ics")
+    logger.info(event)
+
+    # await orm.Event.update(event, title="[Test 1] - Basic update")
+
+    # await run_test()
     async with async_get_db_cm() as db:
         await sync_service.sync_user_events(db=db, calendar=calendar)
-
+        await sync_service.get_deleted_events_from_caldav(calendar, db)
 
 if __name__ == "__main__":
     asyncio.run(main())
