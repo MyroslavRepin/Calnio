@@ -17,7 +17,7 @@ jobs:
           username: ${{ secrets.DO_USER }}
           password: ${{ secrets.DO_PASSWORD }}
           script: |
-            cd /Calnio
+            cd /root/Calnio
             git pull
             git fetch
             docker compose down
