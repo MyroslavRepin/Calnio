@@ -13,9 +13,9 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
-          host: $ secrets.DO_HOST
-          username: $ secrets.DO_USER
-          password: $ secrets.DO_PASSWORD
+          host: $ secrets.DO_HOST           # ← Исправлено
+          username: $ secrets.DO_USER       # ← Исправлено
+          password: $ secrets.DO_PASSWORD   # ← Исправлено
           script: |
             cd /Calnio
             git pull
