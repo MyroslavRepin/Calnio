@@ -141,6 +141,10 @@ class SyncService:
 
         db_events = await self.notion_orm.get_all_tasks(user_id=self.user_id)
 
+        remote_deleted_events = await self.get_deleted_events_from_caldav(calendar, db)
+        # - uid: str - The CalDAV UID of the deleted event
+        # - deleted_at: str - ISO 8601 timestamp when deletion was detected
+
         await self.caldav_orm.authenticate()
 
         for event in caldav_events:
@@ -153,7 +157,7 @@ class SyncService:
             parsed_ical_data = await self.caldav_orm.Event.parse_ical_full(raw_ical_event)
 
             title = parsed_ical_data[0]["title"]
-            caldav_event_uid = parsed_ical_data[0]["uid"] # + ".ics"
+            caldav_event_uid = parsed_ical_data[0]["uid"] + ".ics"
             remote_last_modified = parsed_ical_data[0].get("last_modified") or parsed_ical_data[0].get("created")
 
             logger.info(f"Start syncing event: {title}")
@@ -202,9 +206,8 @@ class SyncService:
 
             # Step 2: Updating logic
             if local_caldav_event and event:
-                # Step 2.1: If local event is marked deleted, un-delete only when remote last_modified is newer (LWW)
+                # Step 2.1: If local event is marked deleted, undo delete only when remote last_modified is newer (LWW)
                 if local_caldav_event.deleted:
-                    # Todo: If last modified date is more fresh from remote, create event in DB
                     if remote_last_modified > local_caldav_event.deleted_at:
                         logger.debug(f"Unmarking event as  deleted: {title}")
                         local_caldav_event.deleted = False
@@ -212,7 +215,13 @@ class SyncService:
                         db.add(local_caldav_event)
                         await db.commit()
                         logger.info(f"Event unmarked as deleted: {title}")
-                    continue
+                        continue
+                    # Todo: If event deleted in remote, get timestamp and the make (LWW)
+
+                    if local_caldav_event.caldav_uid in remote_deleted_events:
+                        logger.debug(f"Script will decide if event should be deleted or not: {title}")
+                        # await self.caldav_orm.Event.delete(event)
+
 
                 # Step 2.2: Update local event only if remote last_modified is newer (LWW)
                 if remote_last_modified > local_caldav_event.updated_at:
@@ -231,7 +240,6 @@ class SyncService:
 
                 # Step 2.3: Update remote event only if local last_modified is newer (LWW)
                 if local_caldav_event.updated_at > remote_last_modified:
-                    # Todo: Update event in CalDav server
                     local_title = local_caldav_event.title
                     await self.caldav_orm.Event.update(event, title=local_title)
                     logger.debug(f"Updating remote event: {local_title}")
@@ -241,8 +249,8 @@ class SyncService:
         Detect deleted events by comparing local DB records with remote CalDAV events.
 
         This function identifies events that exist in the local database but have been
-        deleted from the iCloud CalDAV server. It uses modern CalDAV sync practices by
-        comparing UIDs between local and remote sources.
+        deleted from the remote CalDAV server. It compares UIDs between local and remote
+        sources to determine which events no longer exist on the server.
 
         Args:
             calendar: CalDAV calendar object to check against
@@ -250,20 +258,18 @@ class SyncService:
 
         Returns:
             list[dict]: List of deleted events with their details:
-                - caldav_uid: str
-                - title: str
-                - deleted_at: datetime (current timestamp)
-                - local_event: CalDavEvent object
+                - uid: str - The CalDAV UID of the deleted event
+                - deleted_at: str - ISO 8601 timestamp when deletion was detected
 
         Example:
             deleted = await sync_service.get_deleted_events_from_caldav(calendar, db)
             for event in deleted:
-                logger.info(f"Event '{event['title']}' was deleted remotely")
+                logger.info(f"Event UID '{event['uid']}' was deleted at {event['deleted_at']}")
         """
         logger.info(f"Checking for deleted events for user {self.user_id}")
 
         try:
-            # Get all local CalDAV events for this user
+            # Get all local CalDAV events that are not marked as deleted
             stmt = select(CalDavEvent).where(
                 CalDavEvent.user_id == self.user_id,
                 CalDavEvent.deleted == False
@@ -273,44 +279,63 @@ class SyncService:
 
             # Create a mapping of local event UIDs
             local_uids = {event.caldav_uid: event for event in local_events}
-            logger.debug(f"Found {len(local_uids)} local events")
+            logger.debug(f"Found {len(local_uids)} local events (not deleted)")
 
-            # Get all remote CalDAV events
+            # Get all remote CalDAV events from the server
             def _get_remote_events():
                 try:
-                    return calendar.events()
+                    events = calendar.events()
+                    if events is None:
+                        logger.warning("calendar.events() returned None")
+                        return []
+                    return events
                 except Exception as e:
-                    logger.error(f"Failed to fetch remote events: {e}")
+                    logger.error(f"Failed to fetch remote events: {e}", exc_info=True)
                     return []
 
             remote_events = await asyncio.to_thread(_get_remote_events)
+            logger.debug(f"Fetched {len(remote_events) if remote_events else 0} events from remote CalDAV")
 
             # Extract UIDs from remote events
             remote_uids = set()
             for event in remote_events:
                 try:
-                    event_uid = extract_uid(event.url)
-                    remote_uids.add(event_uid)
+                    # Extract UID from event URL
+                    event_url = str(event.url) if hasattr(event, 'url') else None
+                    if not event_url:
+                        logger.warning(f"Event has no URL attribute: {event}")
+                        continue
+
+                    event_uid = extract_uid(event_url)
+                    if event_uid:
+                        remote_uids.add(event_uid)
+                        logger.debug(f"Remote event UID: {event_uid} (from URL: {event_url})")
+                    else:
+                        logger.warning(f"Could not extract UID from URL: {event_url}")
                 except Exception as e:
                     logger.warning(f"Failed to extract UID from remote event: {e}")
                     continue
 
-            logger.debug(f"Found {len(remote_uids)} remote events")
+            logger.debug(f"Found {len(remote_uids)} valid remote event UIDs")
+
+            # Debug: Show comparison
+            logger.debug(f"Local UIDs: {list(local_uids.keys())}")
+            logger.debug(f"Remote UIDs: {list(remote_uids)}")
 
             # Find events that exist locally but not remotely (deleted events)
             deleted_event_uids = set(local_uids.keys()) - remote_uids
 
-            # Build detailed list of deleted events
+            # Build the result list with UID and timestamp
+            deleted_at_timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
             deleted_events = []
+
             for uid in deleted_event_uids:
                 local_event = local_uids[uid]
                 deleted_events.append({
-                    "caldav_uid": uid,
-                    "title": local_event.title,
-                    "deleted_at": datetime.datetime.now(datetime.timezone.utc),
-                    "local_event": local_event
+                    "uid": uid,
+                    "deleted_at": deleted_at_timestamp
                 })
-                logger.info(f"Detected deleted event: '{local_event.title}' (UID: {uid})")
+                logger.info(f"Detected deleted event: UID={uid}, Title='{local_event.title}'")
 
             logger.info(f"Total deleted events detected: {len(deleted_events)}")
             return deleted_events
@@ -328,6 +353,7 @@ class SyncService:
 
         Args:
             deleted_events: List of deleted event dicts from get_deleted_events_from_caldav
+                           Each dict contains: {"uid": str, "deleted_at": str (ISO 8601)}
             db: AsyncSession for database operations
 
         Returns:
@@ -342,8 +368,23 @@ class SyncService:
 
         for deleted_event in deleted_events:
             try:
-                local_event = deleted_event["local_event"]
-                deleted_at = deleted_event["deleted_at"]
+                event_uid = deleted_event["uid"]
+                deleted_at_str = deleted_event["deleted_at"]
+
+                # Parse the ISO 8601 timestamp
+                deleted_at = datetime.datetime.fromisoformat(deleted_at_str)
+
+                # Find the local event by UID
+                stmt = select(CalDavEvent).where(
+                    CalDavEvent.user_id == self.user_id,
+                    CalDavEvent.caldav_uid == event_uid
+                )
+                result = await db.execute(stmt)
+                local_event = result.scalars().first()
+
+                if not local_event:
+                    logger.warning(f"Event with UID {event_uid} not found in DB")
+                    continue
 
                 # Update the event in DB
                 local_event.deleted = True
@@ -352,7 +393,7 @@ class SyncService:
                 db.add(local_event)
                 marked_count += 1
 
-                logger.info(f"Marked event '{local_event.title}' as deleted")
+                logger.info(f"Marked event '{local_event.title}' (UID: {event_uid}) as deleted")
 
             except Exception as e:
                 logger.error(f"Failed to mark event as deleted: {e}")

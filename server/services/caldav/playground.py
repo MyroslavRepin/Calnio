@@ -287,7 +287,8 @@ async def main():
     # await run_test()
     async with async_get_db_cm() as db:
         await sync_service.sync_user_events(db=db, calendar=calendar)
-        await sync_service.get_deleted_events_from_caldav(calendar, db)
+        # deleted_events = await sync_service.get_deleted_events_from_caldav(calendar, db)
+        # logger.info(deleted_events)
 
 if __name__ == "__main__":
     asyncio.run(main())
