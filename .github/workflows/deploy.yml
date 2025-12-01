@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: Digital-Ocean
 
     steps:
       - name: Deploy via SSH
