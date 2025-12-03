@@ -1,5 +1,4 @@
 Calnio/
-├── calnio/
 ├── certbot/
 │   ├── conf/
 │   └── www/
@@ -263,10 +262,10 @@ Calnio/
 ├── main.py
 ├── manage.py
 ├── ngrok.yml
-├── plan-calnioCompletionRoadmap.prompt.md
 ├── Procfile
 ├── prometheus.yml
 ├── promtail-config.yaml
+├── pyproject.toml
 ├── railway.json
 ├── README.md
 ├── requirements.txt
