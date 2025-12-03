@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Request, Depends, BackgroundTasks
+from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
 from server.db.deps import async_get_db
@@ -10,7 +10,7 @@ from server.app.core.logging_config import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from services.email.utils.email_sender import send_waitlist_email
+from server.services.email.utils.email_sender import send_waitlist_email
 
 router = APIRouter()
 

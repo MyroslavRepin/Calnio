@@ -48,5 +48,4 @@ def redis_ping():
     return "pong"
 
 # Import task modules to register them with Celery
-from services.email.worker import auth
 

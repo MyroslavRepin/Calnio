@@ -19,7 +19,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from services.email.worker.auth import send_welcome_email
+from server.services.email.worker.auth import send_welcome_email
 
 router = APIRouter()
 

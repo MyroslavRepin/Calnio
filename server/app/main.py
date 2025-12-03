@@ -169,8 +169,8 @@ app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_DIR,
           "static")), name="static")
 app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR,
           "assets")), name="assets")
-app.mount(
-    "/fonts", StaticFiles(directory=os.path.join(FRONTEND_DIR, "fonts")), name="fonts")
+# app.mount(
+#     "/fonts", StaticFiles(directory=os.path.join(FRONTEND_DIR, "fonts")), name="fonts")
 
 app.add_middleware(IgnoreSpecificPathsMiddleware)
 app.include_router(auth_router)

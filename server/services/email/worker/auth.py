@@ -1,6 +1,6 @@
 # worker/email/tasks.py
-from services.email.celery_app import celery_app
-from services.email.utils.emails import send_html_email
+from server.services.email.celery_app import celery_app
+from server.services.email.utils.emails import send_html_email
 from server.app.core.logging_config import logger
 
 @celery_app.task

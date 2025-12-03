@@ -129,7 +129,6 @@ Calnio/
 │   │   ├── main.py
 │   │   ├── main_litestar.py
 │   │   └── version.py
-│   ├── config/
 │   ├── db/
 │   │   ├── models/
 │   │   │   ├── __init__.py
@@ -182,6 +181,25 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
 │   │   │   └── users.py
+│   │   ├── email/
+│   │   │   ├── schemas/
+│   │   │   ├── templates/
+│   │   │   │   ├── account_created.html
+│   │   │   │   ├── password_reset.html
+│   │   │   │   ├── product_updates.html
+│   │   │   │   └── requirements.txt
+│   │   │   ├── utils/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── email_sender.py
+│   │   │   │   └── emails.py
+│   │   │   ├── worker/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── auth.py
+│   │   │   ├──  requirements.txt
+│   │   │   ├── __init__.py
+│   │   │   ├── celery_app.py
+│   │   │   ├── Dockerfile
+│   │   │   └── main.py
 │   │   ├── notion_syncing/
 │   │   │   ├── __init__.py
 │   │   │   ├── notion_integrations.py
@@ -216,34 +234,6 @@ Calnio/
 │   │   ├── exceptions.py
 │   │   └── utils.py
 │   └── __init__.py
-├── services/
-│   ├── email/
-│   │   ├── schemas/
-│   │   ├── templates/
-│   │   │   ├── account_created.html
-│   │   │   ├── password_reset.html
-│   │   │   ├── product_updates.html
-│   │   │   └── requirements.txt
-│   │   ├── utils/
-│   │   │   ├── __init__.py
-│   │   │   ├── email_sender.py
-│   │   │   └── emails.py
-│   │   ├── worker/
-│   │   │   ├── __init__.py
-│   │   │   └── auth.py
-│   │   ├──  requirements.txt
-│   │   ├── __init__.py
-│   │   ├── celery_app.py
-│   │   ├── Dockerfile
-│   │   └── main.py
-│   ├── sync/
-│   │   ├── server/
-│   │   │   └── app/
-│   │   │       ├── api/
-│   │   │       ├── core/
-│   │   │       └── schemas/
-│   │   └── Dockerfile
-│   └── __init__.py
 ├── tests/
 │   └── load/
 │       ├── load_test.js
@@ -270,4 +260,5 @@ Calnio/
 ├── README.md
 ├── requirements.txt
 ├── robots.txt
-└── START_SERVER.sh
+├── START_SERVER.sh
+└── uv.lock
