@@ -80,8 +80,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqladmin import Admin
-from sqladmin import ModelView
-
+from server.app.admin import *
 from server.app.api.add_waitlist import router as add_waitlist_email
 from server.app.api import dashboard, landing, refresh_cookies, brutalist
 from server.app.api.auth import router as auth_router
@@ -89,7 +88,6 @@ from server.app.api.errors import error_404
 from server.app.api.webhooks.notion_webhooks import router as notion_webhook_router
 from server.app import version
 from server.db.database import async_engine
-from server.db.models import users as user_models
 from server.db.redis_client import close_redis, init_redis
 from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
@@ -185,13 +183,16 @@ app.include_router(pages.router)
 app.include_router(notion_webhook_router)
 app.include_router(add_waitlist_email)
 
-
-
-class UserAdmin(ModelView, model=user_models.User):
-    column_list = [user_models.User.id, user_models.User.email, user_models.User.username, user_models.User.is_superuser]
-
 admin = Admin(app, async_engine)
-admin.add_view(UserAdmin)
+
+try:
+    logger.info("Setting up admin interface...")
+    admin.add_view(UserAdmin)
+    admin.add_view(WaitlistAdmin)
+    admin.add_view(NotionIntegrationAdmin)
+    logger.info("Admin interface set up successfully.")
+except Exception as e:
+    logger.error(f"Error setting up admin interface: {e}")
 
 # APScheduler starting
 @app.on_event("startup")
