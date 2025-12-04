@@ -1,13 +1,28 @@
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /calnio
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Системные зависимости для psycopg2-binary
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
+# Создаем изолированную среду venv для контейнера
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN python -m venv "$VIRTUAL_ENV" && pip install --upgrade pip uv
+
+# Копируем манифесты зависимостей первыми
+COPY pyproject.toml uv.lock ./
+
+# Синхронизируем зависимости (замороженные, если есть lock-файл)
+RUN uv sync --frozen
+
+# Копируем проект
 COPY . .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "server.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "debug", "--reload", "--timeout-keep-alive", "60"]
-
+# Запускаем через uv, используя venv
+CMD ["uv", "run", "main.py"]

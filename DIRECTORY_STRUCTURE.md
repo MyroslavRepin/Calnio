@@ -1,4 +1,7 @@
 Calnio/
+├── certbot/
+│   ├── conf/
+│   └── www/
 ├── deploy/
 │   ├── certbot/
 │   │   ├── conf/
@@ -62,6 +65,10 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
+├── grafana/
+│   └── datasources.yaml/
+├── nginx/
+│   └── conf.d/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -126,7 +133,6 @@ Calnio/
 │   │   │   └── waitlist.py
 │   │   ├── __init__.py
 │   │   ├── main.py
-│   │   ├── main_litestar.py
 │   │   └── version.py
 │   ├── db/
 │   │   ├── models/

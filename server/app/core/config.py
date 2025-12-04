@@ -15,9 +15,11 @@ class Settings(BaseSettings):
     https: bool
     notion_send_data_env: str
 
+    # Database config
     database_url_prod: str
     database_url_local: str
 
+    # Notion config
     notion_oauth_client_id_prod: str
     notion_oauth_client_id_local: str
 
@@ -31,16 +33,25 @@ class Settings(BaseSettings):
     oauth_url_prod: str
     oauth_url_local: str
 
+    # Ngrok config
     ngrok_auth_token: str
     ngrok_url: str
 
+    # Redis config
     redis_url: str
     redis_public_url: str
 
+    # Email config
     email_host: str
     email_port: int
     email_user: str
     email_password: str
+
+    # Deploy config
+    host: str
+    port: int
+    reload: bool
+
 
     @property
     def database_url(self):
