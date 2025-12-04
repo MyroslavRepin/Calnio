@@ -94,7 +94,7 @@ from server.db.redis_client import close_redis, init_redis
 from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
-from server.services.postgres_trigger import listen_to_postgres
+from server.db.tools.postgres_trigger import listen_to_postgres
 
 # Creating Main App
 app = FastAPI()

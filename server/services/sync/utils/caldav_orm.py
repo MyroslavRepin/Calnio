@@ -1,15 +1,11 @@
 import asyncio
 import datetime
-from typing import List, Dict, Any
-from uuid import uuid4
 from types import SimpleNamespace
 from sqlalchemy import select
 
-from aiocaldav import Calendar as AIOCalendar
 from caldav import Calendar
 from icalendar import Calendar as ICalCalendar
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.util import await_only
 
 import aiohttp
 from icalendar import Calendar
@@ -17,9 +13,7 @@ from zoneinfo import ZoneInfo
 from datetime import datetime
 from typing import List, Dict, Any
 
-from server.db.deps import async_get_db_cm
 from server.db.models import User
-from server.db.models.caldav_events import CalDavEvent
 from server.utils.utils import extract_uid
 from server.app.core.logging_config import logger
 
@@ -33,7 +27,7 @@ class CalDavORM:
         self.Event = self.Event(self)
 
     async def authenticate(self):
-        from server.services.caldav.caldav_client import get_caldav_client
+        from server.services.sync.caldav_client import get_caldav_client
 
         self.client = await get_caldav_client(self.user_id)
         return self

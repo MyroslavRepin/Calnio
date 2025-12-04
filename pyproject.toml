@@ -6,6 +6,7 @@ requires-python = ">=3.13"
 dependencies = [
     "aiocaldav>=0.5.1",
     "aiosmtplib==3.0.2",
+    "alembic>=1.17.2",
     "annotated-types==0.7.0",
     "anyio==4.9.0",
     "apscheduler>=3.11.1",

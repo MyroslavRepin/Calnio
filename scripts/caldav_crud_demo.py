@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta, timezone
 
-from server.services.caldav.caldav_client import get_caldav_client
+from server.services.caldav import get_caldav_client
 from server.services.crud.caldav_events import (
     create_event,
     delete_event_by_uid,

@@ -3,7 +3,7 @@ from server.db.models.users import User
 from server.db.models.calendars import Calendar
 from sqlalchemy import select
 from server.app.core.logging_config import logger
-from server.services.caldav.utils.caldav_orm import CalDavORM
+from server.services.sync.utils.caldav_orm import CalDavORM
 from server.utils.utils import extract_uid
 
 

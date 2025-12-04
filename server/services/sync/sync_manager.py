@@ -5,8 +5,7 @@ import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.db.models import UserNotionTask
-from server.db.models.enums import SyncStatus
-from server.services.caldav.utils.caldav_orm import CalDavORM
+from server.services.sync.utils.caldav_orm import CalDavORM
 from server.utils.utils import extract_uid, ensure_datetime_with_tz
 from server.db.repositories.notion_tasks import NotionTaskRepository
 from server.db.models.caldav_events import CalDavEvent

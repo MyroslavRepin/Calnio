@@ -9,10 +9,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from server.db.repositories.notion_tasks import NotionTaskRepository
-from server.services.caldav.utils.caldav_orm import CalDavORM
-from server.services.sync.sync_manager import SyncService
-from server.services.caldav.utils.caldav_orm import CalDavORM
+from server.services.sync.utils.caldav_orm import CalDavORM
 from server.services.sync.sync_manager import SyncService
 from server.app.core.logging_config import logger
 
@@ -33,10 +30,11 @@ async def test_deleted_events_detection():
     orm = CalDavORM(user_id=3)
 
     await orm.authenticate()
-    calendar = await orm.Calendar.get_by_name("Work")
+    calendar_name = "Work"
+    calendar = await orm.Calendar.get_by_name(calendar_name)
 
     if not calendar:
-        logger.error("Calendar 'Work' not found!")
+        logger.error(f"Calendar '{calendar_name}' not found!")
         return
 
     async with async_get_db_cm() as db:
@@ -117,7 +115,6 @@ async def simulate_deleted_event_test():
     logger.info("=" * 60)
 
     from server.db.models.caldav_events import CalDavEvent
-    from sqlalchemy import select
     import uuid
     from datetime import datetime, timezone
 
@@ -277,14 +274,12 @@ async def main():
     orm = CalDavORM(user_id=3)
     sync_service = SyncService(user_id=3)
     await orm.authenticate()
-    calendar = await orm.Calendar.get_by_name("Calnio")
+    calendar_name = "Calnioo"
+    calendar = await orm.Calendar.get_by_name(calendar_name)
+    if not calendar:
+        logger.error(f"Calendar '{calendar_name}' not found!")
+        return
 
-    event = await orm.Event.get(calendar=calendar, event_uid="E53A8B96-3E3B-4A95-8FAF-588CE201AB0E.ics")
-    logger.info(event)
-
-    # await orm.Event.update(event, title="[Test 1] - Basic update")
-
-    # await run_test()
     async with async_get_db_cm() as db:
         await sync_service.sync_user_events(db=db, calendar=calendar)
         # deleted_events = await sync_service.get_deleted_events_from_caldav(calendar, db)

@@ -1,7 +1,14 @@
 Calnio/
-├── certbot/
-│   ├── conf/
-│   └── www/
+├── deploy/
+│   ├── certbot/
+│   │   ├── conf/
+│   │   └── www/
+│   ├── grafana/
+│   │   ├── calnio_litestar_dashboard.json
+│   │   └── datasources.yaml
+│   └── nginx/
+│       └── conf.d/
+│           └── default.conf
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -55,12 +62,6 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
-├── grafana/
-│   ├── calnio_litestar_dashboard.json
-│   └── datasources.yaml
-├── nginx/
-│   └── conf.d/
-│       └── default.conf
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -115,10 +116,8 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── config.py
 │   │   │   └── logging_config.py
-│   │   ├── dops/
 │   │   ├── middleware/
 │   │   │   └── ignore_logging.py
-│   │   ├── routes/
 │   │   ├── schemas/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
@@ -146,6 +145,7 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── create_all_tables.py
 │   │   │   ├── create_missing_tables.py
+│   │   │   ├── postgres_trigger.py
 │   │   │   └── recreate_tables.py
 │   │   ├── __init__.py
 │   │   ├── database.py
@@ -168,15 +168,6 @@ Calnio/
 │   │   ├── __init__.py
 │   │   └── ignore_logging.py
 │   ├── services/
-│   │   ├── caldav/
-│   │   │   ├── utils/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── caldav_orm.py
-│   │   │   │   ├── user_calendars.py
-│   │   │   │   └── user_events.py
-│   │   │   ├── __init__.py
-│   │   │   ├── caldav_client.py
-│   │   │   └── playground.py
 │   │   ├── crud/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
@@ -213,10 +204,16 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   └── scheduler_service.py
 │   │   ├── sync/
-│   │   │   ├── DELETED_EVENTS_USAGE.md
+│   │   │   ├── utils/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── caldav_orm.py
+│   │   │   │   ├── user_calendars.py
+│   │   │   │   └── user_events.py
+│   │   │   ├── __init__.py
+│   │   │   ├── caldav_client.py
+│   │   │   ├── playground.py
 │   │   │   └── sync_manager.py
-│   │   ├── __init__.py
-│   │   └── postgres_trigger.py
+│   │   └── __init__.py
 │   ├── utils/
 │   │   ├── notion/
 │   │   │   ├── __init__.py
@@ -235,15 +232,15 @@ Calnio/
 │   │   └── utils.py
 │   └── __init__.py
 ├── tests/
-│   └── load/
-│       ├── load_test.js
-│       └── playground.js
+│   ├── load/
+│   │   ├── load_test.js
+│   │   └── playground.js
+│   └── web/
+│       ├── http-client.env.json
+│       └── test.http
 ├── .gitignore
 ├── alembic.ini
-├── caldav_events.sql
-├── calnio_backup.dump
 ├── CHANGELOG.md
-├── db_schema.sql
 ├── DIRECTORY_STRUCTURE.md
 ├── docker-compose.yml
 ├── Dockerfile

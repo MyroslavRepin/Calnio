@@ -7,7 +7,7 @@ from server.db.models import User
 from server.integrations.notion.notion_client import get_notion_client
 from server.services.notion_syncing.notion_sync import notion_sync_background
 from server.app.core.logging_config import logger
-from server.services.caldav.utils.user_calendars import sync_user_calendars
+from server.services.sync.utils.user_calendars import sync_user_calendars
 
 # Scheduler config, can be extended for custom intervals
 scheduler = AsyncIOScheduler()
