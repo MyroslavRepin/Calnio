@@ -1,8 +1,14 @@
+import datetime
 import os
 import sys
 import asyncio
+from datetime import time
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 
 from server.db.deps import async_get_db_cm
+from server.utils.utils import ensure_datetime_with_tz
 
 # Ensure project root is on sys.path
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
@@ -104,7 +110,6 @@ async def test_deleted_events_detection():
             else:
                 logger.info("❌ Skipped marking events as deleted")
 
-
 async def simulate_deleted_event_test():
     """
     Create a test event in DB only (not in CalDAV) to simulate a deleted event.
@@ -184,7 +189,6 @@ async def simulate_deleted_event_test():
         await db.delete(fake_event)
         await db.commit()
         logger.info(f"✅ Test event removed from database")
-
 
 async def show_all_events_comparison():
     """
@@ -270,20 +274,73 @@ async def run_test():
     else:
         logger.error("Invalid choice!")
 
-async def main():
+
+async def manual_sync():
+    """Main entry point for manual testing."""
     orm = CalDavORM(user_id=3)
     sync_service = SyncService(user_id=3)
     await orm.authenticate()
-    calendar_name = "Calnioo"
+    calendar_name = "Calnio"
     calendar = await orm.Calendar.get_by_name(calendar_name)
     if not calendar:
         logger.error(f"Calendar '{calendar_name}' not found!")
         return
-
     async with async_get_db_cm() as db:
         await sync_service.sync_user_events(db=db, calendar=calendar)
-        # deleted_events = await sync_service.get_deleted_events_from_caldav(calendar, db)
-        # logger.info(deleted_events)
+
+async def sync():
+    orm = CalDavORM(user_id=3)
+    sync_service = SyncService(user_id=3)
+    await orm.authenticate()
+    calendar_name = "Calnio"
+    calendar = await orm.Calendar.get_by_name(calendar_name)
+    if not calendar:
+        logger.error(f"Calendar '{calendar_name}' not found!")
+        return
+    async with async_get_db_cm() as db:
+        await sync_service.sync_user_events(calendar=calendar, db=db)
+
+
+scheduler = AsyncIOScheduler()
+
+async def scheduler_sync():
+    logger.info("Starting Calnio sync scheduler")
+    sync_interval = 30
+    scheduler.add_job(
+        sync,
+        "interval",
+        seconds=sync_interval,
+        replace_existing=False,
+        name="sync_user_events"
+    )
+
+    try:
+        await sync()
+        scheduler.start()
+        logger.info(f"Scheduler started | interval={sync_interval}s")
+        # This prevent from quitting the script
+        try:
+            while True:
+                await asyncio.sleep(5)
+        except (KeyboardInterrupt, SystemExit):
+            logger.info("Shutting down scheduler...")
+            scheduler.shutdown()
+            logger.info("Scheduler stopped successfully")
+
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("Shutting down scheduler...")
+        scheduler.shutdown()
+
+async def main():
+    remote_lst_mdf = ensure_datetime_with_tz(datetime.datetime.fromisoformat("2025-12-09 02:01:59+00:00"))
+    local_dlt = ensure_datetime_with_tz(datetime.datetime.fromisoformat("2025-12-08 19:14:08.543000+00:00"))
+    logger.info(f"Remote last modified: {remote_lst_mdf} | Local last deleted: {local_dlt}")
+    if remote_lst_mdf < local_dlt:
+        logger.info("Remote is older")
+    else:
+        logger.info("Local is older")
+
+    await sync()
 
 if __name__ == "__main__":
     asyncio.run(main())

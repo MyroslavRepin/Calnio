@@ -1,5 +1,5 @@
 import asyncio
-import datetime
+from datetime import datetime, timezone
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -90,8 +90,8 @@ class SyncService:
                 event_url=ical_url,
                 db=db
             )
-            parsed_parsed_ical_dataata = await self.repo.parse_ical_full(event_raw)
-            title = parsed_parsed_ical_dataata[0]["title"]
+            parsed_parsed_ical_data = await self.repo.parse_ical_full(event_raw)
+            title = parsed_parsed_ical_data[0]["title"]
 
             # Check if event exists in both CalDAV and Notion
             stmt_caldav = select(CalDavEvent).where(
@@ -138,7 +138,10 @@ class SyncService:
 
         caldav_events = calendar.events()
 
-        db_events = await self.notion_orm.get_all_tasks(user_id=self.user_id)
+        # db_events = await self.notion_orm.get_all_tasks(user_id=self.user_id)
+        local_events_stmt = select(CalDavEvent).where(CalDavEvent.user_id == self.user_id)
+        result = await db.execute(local_events_stmt)
+        caldav_local_events = result.scalars().all()
 
         remote_deleted_events = await self.get_deleted_events_from_caldav(calendar, db)
         # - uid: str - The CalDAV UID of the deleted event
@@ -146,6 +149,8 @@ class SyncService:
 
         await self.caldav_orm.authenticate()
 
+        # Note: This loop is within remote existing events (from CalDav)
+        # Part: A
         for event in caldav_events:
             raw_ical_event = await self.caldav_orm.Event.fetch_ical_event(user_id=self.user_id, calendar=calendar, event_url=event.url, db=db)
 
@@ -157,7 +162,7 @@ class SyncService:
 
             title = parsed_ical_data[0]["title"]
             caldav_event_uid = parsed_ical_data[0]["uid"] + ".ics"
-            remote_last_modified = parsed_ical_data[0].get("last_modified") or parsed_ical_data[0].get("created")
+            remote_last_modified = ensure_datetime_with_tz(parsed_ical_data[0].get("last_modified") or parsed_ical_data[0].get("created"))
 
             logger.info(f"Start syncing event: {title}")
             logger.debug(f"Last modified date: {remote_last_modified}")
@@ -171,15 +176,14 @@ class SyncService:
                 logger.error(f"Error while searching for event: {e}")
                 continue
 
-            logger.debug(f"Looking for event: {caldav_event_uid}")
+            logger.debug(f"Searching for event in ('caldav_events'): {caldav_event_uid}")
             if local_caldav_event:
-                logger.debug(f"Found event: {caldav_event_uid}")
+                logger.debug(f"Event found in ('caldav_events'): {caldav_event_uid}")
             else:
                 logger.debug(f"Event not found in DB: {caldav_event_uid}")
 
-            # Step 1: Creating logic
+            # Step A.1: Creating event
             if event and not local_caldav_event:
-                # Todo: If task does not exist in DB, create it
                 start_time = parsed_ical_data[0]["start"]
                 end_time = parsed_ical_data[0]["end"]
 
@@ -194,7 +198,7 @@ class SyncService:
                         start_time=start_time,
                         end_time=end_time,
                         sync_source="caldav",
-                        last_synced_at=datetime.datetime.now(datetime.timezone.utc)
+                        last_synced_at=datetime.now(timezone.utc)
                     )
                     db.add(new_caldav_event)
                     await db.commit()
@@ -203,26 +207,34 @@ class SyncService:
                     logger.error(f"Error while creating new event: {e}")
                     continue
 
-            # Step 2: Updating logic
+            # Step A.2: Updating existing event
             if local_caldav_event and event:
-                # Step 2.1: If local event is marked deleted, undo delete only when remote last_modified is newer (LWW)
+                # Step A.2.1: If local event is marked deleted, undo delete only when remote last_modified is newer (LWW)
                 if local_caldav_event.deleted:
+                    # Step A.2.1.1: If remote last_modified is newer than local deleted_at, delete event in remote CalDav
                     if remote_last_modified > local_caldav_event.deleted_at:
-                        logger.debug(f"Unmarking event as  deleted: {title}")
+                        logger.debug(f"Event remains deleted locally: {title} because local deleted_at is newer")
+                        # Todo: Delete event in remote CalDav
+                        try:
+                            event.delete()
+                            logger.info(f"Event deleted in remote CalDav: {title}")
+                        except Exception as e:
+                            logger.error(f"Error while deleting event in remote CalDav: {e}")
+                        continue
+                    # Step A.2.1.2: If local deleted_at is newer than remote last_modified, unmark event as deleted in local DB
+                    if local_caldav_event.deleted_at > remote_last_modified:
+                        # Fixme: If event is deleted in local, in next iteration will be unmarked as deleted
+                        logger.debug(f"Unmarking event as deleted: {title} because remote last_modified is newer")
+                        logger.debug(f"Remote last modified: {remote_last_modified} | Local deleted at: {local_caldav_event.deleted_at}")
                         local_caldav_event.deleted = False
                         local_caldav_event.deleted_at = None
                         db.add(local_caldav_event)
                         await db.commit()
                         logger.info(f"Event unmarked as deleted: {title}")
                         continue
-                    # Todo: If event deleted in remote, get timestamp and the make (LWW)
-
-                    if local_caldav_event.caldav_uid in remote_deleted_events:
-                        logger.debug(f"Script will decide if event should be deleted or not: {title}")
-                        # await self.caldav_orm.Event.delete(event)
 
 
-                # Step 2.2: Update local event only if remote last_modified is newer (LWW)
+                # Step A.2.2: Update local event only if remote last_modified is newer (LWW)
                 if remote_last_modified > local_caldav_event.updated_at:
                     logger.debug(f"Updating local event: {title}")
                     try:
@@ -230,18 +242,73 @@ class SyncService:
                         local_caldav_event.description = parsed_ical_data[0]["description"]
                         local_caldav_event.start_time = parsed_ical_data[0]["start"]
                         local_caldav_event.end_time = parsed_ical_data[0]["end"]
-                        local_caldav_event.last_synced_at = datetime.datetime.now(datetime.timezone.utc)
+                        local_caldav_event.last_synced_at = datetime.now(timezone.utc)
                         await db.commit()
                         await db.refresh(local_caldav_event)
                         logger.info(f"Local event updated: {title}")
                     except Exception as e:
                         logger.error(f"Error while updating local event: {e}")
 
-                # Step 2.3: Update remote event only if local last_modified is newer (LWW)
+                # Step A.2.3: Update remote event only if local last_modified is newer (LWW)
                 if local_caldav_event.updated_at > remote_last_modified:
                     local_title = local_caldav_event.title
                     await self.caldav_orm.Event.update(event, title=local_title)
                     logger.debug(f"Updating remote event: {local_title}")
+
+        # Note: This loop is for deleted events in remote CalDav (exists in local)
+        # Part: B
+        for deleted_event in remote_deleted_events:
+            # Step B.1: Trying to find event in DB\
+            logger.info(f"Syncing deletion from CalDav → local | user_id={self.user_id} | uid={deleted_event['uid']}")
+            try:
+                logger.debug(f"Looking for deleted event: {deleted_event['uid']}")
+                stmt = select(CalDavEvent).where(CalDavEvent.user_id == self.user_id, CalDavEvent.caldav_uid == deleted_event["uid"])
+                result = await db.execute(stmt)
+                local_caldav_event = result.scalars().first()
+                logger.debug(f"Found event: {local_caldav_event}")
+            except Exception as e:
+                logger.error(f"Error while searching for event: {e}")
+                continue
+
+            remote_deleted_at_iso = deleted_event["deleted_at"] # needs to be datetime
+            remote_deleted_at = datetime.fromisoformat(remote_deleted_at_iso)
+            local_updated_at = local_caldav_event.updated_at
+            logger.debug(f"Remote deleted at type: {type(remote_deleted_at)}")
+            logger.debug(f"Local deleted at type: {type(local_updated_at)}")
+
+            # Step B.2: LWW
+            # Fixme: My code cant handle when deleted from local: id does nor deleted in remote
+            if remote_deleted_at > local_updated_at:
+                logger.info(f"Marking event as deleted in local DB: {local_caldav_event.title}")
+                local_caldav_event.deleted = True
+                local_caldav_event.deleted_at = remote_deleted_at
+                db.add(local_caldav_event)
+                await db.commit()
+            # Step B.3: If local updated_at is newer than remote deleted_at, delete event in remote CalDav
+            if local_updated_at > remote_deleted_at:
+                logger.info(f"Marking event as deleted in remote CalDav: {local_caldav_event.title}")
+                event = await self.caldav_orm.Event.get(event_url=local_caldav_event.caldav_url)
+                await self.caldav_orm.Event.delete(event)
+
+        # Note: This loop is withing local events
+        # Part: C
+        for local_event in caldav_local_events:
+            # Step C.1: If local event is marked as deleted, ensure it is deleted in remote CalDav
+            if local_event.deleted:
+                try:
+                    # If event is marked as deleted locally, check if it exists remotely
+                    remote_event = await self.caldav_orm.Event.get(calendar=calendar, event_uid=extract_uid(local_event.caldav_url))
+                    if not remote_event:
+                        logger.info(f"Event '{local_event.title}' already deleted remotely.")
+                        continue
+
+                    # If it exists remotely, delete it
+                    await remote_event.delete()
+                    logger.info(f"Deleted event '{local_event.title}' from remote CalDav.")
+
+                except Exception as e:
+                    logger.error(f"Failed to recover deleted event: {e}")
+                    continue
 
     async def get_deleted_events_from_caldav(self, calendar, db: AsyncSession) -> list[dict]:
         """
@@ -257,15 +324,16 @@ class SyncService:
 
         Returns:
             list[dict]: List of deleted events with their details:
-                - uid: str - The CalDAV UID of the deleted event
-                - deleted_at: str - ISO 8601 timestamp when deletion was detected
+                dict[dict]:
+                    - uid: str - The CalDAV UID of the deleted event
+                    - deleted_at: str - ISO 8601 timestamp when deletion was detected
 
         Example:
             deleted = await sync_service.get_deleted_events_from_caldav(calendar, db)
             for event in deleted:
                 logger.info(f"Event UID '{event['uid']}' was deleted at {event['deleted_at']}")
         """
-        logger.info(f"Checking for deleted events for user {self.user_id}")
+        logger.info(f"Scanning for CalDav deleted events | user_id: {self.user_id}, calendar: {calendar.name}")
 
         try:
             # Get all local CalDAV events that are not marked as deleted
@@ -325,7 +393,7 @@ class SyncService:
             deleted_event_uids = set(local_uids.keys()) - remote_uids
 
             # Build the result list with UID and timestamp
-            deleted_at_timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+            deleted_at_timestamp = datetime.now(timezone.utc).isoformat()
             deleted_events = []
 
             for uid in deleted_event_uids:
@@ -371,7 +439,7 @@ class SyncService:
                 deleted_at_str = deleted_event["deleted_at"]
 
                 # Parse the ISO 8601 timestamp
-                deleted_at = datetime.datetime.fromisoformat(deleted_at_str)
+                deleted_at = datetime.fromisoformat(deleted_at_str)
 
                 # Find the local event by UID
                 stmt = select(CalDavEvent).where(
