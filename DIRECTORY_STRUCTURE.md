@@ -65,8 +65,6 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
-├── grafana/
-│   └── datasources.yaml/
 ├── nginx/
 │   └── conf.d/
 ├── scripts/

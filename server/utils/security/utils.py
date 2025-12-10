@@ -1,3 +1,5 @@
+from venv import logger
+
 from fastapi import Response
 from passlib.context import CryptContext
 from fastapi.exceptions import HTTPException
@@ -56,7 +58,7 @@ async def refresh_access_token(request: Request, response: Response) -> dict:
 
         return {"sub": refresh_payload.sub}
     except Exception as e:
-        print(e)
+        logger.error(f"Error refreshing access token: {e}")
         raise HTTPException(
             status_code=401, detail="Invalid refresh token or expired")
 

@@ -15,6 +15,8 @@ from server.utils.redis.utils import save_webhook_data
 
 
 async def listen_to_postgres(channel='my_channel'):
+    from server.app.core.config import Settings
+    # db_url = settings.database_url
     conn = await asyncpg.connect("postgresql://postgres:TxgyMUDOCAXOedvxSoXVsteYpvuprNnt@turntable.proxy.rlwy.net:25860/railway")
     await conn.add_listener(channel, handle_notification)
     logger.info(f"Listening to Postgres channel: {channel}")
