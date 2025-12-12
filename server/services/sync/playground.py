@@ -20,8 +20,8 @@ from server.services.sync.sync_manager import SyncService
 from server.app.core.logging_config import logger
 
 # import pretty_errors
-from rich.traceback import install
-install(show_locals=True)  # Add at startup
+# from rich.traceback import install
+# install(show_locals=True)  # Add at startup
 
 async def test_deleted_events_detection():
     """
@@ -286,7 +286,7 @@ async def manual_sync():
         logger.error(f"Calendar '{calendar_name}' not found!")
         return
     async with async_get_db_cm() as db:
-        await sync_service.sync_user_events(db=db, calendar=calendar)
+        await sync_service.sync_caldav_to_db(db=db, calendar=calendar)
 
 async def sync():
     orm = CalDavORM(user_id=3)
@@ -298,7 +298,7 @@ async def sync():
         logger.error(f"Calendar '{calendar_name}' not found!")
         return
     async with async_get_db_cm() as db:
-        await sync_service.sync_user_events(calendar=calendar, db=db)
+        await sync_service.sync_caldav_to_db(calendar=calendar, db=db)
 
 
 scheduler = AsyncIOScheduler()
@@ -343,4 +343,4 @@ async def main():
     await sync()
 
 if __name__ == "__main__":
-    asyncio.run(scheduler_sync())
+    asyncio.run(manual_sync())
