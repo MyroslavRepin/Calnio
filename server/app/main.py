@@ -5,6 +5,13 @@ import logging
 from loguru import logger
 from dotenv import load_dotenv
 
+from server.db.deps import async_get_db, async_get_db_cm
+from server.utils.security.utils import access_token_required, refresh_access_token, check_if_user_authorized
+from fastapi import Request, Depends
+from fastapi.responses import RedirectResponse, Response
+
+from server.services.crud.users import async_get_by_id
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -196,9 +203,47 @@ app.include_router(add_waitlist_email)
 
 
 class UserAdmin(ModelView, model=user_models.User):
-    column_list = [user_models.User.id, user_models.User.email, user_models.User.username, user_models.User.is_superuser]
+    # column_list = [user_models.User.id, user_models.User.email, user_models.User.username, user_models.User.is_superuser]
+    column_list = "__all__"
 
-admin = Admin(app, async_engine)
+    async def is_accessible(self, request: Request, ) -> bool:
+        if request is None:
+            return False
+
+        try:
+            payload = await access_token_required(request)
+        except HTTPException:
+            return False
+
+        user_id_raw = payload.get("user_id")
+        if user_id_raw is None:
+            return False
+
+        try:
+            user_id = int(user_id_raw)
+        except ValueError:
+            return False
+
+        async with async_get_db_cm() as db:
+            user = await async_get_by_id(db, user_id)
+            if user is None:
+                return False
+
+        return bool(user.is_superuser)
+
+from sqlalchemy.ext.asyncio import async_sessionmaker
+
+async_session_maker = async_sessionmaker(
+    async_engine,
+    expire_on_commit=False,
+)
+
+admin = Admin(
+    app,
+    async_engine,
+    session_maker=async_session_maker,
+)
+# admin = Admin(app, async_engine)
 admin.add_view(UserAdmin)
 
 # APScheduler starting
