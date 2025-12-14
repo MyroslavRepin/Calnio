@@ -41,6 +41,7 @@ Calnio/
 │   │       └── theme-toggle.js
 │   └── templates/
 │       ├── email/
+│       │   ├── first_user_welcome.html
 │       │   └── waitlist_confirmation.html
 │       ├── errors/
 │       │   ├── 400.html

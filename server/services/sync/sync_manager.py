@@ -228,6 +228,7 @@ class SyncService:
                         logger.debug(f"Remote last modified: {remote_last_modified} | Local deleted at: {local_caldav_event.deleted_at}")
                         local_caldav_event.deleted = False
                         local_caldav_event.deleted_at = None
+                        local_caldav_event.updated_at = datetime.now(timezone.utc)
                         db.add(local_caldav_event)
                         await db.commit()
                         logger.info(f"Event unmarked as deleted: {title}")
@@ -243,6 +244,7 @@ class SyncService:
                         local_caldav_event.start_time = parsed_ical_data[0]["start"]
                         local_caldav_event.end_time = parsed_ical_data[0]["end"]
                         local_caldav_event.last_synced_at = datetime.now(timezone.utc)
+                        local_caldav_event.updated_at = datetime.now(timezone.utc)
                         await db.commit()
                         await db.refresh(local_caldav_event)
                         logger.info(f"Local event updated: {title}")
@@ -277,27 +279,24 @@ class SyncService:
             logger.debug(f"Local deleted at type: {type(local_updated_at)}")
 
             # Step B.2: LWW
-            # Fixme: My code cant handle when deleted from local: id does nor deleted in remote
             if remote_deleted_at > local_updated_at:
                 logger.info(f"Marking event as deleted in local DB: {local_caldav_event.title}")
                 local_caldav_event.deleted = True
                 local_caldav_event.deleted_at = remote_deleted_at
                 db.add(local_caldav_event)
                 await db.commit()
-            # Step B.3: If local updated_at is newer than remote deleted_at, delete event in remote CalDav
-            if local_updated_at > remote_deleted_at:
-                logger.info(f"Marking event as deleted in remote CalDav: {local_caldav_event.title}")
-                event = await self.caldav_orm.Event.get(event_url=local_caldav_event.caldav_url)
-                await self.caldav_orm.Event.delete(event)
 
         # Note: This loop is withing local events
-        # Part: C
+        # Part: C - Push local changes to remote CalDav
         for local_event in caldav_local_events:
-            # Step C.1: If local event is marked as deleted, ensure it is deleted in remote CalDav
-            if local_event.deleted:
-                try:
-                    # If event is marked as deleted locally, check if it exists remotely
-                    remote_event = await self.caldav_orm.Event.get(calendar=calendar, event_uid=extract_uid(local_event.caldav_url))
+            event_uid = extract_uid(local_event.caldav_url)
+
+            try:
+                # Try to get the remote event
+                remote_event = await self.caldav_orm.Event.get(calendar=calendar, event_uid=event_uid)
+
+                # Step C.1: If local event is marked as deleted, ensure it is deleted in remote CalDav
+                if local_event.deleted:
                     if not remote_event:
                         logger.info(f"Event '{local_event.title}' already deleted remotely.")
                         continue
@@ -305,10 +304,57 @@ class SyncService:
                     # If it exists remotely, delete it
                     await remote_event.delete()
                     logger.info(f"Deleted event '{local_event.title}' from remote CalDav.")
-
-                except Exception as e:
-                    logger.error(f"Failed to recover deleted event: {e}")
                     continue
+
+                # Step C.2: If local event doesn't exist remotely, create it
+                if not remote_event:
+                    logger.info(f"Creating event '{local_event.title}' in remote CalDav")
+                    try:
+                        await self.caldav_orm.Event.create(
+                            calendar=calendar,
+                            title=local_event.title,
+                            description=local_event.description,
+                            start=local_event.start_time,
+                            end=local_event.end_time,
+                            uid=event_uid
+                        )
+                        logger.info(f"Created event '{local_event.title}' in remote CalDav")
+                    except Exception as e:
+                        logger.error(f"Failed to create event '{local_event.title}' in remote CalDav: {e}")
+                    continue
+
+                # Step C.3: If local event exists remotely, update it if local is newer (LWW)
+                if remote_event:
+                    # Get remote event's last modified time
+                    raw_ical_event = await self.caldav_orm.Event.fetch_ical_event(
+                        user_id=self.user_id,
+                        calendar=calendar,
+                        event_url=remote_event.url,
+                        db=db
+                    )
+                    parsed_ical_data = await self.caldav_orm.Event.parse_ical_full(raw_ical_event)
+                    remote_last_modified = ensure_datetime_with_tz(
+                        parsed_ical_data[0].get("last_modified") or parsed_ical_data[0].get("created")
+                    )
+
+                    # Update remote only if local is newer
+                    if local_event.updated_at > remote_last_modified:
+                        logger.info(f"Updating remote event '{local_event.title}' because local is newer")
+                        try:
+                            await self.caldav_orm.Event.update(
+                                remote_event,
+                                title=local_event.title,
+                                description=local_event.description,
+                                start=local_event.start_time,
+                                end=local_event.end_time
+                            )
+                            logger.info(f"Updated remote event '{local_event.title}'")
+                        except Exception as e:
+                            logger.error(f"Failed to update remote event '{local_event.title}': {e}")
+
+            except Exception as e:
+                logger.error(f"Failed to process local event '{local_event.title}': {e}")
+                continue
 
     async def get_deleted_events_from_caldav(self, calendar, db: AsyncSession) -> list[dict]:
         """
