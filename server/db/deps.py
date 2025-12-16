@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def async_get_db() -> AsyncGenerator[AsyncSession, None]:
-    async with AsyncSessionLocal() as session:
+    async with AsyncSessionLocal(expire_on_commit=False) as session:
         yield session
 
 @asynccontextmanager
 async def async_get_db_cm() -> AsyncSession:
-    async with AsyncSessionLocal() as session:
+    async with AsyncSessionLocal(expire_on_commit=False) as session:
         yield session
 

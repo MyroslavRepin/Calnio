@@ -1,4 +1,5 @@
 Calnio/
+├── calnio/
 ├── certbot/
 │   ├── conf/
 │   └── www/
@@ -66,8 +67,6 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
-├── nginx/
-│   └── conf.d/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -239,6 +238,10 @@ Calnio/
 │   │   ├── exceptions.py
 │   │   └── utils.py
 │   └── __init__.py
+├── services/
+│   └── email/
+│       ├── utils/
+│       └── worker/
 ├── tests/
 │   ├── load/
 │   │   ├── load_test.js

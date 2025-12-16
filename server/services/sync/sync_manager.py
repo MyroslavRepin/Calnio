@@ -209,29 +209,37 @@ class SyncService:
 
             # Step A.2: Updating existing event
             if local_caldav_event and event:
-                # Step A.2.1: If local event is marked deleted, undo delete only when remote last_modified is newer (LWW)
+                # Step A.2: Updating existing event
                 if local_caldav_event.deleted:
-                    # Step A.2.1.1: If remote last_modified is newer than local deleted_at, delete event in remote CalDav
+                    logger.debug(f"[LWW CHECK] Event: {title}")
+                    logger.debug(f"[LWW CHECK] Remote last_modified: {remote_last_modified}")
+                    logger.debug(f"[LWW CHECK] Local deleted_at: {local_caldav_event.deleted_at}")
+                    logger.debug(
+                        f"[LWW CHECK] Comparison: remote > local? {remote_last_modified > local_caldav_event.deleted_at}")
+
+                    # Step A.2.1: If remote last_modified is NEWER → RESTORE locally (remote wins)
                     if remote_last_modified > local_caldav_event.deleted_at:
-                        logger.debug(f"Event remains deleted locally: {title} because local deleted_at is newer")
-                        # Todo: Delete event in remote CalDav
-                        try:
-                            event.delete()
-                            logger.info(f"Event deleted in remote CalDav: {title}")
-                        except Exception as e:
-                            logger.error(f"Error while deleting event in remote CalDav: {e}")
-                        continue
-                    # Step A.2.1.2: If local deleted_at is newer than remote last_modified, unmark event as deleted in local DB
-                    if local_caldav_event.deleted_at > remote_last_modified:
-                        # Fixme: If event is deleted in local, in next iteration will be unmarked as deleted
                         logger.debug(f"Unmarking event as deleted: {title} because remote last_modified is newer")
-                        logger.debug(f"Remote last modified: {remote_last_modified} | Local deleted at: {local_caldav_event.deleted_at}")
+                        logger.debug(
+                            f"Remote last modified: {remote_last_modified} | Local deleted at: {local_caldav_event.deleted_at}")
                         local_caldav_event.deleted = False
                         local_caldav_event.deleted_at = None
                         local_caldav_event.updated_at = datetime.now(timezone.utc)
                         db.add(local_caldav_event)
                         await db.commit()
                         logger.info(f"Event unmarked as deleted: {title}")
+                        continue
+
+                    # Step A.2.2: If local deleted_at is NEWER → DELETE remote (local wins)
+                    if local_caldav_event.deleted_at > remote_last_modified:
+                        logger.debug(f"Event remains deleted locally: {title} because local deleted_at is newer")
+                        logger.debug(
+                            f"Remote last modified: {remote_last_modified} | Local deleted at: {local_caldav_event.deleted_at}")
+                        try:
+                            event.delete()
+                            logger.info(f"Event deleted in remote CalDav: {title}")
+                        except Exception as e:
+                            logger.error(f"Error while deleting event in remote CalDav: {e}")
                         continue
 
 
