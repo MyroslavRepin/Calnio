@@ -3,6 +3,10 @@ Calnio/
 ├── certbot/
 │   ├── conf/
 │   └── www/
+├── deploy/
+│   └── certbot/
+│       ├── conf/
+│       └── www/
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -116,10 +120,8 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── config.py
 │   │   │   └── logging_config.py
-│   │   ├── dops/
 │   │   ├── middleware/
 │   │   │   └── ignore_logging.py
-│   │   ├── routes/
 │   │   ├── schemas/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
@@ -130,7 +132,6 @@ Calnio/
 │   │   ├── main.py
 │   │   ├── main_litestar.py
 │   │   └── version.py
-│   ├── config/
 │   ├── db/
 │   │   ├── models/
 │   │   │   ├── __init__.py
@@ -172,7 +173,6 @@ Calnio/
 │   │   └── ignore_logging.py
 │   ├── services/
 │   │   ├── caldav/
-│   │   │   ├── utils/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_client.py
 │   │   │   ├── caldav_orm.py
@@ -183,6 +183,10 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
 │   │   │   └── users.py
+│   │   ├── email/
+│   │   │   ├── schemas/
+│   │   │   ├── utils/
+│   │   │   └── worker/
 │   │   ├── notion_syncing/
 │   │   │   ├── __init__.py
 │   │   │   ├── notion_integrations.py
@@ -196,6 +200,7 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   └── scheduler_service.py
 │   │   ├── sync/
+│   │   │   ├── utils/
 │   │   │   └── sync_manager.py
 │   │   ├── __init__.py
 │   │   └── postgres_trigger.py
@@ -218,7 +223,6 @@ Calnio/
 │   └── __init__.py
 ├── services/
 │   ├── email/
-│   │   ├── schemas/
 │   │   ├── templates/
 │   │   │   ├── account_created.html
 │   │   │   ├── password_reset.html
@@ -237,11 +241,6 @@ Calnio/
 │   │   ├── Dockerfile
 │   │   └── main.py
 │   ├── sync/
-│   │   ├── server/
-│   │   │   └── app/
-│   │   │       ├── api/
-│   │   │       ├── core/
-│   │   │       └── schemas/
 │   │   └── Dockerfile
 │   └── __init__.py
 ├── tests/
