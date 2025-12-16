@@ -198,8 +198,8 @@ app.include_router(add_waitlist_email)
 class UserAdmin(ModelView, model=user_models.User):
     column_list = [user_models.User.id, user_models.User.email, user_models.User.username, user_models.User.is_superuser]
 
-admin = Admin(app, async_engine)
-admin.add_view(UserAdmin)
+# admin = Admin(app, async_engine)
+# admin.add_view(UserAdmin)
 
 # APScheduler starting
 @app.on_event("startup")
