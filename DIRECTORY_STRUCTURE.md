@@ -90,6 +90,7 @@ Calnio/
 │   │   │   ├── 569210df4a2b_rename_caldav_uid_to_caldav_id.py
 │   │   │   ├── 589f8fa06ba0_update_syncstatus_to_enum_manually.py
 │   │   │   ├── 665c6414c6ba_make_icloud_email_nullable.py
+│   │   │   ├── 6a3972a46c19_added_new_column.py
 │   │   │   ├── 7a35541b1b09_add_default_false_to_deleted_column.py
 │   │   │   ├── 868c1b1fb071_init_fresh_migration.py
 │   │   │   ├── a4ab66b804c6_convert_sync_status_to_postgresql_enum.py
@@ -159,6 +160,8 @@ Calnio/
 │   │   ├── deps.py
 │   │   ├── redis_client.py
 │   │   └── utils.py
+│   ├── deps/
+│   │   └── scheduler_client.py
 │   ├── integrations/
 │   │   ├── notion/
 │   │   │   ├── __init__.py
@@ -218,8 +221,9 @@ Calnio/
 │   │   │   │   └── user_events.py
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_client.py
+│   │   │   ├── main.py
 │   │   │   ├── playground.py
-│   │   │   └── sync_manager.py
+│   │   │   └── sync_service.py
 │   │   └── __init__.py
 │   ├── utils/
 │   │   ├── notion/

@@ -7,6 +7,7 @@ from datetime import time
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
+from server.deps.scheduler_client import get_scheduler
 from server.db.deps import async_get_db_cm
 from server.utils.utils import ensure_datetime_with_tz
 
@@ -16,12 +17,13 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from server.services.sync.utils.caldav_orm import CalDavORM
-from server.services.sync.sync_manager import SyncService
+from server.services.sync.sync_service import SyncService
 from server.app.core.logging_config import logger
+from server.services.sync.main import sync_remote_to_local_for_all_users
 
-# import pretty_errors
-# from rich.traceback import install
-# install(show_locals=True)  # Add at startup
+import pretty_errors
+from rich.traceback import install
+install(show_locals=True)  # Add at startup
 
 async def test_deleted_events_detection():
     """
@@ -79,7 +81,7 @@ async def test_deleted_events_detection():
 
         logger.info(f"\n" + "=" * 60)
         if len(deleted_events) == 0:
-            logger.info("✅ No deleted events found - all local events exist remotely")
+            logger.info("No deleted events found - all local events exist remotely")
             logger.info("=" * 60)
 
             # Show which events are in DB but check their remote status
@@ -301,7 +303,7 @@ async def sync():
         await sync_service.sync_caldav_to_db(calendar=calendar, db=db)
 
 
-scheduler = AsyncIOScheduler()
+scheduler = get_scheduler()
 
 async def scheduler_sync():
     logger.info("Starting Calnio sync scheduler")
@@ -331,16 +333,6 @@ async def scheduler_sync():
         logger.info("Shutting down scheduler...")
         scheduler.shutdown()
 
-async def main():
-    remote_lst_mdf = ensure_datetime_with_tz(datetime.datetime.fromisoformat("2025-12-09 02:01:59+00:00"))
-    local_dlt = ensure_datetime_with_tz(datetime.datetime.fromisoformat("2025-12-08 19:14:08.543000+00:00"))
-    logger.info(f"Remote last modified: {remote_lst_mdf} | Local last deleted: {local_dlt}")
-    if remote_lst_mdf < local_dlt:
-        logger.info("Remote is older")
-    else:
-        logger.info("Local is older")
-
-    await sync()
 
 if __name__ == "__main__":
-    asyncio.run(manual_sync())
+    asyncio.run(sync_remote_to_local_for_all_users())

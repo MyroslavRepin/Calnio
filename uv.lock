@@ -294,6 +294,7 @@ dependencies = [
     { name = "markupsafe" },
     { name = "notion-client" },
     { name = "passlib", extra = ["bcrypt"] },
+    { name = "pretty-errors" },
     { name = "prometheus-client" },
     { name = "prometheus-fastapi-instrumentator" },
     { name = "psycopg" },
@@ -347,6 +348,7 @@ requires-dist = [
     { name = "markupsafe", specifier = "==3.0.2" },
     { name = "notion-client", specifier = ">=2.7.0" },
     { name = "passlib", extras = ["bcrypt"], specifier = "==1.7.4" },
+    { name = "pretty-errors", specifier = ">=1.2.25" },
     { name = "prometheus-client", specifier = ">=0.23.1" },
     { name = "prometheus-fastapi-instrumentator", specifier = ">=7.1.0" },
     { name = "psycopg", specifier = "==3.2.9" },
@@ -1296,6 +1298,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c9/3a/db522ea17e0e8d38f3128889b5b600b3a1d5728ae0724f43a0ed5ed1f82e/polyfactory-3.1.0.tar.gz", hash = "sha256:9061c0a282e0594502576455230fce534f2915042be77715256c1e6bbbf24ac5", size = 344189, upload-time = "2025-11-25T08:10:16.555Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/94/7c/535646d75a1c510065169ea65693613c7a6bc64491bea13e7dad4f028ff3/polyfactory-3.1.0-py3-none-any.whl", hash = "sha256:78171232342c25906d542513c9f00ebf41eadec2c67b498490a577024dd7e867", size = 61836, upload-time = "2025-11-25T08:10:14.893Z" },
+]
+
+[[package]]
+name = "pretty-errors"
+version = "1.2.25"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c8/a7/823f451d48726729b4983072aad7c442f4c02fbaec04b71c1f4c03993964/pretty_errors-1.2.25.tar.gz", hash = "sha256:a16ba5c752c87c263bf92f8b4b58624e3b1e29271a9391f564f12b86e93c6755", size = 20332, upload-time = "2021-11-24T14:32:10.529Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/8e/2df7467a15eae40e26c476683962fdb810cd1b36676603e2f139b4abbeaf/pretty_errors-1.2.25-py3-none-any.whl", hash = "sha256:8ce68ccd99e0f2a099265c8c1f1c23b7c60a15d69bb08816cb336e237d5dc983", size = 17195, upload-time = "2021-11-24T14:32:07.762Z" },
 ]
 
 [[package]]

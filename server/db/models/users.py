@@ -36,3 +36,5 @@ class User(Base):
     #     "UserCalendar", back_populates="user", uselist=True, lazy="selectin")
     caldav_events = relationship(
         "CalDavEvent", back_populates="user", lazy="selectin")
+    
+    caldav_calendar_name: Mapped[Optional[str]] = mapped_column(nullable=True)
