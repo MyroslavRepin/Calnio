@@ -50,7 +50,7 @@ async def sync_remote_to_local_for_all_users():
         )
         logger.info(f"Scheduled sync job for user {user.id}")
     scheduler.start()
-    try:
-        asyncio.get_event_loop().run_forever()
-    except (KeyboardInterrupt, SystemExit):
-        pass
+    # try:
+    #     asyncio.get_event_loop().run_forever()
+    # except (KeyboardInterrupt, SystemExit):
+    #     pass
