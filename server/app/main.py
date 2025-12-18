@@ -188,14 +188,15 @@ app.include_router(add_waitlist_email)
 
 admin = Admin(app, async_engine)
 
-try:
-    logger.info("Setting up admin interface...")
-    admin.add_view(UserAdmin)
-    admin.add_view(WaitlistAdmin)
-    admin.add_view(NotionIntegrationAdmin)
-    logger.info("Admin interface set up successfully.")
-except Exception as e:
-    logger.error(f"Error setting up admin interface: {e}")
+# Fixme: This is security leak
+# try:
+#     logger.info("Setting up admin interface...")
+#     admin.add_view(UserAdmin)
+#     admin.add_view(WaitlistAdmin)
+#     admin.add_view(NotionIntegrationAdmin)
+#     logger.info("Admin interface set up successfully.")
+# except Exception as e:
+#     logger.error(f"Error setting up admin interface: {e}")
 
 # APScheduler starting
 @app.on_event("startup")

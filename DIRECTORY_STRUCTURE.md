@@ -67,8 +67,6 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
-├── nginx/
-│   └── conf.d/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
