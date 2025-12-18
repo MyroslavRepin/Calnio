@@ -79,16 +79,17 @@ async def scheduler_sync():
 
 async def main():
     """Main entry point that keeps the event loop running."""
+    logger.info("Starting scheduler and syncing users...")
     await sync_remote_to_local_for_all_users()
 
+    scheduler = get_scheduler()
     logger.info("Scheduler is running. Press Ctrl+C to stop.")
     try:
         while True:
             await asyncio.sleep(1)
     except (KeyboardInterrupt, SystemExit):
         logger.info("Shutting down scheduler...")
-        scheduler = get_scheduler()
-        scheduler.shutdown()
+        scheduler.shutdown(wait=False)
         logger.info("Scheduler stopped successfully")
 
 

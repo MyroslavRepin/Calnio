@@ -52,6 +52,9 @@ class Settings(BaseSettings):
     port: int
     reload: bool
 
+    # Syncing defaults
+    default_sync_interval_seconds: int
+
 
     @property
     def database_url(self):

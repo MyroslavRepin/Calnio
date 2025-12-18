@@ -67,6 +67,8 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
+├── nginx/
+│   └── conf.d/
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -87,6 +89,7 @@ Calnio/
 │   │   │   ├── 23502f720669_add_default_pending_to_sync_status.py
 │   │   │   ├── 346bc90683e4_merge_heads_after_branch_merge.py
 │   │   │   ├── 4192080716ba_add_calendars_table.py
+│   │   │   ├── 47b95ae4d02f_add_new_column_to_users_table.py
 │   │   │   ├── 569210df4a2b_rename_caldav_uid_to_caldav_id.py
 │   │   │   ├── 589f8fa06ba0_update_syncstatus_to_enum_manually.py
 │   │   │   ├── 665c6414c6ba_make_icloud_email_nullable.py

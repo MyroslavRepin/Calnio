@@ -2,6 +2,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from server.deps.scheduler_client import get_scheduler
 from server.db.deps import async_get_db_cm
 from server.db.models import User
 from server.integrations.notion.notion_client import get_notion_client
@@ -10,7 +11,7 @@ from server.app.core.logging_config import logger
 from server.services.sync.utils.user_calendars import sync_user_calendars
 
 # Scheduler config, can be extended for custom intervals
-scheduler = AsyncIOScheduler()
+scheduler = get_scheduler()
 
 async def sync_service():
     async with async_get_db_cm() as db:

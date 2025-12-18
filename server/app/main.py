@@ -5,6 +5,8 @@ import logging
 from loguru import logger
 from dotenv import load_dotenv
 
+from server.services.sync.main import sync_remote_to_local_for_all_users
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -93,6 +95,7 @@ from server.integrations.notion import pages
 from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.db.tools.postgres_trigger import listen_to_postgres
+from contextlib import asynccontextmanager
 
 # Creating Main App
 app = FastAPI()
@@ -208,6 +211,10 @@ def on_shutdown():
 @app.on_event("startup")
 async def on_startup_async():
     await init_redis()
+    try:
+        await sync_remote_to_local_for_all_users()
+    except Exception as e:
+        logger.error(f"Error starting sync: {e}")
 
 @app.on_event("shutdown")
 async def on_shutdown_async():

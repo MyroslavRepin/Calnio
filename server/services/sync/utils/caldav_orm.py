@@ -89,16 +89,15 @@ class CalDavORM:
             def _get_calendar_by_name():
                 principal = client.principal()
                 calendars = principal.calendars()
-                calendar = None
-                for calendar in calendars:
-                    # logger.debug(calendar.name)
-                    if calendar.name == name:
-                        return calendar
 
-                if calendar is None:
-                    logger.warning(f"Calendar with name {name} not found.")
-                if calendar:
-                    return calendar
+                for cal in calendars:
+                    logger.debug(f"Checking calendar: {cal.name}")
+                    if cal.name == name:
+                        logger.info(f"Found calendar with name: {name}")
+                        return cal
+
+                logger.warning(f"Calendar with name '{name}' not found. Available calendars: {[cal.name for cal in calendars]}")
+                return None
 
             return await asyncio.to_thread(_get_calendar_by_name)
 

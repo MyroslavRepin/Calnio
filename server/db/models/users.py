@@ -3,7 +3,7 @@ from sqlalchemy import Boolean, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import Optional
-
+from sqlalchemy import text
 
 class User(Base):
     __tablename__ = 'users'
@@ -38,3 +38,5 @@ class User(Base):
         "CalDavEvent", back_populates="user", lazy="selectin")
     
     caldav_calendar_name: Mapped[Optional[str]] = mapped_column(nullable=True)
+
+    sync_interval: Mapped[int] = mapped_column(nullable=True)
