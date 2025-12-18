@@ -65,7 +65,8 @@ Calnio/
 │   └── datasources.yaml
 ├── nginx/
 │   └── conf.d/
-│       └── default.conf
+│       ├── calnio.conf
+│       └── default.conf.bak
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -156,6 +157,7 @@ Calnio/
 │   │   ├── deps.py
 │   │   ├── redis_client.py
 │   │   └── utils.py
+│   ├── deps/
 │   ├── integrations/
 │   │   ├── notion/
 │   │   │   ├── __init__.py
