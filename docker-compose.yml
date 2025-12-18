@@ -25,7 +25,7 @@ services:
     networks:
       - calnio_network
     volumes:
-      - ./ngrok.yml:/ngrok.yml
+      - ./deploy/ngrok.yml:/ngrok.yml
     command: start --all --config /ngrok.yml --log=stdout --log-level=info
     restart: always
 
@@ -37,9 +37,9 @@ services:
       - "80:80"
       # - "443:443"  # Uncomment when SSL certificates are obtained
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./certbot/www:/var/www/certbot:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./deploy/certbot/www:/var/www/certbot:ro
+      - ./deploy/certbot/conf:/etc/letsencrypt:ro
     depends_on:
       - calnio
     networks:

@@ -1,0 +1,14 @@
+# ngrok configuration v3
+# Documentation: https://ngrok.com/docs/agent/config/
+
+version: 3
+
+agent:
+  authtoken: 30yfUeunkQtrivsTQb1ZubXStt3_ULkbxYtBYchAUnG9bqtN
+
+endpoints:
+  - name: calnio
+    url: calnio.ngrok.dev
+    upstream:
+      url: calnio:8000
+
