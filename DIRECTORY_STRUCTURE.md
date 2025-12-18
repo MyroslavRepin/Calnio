@@ -4,9 +4,16 @@ Calnio/
 │   ├── conf/
 │   └── www/
 ├── deploy/
-│   └── certbot/
-│       ├── conf/
-│       └── www/
+│   ├── certbot/
+│   │   ├── conf/
+│   │   └── www/
+│   ├── grafana/
+│   │   ├── calnio_litestar_dashboard.json
+│   │   └── datasources.yaml
+│   └── nginx/
+│       └── conf.d/
+│           ├── calnio.conf
+│           └── default.conf.bak
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
@@ -36,6 +43,7 @@ Calnio/
 │   │       └── theme-toggle.js
 │   └── templates/
 │       ├── email/
+│       │   ├── first_user_welcome.html
 │       │   └── waitlist_confirmation.html
 │       ├── errors/
 │       │   ├── 400.html
@@ -60,13 +68,6 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
-├── grafana/
-│   ├── calnio_litestar_dashboard.json
-│   └── datasources.yaml
-├── nginx/
-│   └── conf.d/
-│       ├── calnio.conf
-│       └── default.conf.bak
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
@@ -87,9 +88,11 @@ Calnio/
 │   │   │   ├── 23502f720669_add_default_pending_to_sync_status.py
 │   │   │   ├── 346bc90683e4_merge_heads_after_branch_merge.py
 │   │   │   ├── 4192080716ba_add_calendars_table.py
+│   │   │   ├── 47b95ae4d02f_add_new_column_to_users_table.py
 │   │   │   ├── 569210df4a2b_rename_caldav_uid_to_caldav_id.py
 │   │   │   ├── 589f8fa06ba0_update_syncstatus_to_enum_manually.py
 │   │   │   ├── 665c6414c6ba_make_icloud_email_nullable.py
+│   │   │   ├── 6a3972a46c19_added_new_column.py
 │   │   │   ├── 7a35541b1b09_add_default_false_to_deleted_column.py
 │   │   │   ├── 868c1b1fb071_init_fresh_migration.py
 │   │   │   ├── a4ab66b804c6_convert_sync_status_to_postgresql_enum.py
@@ -121,6 +124,8 @@ Calnio/
 │   │   │   ├── __init__.py
 │   │   │   ├── config.py
 │   │   │   └── logging_config.py
+│   │   ├── deps/
+│   │   │   └── user_deps.py
 │   │   ├── middleware/
 │   │   │   └── ignore_logging.py
 │   │   ├── schemas/
@@ -130,8 +135,8 @@ Calnio/
 │   │   │   ├── users.py
 │   │   │   └── waitlist.py
 │   │   ├── __init__.py
+│   │   ├── admin.py
 │   │   ├── main.py
-│   │   ├── main_litestar.py
 │   │   └── version.py
 │   ├── db/
 │   │   ├── models/
@@ -144,13 +149,13 @@ Calnio/
 │   │   │   ├── users.py
 │   │   │   └── waitlist.py
 │   │   ├── repositories/
-│   │   │   ├── caldav_events.py
 │   │   │   ├── notion_tasks.py
 │   │   │   └── user.py
 │   │   ├── tools/
 │   │   │   ├── __init__.py
 │   │   │   ├── create_all_tables.py
 │   │   │   ├── create_missing_tables.py
+│   │   │   ├── postgres_trigger.py
 │   │   │   └── recreate_tables.py
 │   │   ├── __init__.py
 │   │   ├── database.py
@@ -158,6 +163,7 @@ Calnio/
 │   │   ├── redis_client.py
 │   │   └── utils.py
 │   ├── deps/
+│   │   └── scheduler_client.py
 │   ├── integrations/
 │   │   ├── notion/
 │   │   │   ├── __init__.py
@@ -174,21 +180,29 @@ Calnio/
 │   │   ├── __init__.py
 │   │   └── ignore_logging.py
 │   ├── services/
-│   │   ├── caldav/
-│   │   │   ├── __init__.py
-│   │   │   ├── caldav_client.py
-│   │   │   ├── caldav_orm.py
-│   │   │   ├── playground.py
-│   │   │   ├── user_calendars.py
-│   │   │   └── user_events.py
 │   │   ├── crud/
 │   │   │   ├── __init__.py
 │   │   │   ├── caldav_events.py
 │   │   │   └── users.py
 │   │   ├── email/
 │   │   │   ├── schemas/
+│   │   │   ├── templates/
+│   │   │   │   ├── account_created.html
+│   │   │   │   ├── password_reset.html
+│   │   │   │   ├── product_updates.html
+│   │   │   │   └── requirements.txt
 │   │   │   ├── utils/
-│   │   │   └── worker/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── email_sender.py
+│   │   │   │   └── emails.py
+│   │   │   ├── worker/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── auth.py
+│   │   │   ├──  requirements.txt
+│   │   │   ├── __init__.py
+│   │   │   ├── celery_app.py
+│   │   │   ├── Dockerfile
+│   │   │   └── main.py
 │   │   ├── notion_syncing/
 │   │   │   ├── __init__.py
 │   │   │   ├── notion_integrations.py
@@ -203,9 +217,16 @@ Calnio/
 │   │   │   └── scheduler_service.py
 │   │   ├── sync/
 │   │   │   ├── utils/
-│   │   │   └── sync_manager.py
-│   │   ├── __init__.py
-│   │   └── postgres_trigger.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── caldav_orm.py
+│   │   │   │   ├── user_calendars.py
+│   │   │   │   └── user_events.py
+│   │   │   ├── __init__.py
+│   │   │   ├── caldav_client.py
+│   │   │   ├── main.py
+│   │   │   ├── playground.py
+│   │   │   └── sync_service.py
+│   │   └── __init__.py
 │   ├── utils/
 │   │   ├── notion/
 │   │   │   ├── __init__.py
@@ -224,37 +245,19 @@ Calnio/
 │   │   └── utils.py
 │   └── __init__.py
 ├── services/
-│   ├── email/
-│   │   ├── templates/
-│   │   │   ├── account_created.html
-│   │   │   ├── password_reset.html
-│   │   │   ├── product_updates.html
-│   │   │   └── requirements.txt
-│   │   ├── utils/
-│   │   │   ├── __init__.py
-│   │   │   ├── email_sender.py
-│   │   │   └── emails.py
-│   │   ├── worker/
-│   │   │   ├── __init__.py
-│   │   │   └── auth.py
-│   │   ├──  requirements.txt
-│   │   ├── __init__.py
-│   │   ├── celery_app.py
-│   │   ├── Dockerfile
-│   │   └── main.py
-│   ├── sync/
-│   │   └── Dockerfile
-│   └── __init__.py
+│   └── email/
+│       ├── utils/
+│       └── worker/
 ├── tests/
-│   └── load/
-│       ├── load_test.js
-│       └── playground.js
+│   ├── load/
+│   │   ├── load_test.js
+│   │   └── playground.js
+│   └── web/
+│       ├── http-client.env.json
+│       └── test.http
 ├── .gitignore
 ├── alembic.ini
-├── caldav_events.sql
-├── calnio_backup.dump
 ├── CHANGELOG.md
-├── db_schema.sql
 ├── DIRECTORY_STRUCTURE.md
 ├── docker-compose.yml
 ├── Dockerfile
@@ -263,12 +266,13 @@ Calnio/
 ├── main.py
 ├── manage.py
 ├── ngrok.yml
-├── plan-calnioCompletionRoadmap.prompt.md
 ├── Procfile
 ├── prometheus.yml
 ├── promtail-config.yaml
+├── pyproject.toml
 ├── railway.json
 ├── README.md
 ├── requirements.txt
 ├── robots.txt
-└── START_SERVER.sh
+├── START_SERVER.sh
+└── uv.lock
