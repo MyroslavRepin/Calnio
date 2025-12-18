@@ -36,11 +36,18 @@ async def sync_user_calendars():
                 existing = await db.execute(stmt)
                 existing_calendar = existing.scalar_one_or_none()
 
+                raw_uid = cal.get("uid") or cal.get("event_uid")
+                if not raw_uid:
+                    logger.error(f"Calendar dict has no uid keys: {cal.keys()}")
+                    return  # или continue, если это в цикле
+
+                uid = extract_uid(str(raw_uid))
+
                 if not existing_calendar:
                     logger.info("Adding new calendar")
                     new_calendar = Calendar(
                         user_id=user.id,
-                        uid=extract_uid(str(cal["uid"])),
+                        uid=uid,
                         name=cal.get("name"),
                         url=str(cal.get("url")),
                         color=None
