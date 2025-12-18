@@ -26,6 +26,70 @@ and adheres to [Semantic Versioning](https://semver.org/)
 
 - Anything still broken or limitations users should know -->
 
+## v1.17.0 - 2025-12-17
+
+### Added
+
+- Admin interface for managing users, waitlist entries, and Notion integrations via SQLAdmin (`server/app/admin.py`)
+- CalDav sync scheduler with APScheduler for automatic background synchronization every 5 minutes (`scheduler_service.py`)
+- User sync interval configuration - new `sync_interval` column in users table for per-user sync intervals
+- New `caldav_calendar_name` column in users table for storing preferred calendar name
+- SyncService class for bidirectional CalDav-to-database synchronization with LWW (Last-Write-Wins) conflict resolution strategy (`sync_service.py`)
+- Custom error pages for HTTP status codes: 400, 401, 403, 404, 429, 500, 503 (`frontend/templates/errors/`)
+- Custom exception helpers for raising HTTP errors with proper error page display (`server/utils/exceptions.py`)
+- First user welcome email template (`frontend/templates/email/first_user_welcome.html`)
+- Scheduler client singleton for APScheduler instance management (`server/deps/scheduler_client.py`)
+- User dependencies module placeholder (`server/app/deps/user_deps.py`)
+- HTTP test files for API testing (`tests/web/test.http`, `tests/web/http-client.env.json`)
+- Environment variables for deployment: `HOST`, `PORT`, `RELOAD`, `DEFAULT_SYNC_INTERVAL_SECONDS`
+
+### Changed
+
+- Docker configuration updated to use `uv` package manager instead of pip
+- Entry point changed from `START_SERVER.sh` to `main.py` for container deployment
+- Dockerfile now uses `uv sync --frozen` for dependency installation
+- Email service restructured and moved from `services/email/` to `server/services/email/`
+- CalDav service restructured and moved from `server/services/caldav/` to `server/services/sync/`
+- Email configuration updated to use port 587
+- Switched from `print()` to logging in `refresh_access_token` function
+- User model timestamps (`created_at`, `updated_at`) now use timezone-aware datetime with `server_default=func.now()`
+- Renamed function `sync_user_events` to `sync_caldav_to_db` for clarity
+- Improved async database session management with context manager pattern
+- Deploy configuration files reorganized under `deploy/` directory (grafana, nginx configs)
+- Removed emojis from logging messages across sync operations
+
+### Fixed
+
+- UID extraction from calendar data with proper error logging for missing UID keys
+- Task running in event loop issue resolved
+- Log file path in logging configuration corrected for proper directory structure
+- Path resolution for Jinja2 error pages
+
+### Removed
+
+- Unused Inter and Roboto font files from `frontend/fonts/`
+- Legacy CalDAV tools, templates, and test scripts
+- Unused documentation files (`docs/CELERY_REDIS_DIAGNOSTICS.md`)
+- Old database dumps and SQL files (`calnio_backup.dump`, `db_schema.sql`, `caldav_events.sql`)
+- VSCode settings files (`.vscode/sessions.json`, `.vscode/settings.json`)
+- SSL certificate files (`localhost+2.pem`, `localhost+2-key.pem`)
+- Old log archives
+- `server/app/main_litestar.py`
+- `server/db/repositories/caldav_events.py`
+- `services/__init__.py` and `services/sync/Dockerfile`
+
+### Database / Migrations
+
+- **6a3972a46c19**: Add `caldav_calendar_name` column to users table (nullable string)
+- **47b95ae4d02f**: Add `sync_interval` column to users table (nullable integer)
+
+### Technical Details
+
+- Package management: Project now uses `uv` with `pyproject.toml` and `uv.lock`
+- Scheduler: APScheduler AsyncIOScheduler runs `sync_user_calendars` every 5 minutes
+- Sync strategy: LWW (Last-Write-Wins) for conflict resolution between local and remote events
+
+
 ## v1.16.1 - 2025-10-24
 
 ### Fixed

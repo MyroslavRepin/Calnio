@@ -22,6 +22,19 @@ To start the backend server, use the following command depending on your operati
 
 ---
 
+## Environment Variables
+
+The following environment variables can be configured:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `HOST` | `0.0.0.0` | Server bind address |
+| `PORT` | `8000` | Server port |
+| `RELOAD` | `False` | Enable hot-reload (set to `true` for development) |
+| `DEFAULT_SYNC_INTERVAL_SECONDS` | - | Default sync interval for CalDav synchronization |
+
+---
+
 ## macOS & Linux
 
 **Start normally:**
@@ -53,6 +66,16 @@ START_SERVER.bat
 ```cmd
 START_SERVER.bat --reset
 ```
+
+## Docker
+
+The project uses `uv` for dependency management. To run with Docker:
+
+```bash
+docker-compose up --build
+```
+
+The Docker container uses `main.py` as the entry point and respects `HOST`, `PORT`, and `RELOAD` environment variables.
 
 ## Utils
 
