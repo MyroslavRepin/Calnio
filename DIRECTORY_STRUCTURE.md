@@ -4,9 +4,14 @@ Calnio/
 │   ├── conf/
 │   └── www/
 ├── deploy/
-│   └── certbot/
-│       ├── conf/
-│       └── www/
+│   ├── certbot/
+│   │   ├── conf/
+│   │   └── www/
+│   ├── nginx/
+│   │   └── conf.d/
+│   │       └── calnio.conf
+│   ├── ngrok.yml
+│   └── README.md
 ├── frontend/
 │   ├── assets/
 │   │   ├── apple_calendar_app_logo.png
