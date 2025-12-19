@@ -78,6 +78,8 @@ ACME / Let's Encrypt (HTTP-01, webroot)
 ## Prerequisites
 
 - Python 3.11+
+- Python 3.11+ (local)
+- Docker image Python version: see `Dockerfile` (base image)
 - PostgreSQL 12+
 - Docker & Docker Compose (optional but recommended)
 - ngrok account (optional, for webhook testing in development)
@@ -121,6 +123,16 @@ ACME / Let's Encrypt (HTTP-01, webroot)
 ```bash
 docker compose up -d --build
 ```
+
+# Docker image dependency installs
+
+The Docker image installs Python dependencies using **uv** (not `pip`).
+
+- Dependency manifests: `pyproject.toml` + `uv.lock`
+- Install step in the image: `uv sync --frozen`
+- Runtime command: `uv run uvicorn ...`
+
+If you change dependencies, make sure you update and commit `uv.lock`.
 
 **Start development profile with ngrok (optional):**
 ```bash
@@ -171,20 +183,29 @@ START_SERVER.bat --reset
 
 ### Option 3: Manual Start
 
-```bash
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+ ```bash
+ # Create virtual environment
+ python -m venv .venv
+ source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate
+ 
+ # Install dependencies (recommended: uv)
+ pip install -U uv
+ uv sync
+ 
+ # Run migrations
+ python manage.py upgrade
+ 
+ # Start the server
+ uvicorn server.app.main:app --reload --port 8000
+ ```
 
-# Install dependencies
-pip install -r requirements.txt
+## Recent changes (Docker + deps)
 
-# Run migrations
-python manage.py upgrade
+Over the last few commits, the container build/runtime flow was updated:
 
-# Start the server
-uvicorn server.app.main:app --reload --port 8000
-```
+- Docker now uses **uv** for dependency management.
+- The backend container starts with `uv run uvicorn ...` instead of a hardcoded `uvicorn ...` command.
+- Docker installs dependencies from `pyproject.toml` + `uv.lock` via `uv sync --frozen`.
 
 ## Access the Application
 
