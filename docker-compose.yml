@@ -7,7 +7,8 @@ services:
     volumes:
       - .:/calnio
       - ./logs:/calnio/logs
-    ports: []
+    ports:
+      - "8000:8000"
     expose:
       - "8000"
     networks:
