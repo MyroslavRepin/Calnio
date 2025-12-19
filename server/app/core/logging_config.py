@@ -17,15 +17,7 @@ logger.add(sys.stdout, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <leve
 # LOG_DIR = os.path.join(BASE_DIR, "..", "..", "logs")  # logs рядом с проектом
 # os.makedirs(LOG_DIR, exist_ok=True)
 
-# File - full traceback
-logger.add("./calnio/logs/app_{time:YYYY-MM-DD}.log",
-           rotation="1 day",
-           retention="14 days",
-           compression="zip",
-           format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
-           level="DEBUG",
-           backtrace=True,
-           diagnose=True)
+# Note: path to save logs are located in main.py
 
 # Optionally, set log level here
 logger.level("INFO")

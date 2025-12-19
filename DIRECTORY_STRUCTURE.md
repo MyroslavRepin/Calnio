@@ -1,22 +1,4 @@
 Calnio/
-├── calnio/
-├── certbot/
-│   └── conf/
-│       ├── accounts/
-│       │   └── acme-v02.api.letsencrypt.org/
-│       │       └── directory/
-│       │           └── 39f2b092a86c603bdb9112f9045fa875/
-│       │               ├── meta.json
-│       │               ├── private_key.json
-│       │               └── regr.json
-│       ├── archive/
-│       │   └── calnio.com/
-│       ├── live/
-│       │   ├── calnio.com/
-│       │   │   └── README
-│       │   └── README
-│       └── renewal/
-│           └── calnio.com.conf
 ├── deploy/
 │   ├── certbot/
 │   │   ├── conf/
