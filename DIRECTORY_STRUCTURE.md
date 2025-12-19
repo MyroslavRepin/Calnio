@@ -261,24 +261,17 @@ Calnio/
 │       └── playground.js
 ├── .gitignore
 ├── alembic.ini
-├── caldav_events.sql
-├── calnio_backup.dump
 ├── CHANGELOG.md
-├── db_schema.sql
 ├── DIRECTORY_STRUCTURE.md
 ├── docker-compose.yml
 ├── Dockerfile
 ├── LICENSE
-├── loki-config.yaml
 ├── main.py
 ├── manage.py
 ├── ngrok.yml
-├── plan-calnioCompletionRoadmap.prompt.md
-├── Procfile
-├── prometheus.yml
-├── promtail-config.yaml
-├── railway.json
+├── pyproject.toml
 ├── README.md
 ├── requirements.txt
 ├── robots.txt
-└── START_SERVER.sh
+├── START_SERVER.sh
+└── uv.lock
