@@ -1,15 +1,45 @@
 Calnio/
 ├── calnio/
 ├── certbot/
-│   ├── conf/
-│   └── www/
+│   └── conf/
+│       ├── accounts/
+│       │   └── acme-v02.api.letsencrypt.org/
+│       │       └── directory/
+│       │           └── 39f2b092a86c603bdb9112f9045fa875/
+│       │               ├── meta.json
+│       │               ├── private_key.json
+│       │               └── regr.json
+│       ├── archive/
+│       │   └── calnio.com/
+│       ├── live/
+│       │   ├── calnio.com/
+│       │   │   └── README
+│       │   └── README
+│       └── renewal/
+│           └── calnio.com.conf
 ├── deploy/
 │   ├── certbot/
 │   │   ├── conf/
+│   │   │   ├── accounts/
+│   │   │   │   └── acme-v02.api.letsencrypt.org/
+│   │   │   │       └── directory/
+│   │   │   │           └── 6f0eeed675ab786848bb64d10ec82c89/
+│   │   │   │               ├── meta.json
+│   │   │   │               ├── private_key.json
+│   │   │   │               └── regr.json
+│   │   │   ├── archive/
+│   │   │   │   └── calnio.com/
+│   │   │   ├── live/
+│   │   │   │   ├── calnio.com/
+│   │   │   │   │   └── README
+│   │   │   │   └── README
+│   │   │   └── renewal/
+│   │   │       └── calnio.com.conf
 │   │   └── www/
 │   ├── nginx/
 │   │   └── conf.d/
-│   │       └── calnio.conf
+│   │       ├── calnio.conf
+│   │       └── default.conf
 │   ├── ngrok.yml
 │   └── README.md
 ├── frontend/
@@ -65,13 +95,6 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
-├── grafana/
-│   ├── calnio_litestar_dashboard.json
-│   └── datasources.yaml
-├── nginx/
-│   └── conf.d/
-│       ├── calnio.conf
-│       └── default.conf.bak
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
