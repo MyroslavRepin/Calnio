@@ -1,6 +1,6 @@
 # Calnio
 
-**Version:** 1.16.1  
+**Version:** 1.17.1  
 **License:** See [LICENSE](LICENSE)
 
 ## About the Project
@@ -17,7 +17,9 @@ Calnio is a professional service for **bidirectional synchronization** of tasks 
 - **Notion Integration:** Official notion_client SDK
 - **Monitoring:** Prometheus metrics and custom logging with Loguru
 - **Containerization:** Docker & Docker Compose
-- **Port Forwarding:** ngrok for remote access
+- **Reverse Proxy:** nginx
+- **TLS Certificates:** certbot (Let's Encrypt)
+- **Port Forwarding (dev-only):** ngrok
 
 ### Key Features
 
@@ -33,22 +35,41 @@ Calnio is a professional service for **bidirectional synchronization** of tasks 
 ### Architecture Overview
 
 ```
-┌─────────────┐         ┌──────────────┐         ┌─────────────┐
-│   Notion    │◄───────►│    Calnio    │◄───────►│    CalDAV   │
-│     API     │ Webhooks│   Backend    │  Sync   │   (Apple)   │
-└─────────────┘         └──────────────┘         └─────────────┘
-                              │
-                              ▼
-                        ┌──────────────┐
-                        │  PostgreSQL  │
-                        │   Database   │
-                        └──────────────┘
++------------------------------+
+| Cloudflare (orange cloud)    |
+| DNS + Proxy + WAF            |
++--------------+---------------+
+               |
+               | HTTPS (443)
+               v
++--------------+---------------+
+| Origin: nginx                |
+|  - :80  serves ACME challenge|
+|  - :443 TLS termination      |
+|  - reverse proxy -> backend  |
++--------------+---------------+
+               |
+               | HTTP (Docker network)
+               v
++--------------+---------------+
+| Calnio backend (FastAPI)     |
+|  - listens on :8000          |
++--------------+---------------+
+               |
+               v
++------------------------------+
+| Redis / Postgres / etc.      |
++------------------------------+
+
+ACME / Let's Encrypt (HTTP-01, webroot)
+  certbot -> writes challenge files into ./deploy/certbot/www
+  nginx   -> serves /.well-known/acme-challenge/ from /var/www/certbot
+  certbot -> stores certs into ./deploy/certbot/conf (mounted into nginx)
 ```
 
-- **Notion Webhooks** trigger immediate sync when tasks are updated
-- **Background Scheduler** performs periodic CalDAV → Database → Notion sync
-- **Database** serves as the source of truth for conflict resolution
-- **ngrok** exposes local development environment for webhook testing
+- **Cloudflare** proxies user traffic to your origin server (nginx)
+- **nginx** terminates TLS (Let's Encrypt certs) and proxies requests to the backend (`calnio:8000`)
+- **certbot** issues and renews certificates via HTTP-01 challenge served by nginx
 
 ---
 
@@ -59,7 +80,7 @@ Calnio is a professional service for **bidirectional synchronization** of tasks 
 - Python 3.11+
 - PostgreSQL 12+
 - Docker & Docker Compose (optional but recommended)
-- ngrok account (for webhook integrations)
+- ngrok account (optional, for webhook testing in development)
 
 ## Environment Setup
 
@@ -96,23 +117,31 @@ Calnio is a professional service for **bidirectional synchronization** of tasks 
 
 ### Option 1: Docker Compose (Recommended)
 
-**Start all services:**
+**Start core services (backend + nginx + certbot + redis):**
 ```bash
-docker-compose up -d
+docker compose up -d --build
+```
+
+**Start development profile with ngrok (optional):**
+```bash
+docker compose --profile dev up -d --build
 ```
 
 This will start:
-- Calnio backend (port 8000)
-- ngrok tunnel (exposes backend to internet)
+- Calnio backend (internal port 8000, not exposed publicly)
+- nginx (ports 80/443)
+- certbot (auto-renew loop)
+- redis
+- ngrok (only with `--profile dev`)
 
 **View logs:**
 ```bash
-docker-compose logs -f calnio
+docker compose logs -f nginx
 ```
 
 **Stop services:**
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Option 2: Local Development
@@ -159,11 +188,10 @@ uvicorn server.app.main:app --reload --port 8000
 
 ## Access the Application
 
-- **API:** http://localhost:8000
-- **API Documentation:** http://localhost:8000/schema
-- **Health Check:** http://localhost:8000/health
-- **Metrics:** http://localhost:8000/metrics
-- **Public URL (via ngrok):** https://calnio.ngrok.dev
+- **API (via nginx):** http://localhost/
+- **API Documentation:** http://localhost/schema
+- **Health Check (nginx):** http://localhost/health
+- **Backend direct (internal):** the container listens on port 8000 inside the Docker network
 
 ## Development Utilities
 
@@ -344,7 +372,7 @@ ngrok start --all --config ngrok.yml
 Or use Docker Compose (recommended):
 
 ```bash
-docker-compose up ngrok
+docker compose --profile dev up -d ngrok
 ```
 
 ### 4. Access Your Backend
@@ -427,7 +455,7 @@ For production deployment, ensure:
 
 ```bash
 docker build -t calnio:latest .
-docker-compose -f docker-compose.yml up -d
+docker compose up -d --build
 ```
 
 ## Health Checks
@@ -558,6 +586,4 @@ This project is licensed under the terms specified in the [LICENSE](LICENSE) fil
 
 ---
 
-**Current Version:** 1.16.1  
-**Last Updated:** November 2025  
-**Maintained by:** Myroslav Repin and contributors
+**Current Version:** 1.17.1

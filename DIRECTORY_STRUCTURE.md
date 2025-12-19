@@ -1,8 +1,40 @@
 Calnio/
 ├── calnio/
+├── certbot/
+│   └── conf/
+│       ├── accounts/
+│       │   └── acme-v02.api.letsencrypt.org/
+│       │       └── directory/
+│       │           └── 39f2b092a86c603bdb9112f9045fa875/
+│       │               ├── meta.json
+│       │               ├── private_key.json
+│       │               └── regr.json
+│       ├── archive/
+│       │   └── calnio.com/
+│       ├── live/
+│       │   ├── calnio.com/
+│       │   │   └── README
+│       │   └── README
+│       └── renewal/
+│           └── calnio.com.conf
 ├── deploy/
 │   ├── certbot/
 │   │   ├── conf/
+│   │   │   ├── accounts/
+│   │   │   │   └── acme-v02.api.letsencrypt.org/
+│   │   │   │       └── directory/
+│   │   │   │           └── 6f0eeed675ab786848bb64d10ec82c89/
+│   │   │   │               ├── meta.json
+│   │   │   │               ├── private_key.json
+│   │   │   │               └── regr.json
+│   │   │   ├── archive/
+│   │   │   │   └── calnio.com/
+│   │   │   ├── live/
+│   │   │   │   ├── calnio.com/
+│   │   │   │   │   └── README
+│   │   │   │   └── README
+│   │   │   └── renewal/
+│   │   │       └── calnio.com.conf
 │   │   └── www/
 │   ├── nginx/
 │   │   └── conf.d/
