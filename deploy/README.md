@@ -8,51 +8,73 @@ This directory contains all deployment-related configuration files.
 deploy/
 ├── nginx/
 │   └── conf.d/
-│       └── calnio.conf    # Nginx reverse proxy configuration
+│       └── calnio.conf    # Nginx reverse proxy + HTTPS (Let's Encrypt)
 ├── certbot/
 │   ├── conf/              # Let's Encrypt certificates (auto-generated)
-│   └── www/               # ACME challenge files
-└── ngrok.yml              # ngrok tunnel configuration
+│   └── www/               # ACME challenge files (webroot)
+└── ngrok.yml              # ngrok tunnel configuration (dev only)
 ```
 
 ## Nginx Configuration
 
 The `nginx/conf.d/calnio.conf` file configures:
-- Reverse proxy from port 80 to calnio backend on port 8000
+- HTTP (80) for ACME challenge and redirect to HTTPS
+- HTTPS (443) termination using Let’s Encrypt certificates
+- Reverse proxy to `calnio:8000`
 - WebSocket support
-- Proper proxy headers (Host, X-Real-IP, X-Forwarded-For, X-Forwarded-Proto)
-- Let's Encrypt ACME challenge location for future HTTPS setup
+- Cloudflare real IP support (`CF-Connecting-IP`)
 
-## SSL Certificates (TODO)
+## SSL Certificates (Let’s Encrypt)
 
-To enable HTTPS:
+This repo uses **certbot webroot (HTTP-01)**.
 
-1. Uncomment port 443 in docker-compose.yml
-2. Run certbot to obtain certificates:
-   ```bash
-   docker run -it --rm \
-     -v ./deploy/certbot/conf:/etc/letsencrypt \
-     -v ./deploy/certbot/www:/var/www/certbot \
-     certbot/certbot certonly --webroot \
-     -w /var/www/certbot \
-     -d calnio.com -d www.calnio.com
-   ```
-3. Uncomment the HTTPS server block in `nginx/conf.d/calnio.conf`
-4. Restart nginx: `docker compose restart nginx`
+### 1) Start services (nginx must be reachable on port 80)
 
-## ngrok Configuration
+```bash
+docker compose up -d --build nginx calnio redis
+```
+
+### 2) Issue the initial certificate (run once)
+
+```bash
+docker compose run --rm certbot certonly \
+  --webroot -w /var/www/certbot \
+  -d calnio.com -d www.calnio.com \
+  --agree-tos --email you@example.com --no-eff-email
+```
+
+### 3) Reload nginx
+
+```bash
+docker compose restart nginx
+```
+
+### Auto-renew
+
+The `certbot` service runs `certbot renew` every 12 hours.
+
+## Cloudflare settings
+
+Recommended:
+- **SSL/TLS mode:** Full (strict)
+- Make sure ports **80** and **443** are open on the origin server.
+
+## ngrok Configuration (dev only)
 
 The `ngrok.yml` file is used for development/testing tunnels.
 It creates a tunnel from `calnio.ngrok.dev` to the calnio backend.
+
+Run it with Compose profile:
+
+```bash
+docker compose --profile dev up -d ngrok
+```
 
 ## Deployment Commands
 
 ```bash
 # Verify nginx config exists
 ls -la ./deploy/nginx/conf.d
-
-# Restart nginx with new config
-docker compose up -d --force-recreate nginx
 
 # Test nginx configuration
 docker compose exec nginx nginx -t
@@ -78,3 +100,6 @@ curl -H "Host: calnio.com" -v http://127.0.0.1/
 **Cause:** Backend service (calnio) is not running or not reachable.
 **Solution:** Check `docker compose logs calnio` and ensure the service is healthy.
 
+**Problem:** Certificate issuance fails behind Cloudflare
+**Cause:** Cloudflare proxy/WAF can interfere with HTTP-01 challenge in some setups.
+**Solution:** Temporarily switch to DNS-only (grey cloud) during issuance, or use DNS-01.
