@@ -7,8 +7,9 @@ services:
     volumes:
       - .:/calnio
       - ./logs:/calnio/logs
-    ports:
-     - "8000:8000"
+    ports: []
+    expose:
+      - "8000"
     networks:
       - calnio_network
     logging:
@@ -28,6 +29,7 @@ services:
       - ./deploy/ngrok.yml:/ngrok.yml
     command: start --all --config /ngrok.yml --log=stdout --log-level=info
     restart: always
+    profiles: ["dev"]
 
   nginx:
     image: nginx:latest
@@ -35,7 +37,7 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-      # - "443:443"  # Uncomment when SSL certificates are obtained
+      - "443:443"
     volumes:
       - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
       - ./deploy/certbot/www:/var/www/certbot:ro
@@ -45,71 +47,24 @@ services:
     networks:
       - calnio_network
 
-  # Metrics
-  litestar:
-    build: .
-    container_name: litestar
-    command: uvicorn server.app.main_litestar:app --host 0.0.0.0 --port 8010
-    ports:
-      - "8010:8010"
-
-  promtail:
-    image: grafana/promtail:latest
-    container_name: promtail
-    ports:
-      - "9080:9080"
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    restart: unless-stopped
     volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./promtail-config.yaml:/etc/promtail/config.yml
-      - ./logs:/var/log/calnio:ro
-    command: -config.file=/etc/promtail/config.yml
-    privileged: true
-    deploy:
-      resources:
-        limits:
-          memory: 100M
-          cpus: "0.1"
-
-  loki:
-    image: grafana/loki:latest
-    container_name: loki
-    ports:
-      - "3100:3100"
-    volumes:
-      - ./loki-config.yaml:/etc/loki/local-config.yaml
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheusdata:/prometheus
-    deploy:
-      resources:
-        limits:
-          memory: 150M
-          cpus: "0.2"
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    volumes:
-      - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      - grafanadata:/var/lib/grafana
-
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-          cpus: "0.25"
+      - ./deploy/certbot/www:/var/www/certbot
+      - ./deploy/certbot/conf:/etc/letsencrypt
+    entrypoint: "/bin/sh -c"
+    command: |
+      trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /var/www/certbot --quiet;
+        sleep 12h;
+      done
+    depends_on:
+      - nginx
+    networks:
+      - calnio_network
 
   # Cache / Workers
   redis:
@@ -120,42 +75,6 @@ services:
     networks:
       - calnio_network
 
-#  celery_worker:
-#    build: .
-#    container_name: celery
-#    command: celery -A services.email.celery_app worker --loglevel=info
-#    depends_on:
-#      - redis
-#    networks:
-#      - calnio_network
-#    volumes:
-#      - .:/calnio
-#      - ./logs:/calnio/logs
-#    environment:
-#      - REDIS_HOST=redis
-#      - REDIS_PORT=6379
-#      - REDIS_DB_BROKER=0
-#      - REDIS_DB_BACKEND=1
-
-#  email_worker:
-#    build:
-#      context: ./services/email
-#    container_name: email_worker
-#    command: celery -A celery_app worker --loglevel=info
-#    depends_on:
-#      - redis
-#    networks:
-#      - calnio_network
-#    environment:
-#      - REDIS_HOST=redis
-#      - REDIS_PORT=6379
-#      - REDIS_DB_BROKER=0
-#      - REDIS_DB_BACKEND=1
-
-# Volumes
-volumes:
-  grafanadata:
-  prometheusdata:
 
 # Networks
 networks:
