@@ -1,15 +1,13 @@
 Calnio/
 ├── calnio/
-├── certbot/
-│   ├── conf/
-│   └── www/
 ├── deploy/
 │   ├── certbot/
 │   │   ├── conf/
 │   │   └── www/
 │   ├── nginx/
 │   │   └── conf.d/
-│   │       └── calnio.conf
+│   │       ├── calnio.conf
+│   │       └── default.conf
 │   ├── ngrok.yml
 │   └── README.md
 ├── frontend/
@@ -65,13 +63,6 @@ Calnio/
 │           ├── tasks.html
 │           ├── users.html
 │           └── waitlist.html
-├── grafana/
-│   ├── calnio_litestar_dashboard.json
-│   └── datasources.yaml
-├── nginx/
-│   └── conf.d/
-│       ├── calnio.conf
-│       └── default.conf.bak
 ├── scripts/
 │   ├── apscheduler_test.py
 │   ├── caldav_crud_demo.py
