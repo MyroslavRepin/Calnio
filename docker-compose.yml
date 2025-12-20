@@ -7,6 +7,7 @@ services:
     volumes:
       - .:/calnio
       - ./logs:/calnio/logs
+      - calnio_venv:/calnio/.venv
     ports:
       - "8000:8000"
     expose:
@@ -29,7 +30,7 @@ services:
     volumes:
       - ./deploy/ngrok.yml:/ngrok.yml
     command: start --all --config /ngrok.yml --log=stdout --log-level=info
-    restart: always
+    restart: unless-stopped
     profiles: ["dev"]
 
   nginx:
@@ -81,3 +82,6 @@ services:
 networks:
   calnio_network:
     driver: bridge
+
+volumes:
+  calnio_venv:
