@@ -118,10 +118,13 @@ Calnio/
 │   │   │   ├── errors/
 │   │   │   │   ├── __init__.py
 │   │   │   │   └── error_404.py
+│   │   │   ├── v1/
+│   │   │   │   └── sync_control.py
 │   │   │   ├── webhooks/
 │   │   │   │   └── notion_webhooks.py
 │   │   │   ├── __init__.py
 │   │   │   ├── add_waitlist.py
+│   │   │   ├── admin.py
 │   │   │   ├── auth.py
 │   │   │   ├── brutalist.py
 │   │   │   ├── dashboard.py
@@ -141,7 +144,6 @@ Calnio/
 │   │   │   └── waitlist.py
 │   │   ├── __init__.py
 │   │   ├── main.py
-│   │   ├── main_litestar.py
 │   │   └── version.py
 │   ├── db/
 │   │   ├── models/
@@ -213,6 +215,7 @@ Calnio/
 │   │   │   └── scheduler_service.py
 │   │   ├── sync/
 │   │   │   ├── utils/
+│   │   │   │   └── sync_users.py
 │   │   │   └── sync_manager.py
 │   │   ├── __init__.py
 │   │   └── postgres_trigger.py
@@ -256,9 +259,10 @@ Calnio/
 │   │   └── Dockerfile
 │   └── __init__.py
 ├── tests/
-│   └── load/
-│       ├── load_test.js
-│       └── playground.js
+│   ├── load/
+│   │   ├── load_test.js
+│   │   └── playground.js
+│   └── test_admin_access.py
 ├── .gitignore
 ├── alembic.ini
 ├── CHANGELOG.md

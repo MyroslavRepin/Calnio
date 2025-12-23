@@ -5,6 +5,8 @@ import logging
 from loguru import logger
 from dotenv import load_dotenv
 
+from server.services.sync.sync_manager import SyncService
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -101,6 +103,7 @@ from server.integrations.oauth.notion import notion_callback
 from server.middleware.ignore_logging import IgnoreSpecificPathsMiddleware
 from server.services.postgres_trigger import listen_to_postgres
 from server.services.caldav.user_calendars import sync_user_calendars
+from server.app.api.admin import router as admin_router
 
 # Creating Main App
 app = FastAPI()
@@ -192,6 +195,7 @@ app.include_router(error_404.router)
 app.include_router(pages.router)
 app.include_router(notion_webhook_router)
 app.include_router(add_waitlist_email)
+app.include_router(admin_router)
 
 
 
@@ -210,7 +214,6 @@ def on_startup():
 @app.on_event("shutdown")
 def on_shutdown():
     shutdown_scheduler()
-
 
 @app.on_event("startup")
 async def on_startup_async():
