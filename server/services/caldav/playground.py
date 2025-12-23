@@ -42,4 +42,5 @@ async def main():
         # await sync_service.sync_caldav_to_db(user_id=7, calendar_name="Personal", db=db)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    from server.services.scheduler.scheduler_service import sync_caldav_to_db_for_all_users
+    asyncio.run(sync_caldav_to_db_for_all_users())

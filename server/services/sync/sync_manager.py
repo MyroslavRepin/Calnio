@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import or_
 
 from server.db.deps import async_get_db_cm
 from server.db.models import UserNotionTask
@@ -61,30 +62,78 @@ class SyncService:
                 logger.info(f"Task with title: {task.title} does not exist in CalDav")
 
     async def sync_caldav_to_db(self, user_id: int, calendar_name: str, db: AsyncSession):
+        """
+        Synchronizes events from a CalDAV calendar to a database, maintaining consistency between
+        CalDAV and Notion systems. Handles event creation, updates, and conflict resolution based
+        on modification timestamps.
+
+        Attributes:
+            caldav_orm: CalDAV ORM instance for handling CalDAV operations.
+            repo: Repository for fetching and parsing iCal event data.
+
+        Parameters:
+            user_id (int): The ID of the user whose calendar events should be synchronized.
+            calendar_name (str): The name of the CalDAV calendar to synchronize.
+            db (AsyncSession): The asynchronous database session used for database operations.
+
+        Raises:
+            Exception: General exception for unhandled cases during iCal parsing or database operations.
+        """
         await self.caldav_orm.authenticate()
         calendar = await self.caldav_orm.Calendar.get_by_name(calendar_name)
         events = await self.caldav_orm.Event.all(calendar_uid=extract_uid(calendar.id))
+        native_events = calendar.events()
+
+        logger.debug(f"Calendar: {calendar}")
+        logger.debug(f"Events via orm: {events}")
+        logger.debug(f"Events via native: {native_events}")
 
         deleted_events = await self.caldav_orm.Event.get_deleted_events(calendar=calendar, db=db, user_id=user_id)
 
         for event in events:
-            event_uid = extract_uid(event.url)
+            parsed_uid = (parsed_data := None)
             ical_url = str(event.url).strip()
 
-            # Get RAW event datas
-            event_raw = await self.repo.fetch_ical_event(
-                user_id=user_id,
-                calendar=calendar,
-                event_url=ical_url,
-                db=db
-            )
-            parsed_data = await self.repo.parse_ical_full(event_raw)
+            # Hydrate event UID even when CalDAV client omitted it from the list response
+            if event and getattr(event, "uid", None):
+                parsed_uid = str(event.uid).strip()
+
+            if not parsed_uid:
+                # Parse UID directly from the ICS payload (most reliable)
+                event_raw = await self.repo.fetch_ical_event(
+                    user_id=user_id,
+                    calendar=calendar,
+                    event_url=ical_url,
+                    db=db
+                )
+                parsed_data = await self.repo.parse_ical_full(event_raw)
+                parsed_uid = parsed_data[0].get("uid") if parsed_data else None
+
+            event_uid = (parsed_uid or extract_uid(event.url) or "").strip()
+            if event_uid.lower() == "none":
+                event_uid = ""
+            if not event_uid:
+                logger.warning("Skipping event at %s: UID missing in CalDAV payload", ical_url)
+                continue
+
+            if parsed_data is None:
+                # Get RAW event datas only once when UID already resolved
+                event_raw = await self.repo.fetch_ical_event(
+                    user_id=user_id,
+                    calendar=calendar,
+                    event_url=ical_url,
+                    db=db
+                )
+                parsed_data = await self.repo.parse_ical_full(event_raw)
             title = parsed_data[0]["title"]
 
             # Check if event exists in both CalDAV and Notion
             stmt_caldav = select(CalDavEvent).where(
                 CalDavEvent.user_id == user_id,
-                CalDavEvent.caldav_uid == event_uid
+                or_(
+                    CalDavEvent.caldav_uid == event_uid,
+                    CalDavEvent.caldav_url == ical_url
+                )
             )
             existing_caldav_event = (await db.execute(stmt_caldav)).scalars().first()
 
@@ -142,14 +191,7 @@ class SyncService:
                 if notion_updated_at is None:
                     notion_updated_at = ensure_datetime_with_tz(existing_notion_event.created_at)
 
-            # logger.debug(
-            #     "Sync debug: existing_caldav=%s, existing_notion=%s, last_modified_caldav=%s, notion_updated_at=%s, UID=%s",
-            #     bool(existing_caldav_event), bool(existing_notion_event),
-            #     last_modified_caldav, notion_updated_at, event_uid
-            # )
 
-
-            # Todo: Add functional to delete events from Notion if they are deleted in CalDAV
             if existing_caldav_event and existing_notion_event and last_modified_caldav and notion_updated_at:
 
                 # =======================
