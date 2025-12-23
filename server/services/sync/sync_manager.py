@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import or_, select
@@ -44,8 +44,7 @@ class SyncService:
         
         # If still None, use current UTC time as fallback
         if timestamp is None:
-            from datetime import timezone as dt_timezone
-            timestamp = datetime.now(dt_timezone.utc)
+            timestamp = datetime.now(timezone.utc)
             logger.warning(f"No timestamp found for record, using current UTC time: {timestamp}")
         
         return timestamp
@@ -114,8 +113,6 @@ class SyncService:
             RuntimeError: If CalDAV client authentication fails
             Exception: For network timeouts or critical parsing errors
         """
-        from datetime import timezone as dt_timezone
-        
         try:
             # Authenticate with CalDAV server
             logger.info(f"Starting two-way sync for user {user_id}, calendar '{calendar_name}'")
@@ -235,7 +232,7 @@ class SyncService:
                     
                     if not remote_timestamp:
                         logger.warning(f"LWW: Event {event_uid} has no timestamp, using current UTC time")
-                        remote_timestamp = datetime.now(dt_timezone.utc)
+                        remote_timestamp = datetime.now(timezone.utc)
                     
                     # Check if event exists locally
                     existing_local = local_events_by_uid.get(event_uid)
@@ -435,7 +432,7 @@ class SyncService:
                                 
                                 # Apply LWW: if remote deletion is "newer" than local changes
                                 # For deletions, we consider the deletion as happening "now"
-                                deletion_timestamp = datetime.now(dt_timezone.utc)
+                                deletion_timestamp = datetime.now(timezone.utc)
                                 
                                 if deletion_timestamp > local_timestamp:
                                     logger.info(f"LWW: Remote deletion is newer, marking local event {local_event.caldav_uid} as deleted")
