@@ -396,7 +396,8 @@ class CalDavORM:
                         cal = ICalCalendar.from_ical(ics)
                         for comp in cal.walk():
                             if comp.name == "VEVENT":
-                                uid = str(comp.get("event_uid"))
+                                uid = comp.get("uid") or comp.get("UID")
+                                uid = str(uid) if uid is not None else None
                                 url = getattr(ev, "url", None) or getattr(ev, "href", None)
                                 title = str(comp.get("summary")) if comp.get("summary") else None
                                 start = comp.get("dtstart").dt if comp.get("dtstart") else None
@@ -553,3 +554,4 @@ class CalDavORM:
                 "local": deleted_events_local,
             }
             return deleted_events_total
+
