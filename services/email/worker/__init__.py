@@ -1,2 +1,0 @@
-# Email worker package
-

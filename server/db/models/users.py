@@ -21,16 +21,7 @@ class User(Base):
 
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-
-    notion_integration = relationship(
-        "UserNotionIntegration", back_populates="user", uselist=False, lazy="selectin")
-
-    notion_tasks = relationship(
-        "UserNotionTask", back_populates="user", lazy="selectin")
-
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
     active_sync: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    # calendars = relationship(
-    #     "UserCalendar", back_populates="user", uselist=True, lazy="selectin")
-    caldav_events = relationship(
-        "CalDavEvent", back_populates="user", lazy="selectin")
+

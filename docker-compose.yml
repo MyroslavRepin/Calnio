@@ -1,72 +1,27 @@
 services:
   # Main server
-  calnio:
+  calnio_backend:
     image: calnio:latest
-    container_name: calnio
+    container_name: calnio_backend
     build: .
+    environment:
+      DB_URL_FULL: "${DATABASE_URL_PROD}"
+      JWT_TOKEN_LOCATION: '["cookies"]'
+      CLOUDFLARED_TUNNEL_TOKEN: "placeholder_token"
+      CLOUDFLARED_TUNNEL_NAME: "placeholder_tunnel"
     volumes:
       - .:/calnio
-      - ./logs:/calnio/logs
       - calnio_venv:/calnio/.venv
     ports:
-      - "8000:8000"
+      - "8080:8080"
     expose:
-      - "8000"
+      - "8080"
     networks:
       - calnio_network
     logging:
       driver: json-file
       options:
         tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
-
-  # Port forwarding
-  ngrok:
-    image: ngrok/ngrok:latest
-    container_name: "ngrok"
-    depends_on:
-      - calnio
-    networks:
-      - calnio_network
-    volumes:
-      - ./deploy/ngrok.yml:/ngrok.yml
-    command: start --all --config /ngrok.yml --log=stdout --log-level=info
-    restart: unless-stopped
-    profiles: ["dev"]
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./deploy/certbot/www:/var/www/certbot:ro
-      - ./deploy/certbot/conf:/etc/letsencrypt:ro
-    depends_on:
-      - calnio
-    networks:
-      - calnio_network
-
-  certbot:
-    image: certbot/certbot:latest
-    container_name: certbot
-    restart: unless-stopped
-    volumes:
-      - ./deploy/certbot/www:/var/www/certbot
-      - ./deploy/certbot/conf:/etc/letsencrypt
-    entrypoint: "/bin/sh -c"
-    command: |
-      trap exit TERM;
-      while :; do
-        certbot renew --webroot -w /var/www/certbot --quiet;
-        sleep 12h;
-      done
-    depends_on:
-      - nginx
-    networks:
-      - calnio_network
 
   # Cache / Workers
   redis:

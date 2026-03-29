@@ -7,3 +7,4 @@ settings.json
 server/alembic/versions/__pycache__/
 logs/
 test_brutalist_server.py
+node_modules

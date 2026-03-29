@@ -11,18 +11,6 @@ RUN uv sync --frozen
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8080
 
-#CMD [
-#    "uvicorn",
-#    "server.app.main:app",
-#    "--host", "0.0.0.0",
-#    "--port", "8000",
-#    "--log-level",
-#    "debug",
-#    "--reload",
-#    "--timeout-keep-alive",
-#    "60"
-#] Old hardcoded command
-
-CMD ["uv", "run", "uvicorn", "server.app.main:app", "--app-dir", "/calnio", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "uvicorn", "server.main:app", "--app-dir", "/calnio", "--host", "0.0.0.0", "--port", "8080", "--reload", "--reload-dir", "/calnio/server"]

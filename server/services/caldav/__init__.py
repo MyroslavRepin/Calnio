@@ -1,2 +1,0 @@
-# CalDAV worker package
-
