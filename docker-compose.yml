@@ -1,14 +1,11 @@
 services:
-  # Main server
-  calnio_backend:
+  backend:
     image: calnio:latest
     container_name: calnio_backend
     build: .
     environment:
       DB_URL_FULL: "${DATABASE_URL_PROD}"
       JWT_TOKEN_LOCATION: '["cookies"]'
-      CLOUDFLARED_TUNNEL_TOKEN: "placeholder_token"
-      CLOUDFLARED_TUNNEL_NAME: "placeholder_tunnel"
     volumes:
       - .:/calnio
       - calnio_venv:/calnio/.venv
@@ -16,27 +13,16 @@ services:
       - "8080:8080"
     expose:
       - "8080"
-    networks:
-      - calnio_network
-    logging:
-      driver: json-file
-      options:
-        tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
 
-  # Cache / Workers
-  redis:
-    image: redis:7
-    container_name: redis
-    ports:
-      - "6379:6379"
-    networks:
-      - calnio_network
-
-
-# Networks
-networks:
-  calnio_network:
-    driver: bridge
+  tunnel:
+    container_name: cloudflared-tunnel
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: >
+      tunnel --no-autoupdate run
+      --token ${CLOUDFLARED_TUNNEL_TOKEN}
+    depends_on:
+      - backend
 
 volumes:
   calnio_venv:

@@ -53,7 +53,7 @@ Calnio is a professional service for **bidirectional synchronization** of tasks 
                v
 +--------------+---------------+
 | Calnio backend (FastAPI)     |
-|  - listens on :8000          |
+|  - listens on :8080          |
 +--------------+---------------+
                |
                v
@@ -68,8 +68,9 @@ ACME / Let's Encrypt (HTTP-01, webroot)
 ```
 
 - **Cloudflare** proxies user traffic to your origin server (nginx)
-- **nginx** terminates TLS (Let's Encrypt certs) and proxies requests to the backend (`calnio:8000`)
+- **nginx** terminates TLS (Let's Encrypt certs) and proxies requests to the backend (`calnio:8080`)
 - **certbot** issues and renews certificates via HTTP-01 challenge served by nginx
+- **Note:** current local `docker-compose.yml` in this repository runs backend + redis only; nginx/certbot are not defined there.
 
 ---
 
@@ -119,7 +120,7 @@ ACME / Let's Encrypt (HTTP-01, webroot)
 
 ### Option 1: Docker Compose (Recommended)
 
-**Start core services (backend + nginx + certbot + redis):**
+**Start core services (backend + redis):**
 ```bash
 docker compose up -d --build
 ```
@@ -134,21 +135,13 @@ The Docker image installs Python dependencies using **uv** (not `pip`).
 
 If you change dependencies, make sure you update and commit `uv.lock`.
 
-**Start development profile with ngrok (optional):**
-```bash
-docker compose --profile dev up -d --build
-```
-
-This will start:
-- Calnio backend (internal port 8000, not exposed publicly)
-- nginx (ports 80/443)
-- certbot (auto-renew loop)
+This starts:
+- Calnio backend (exposed on `localhost:8080`)
 - redis
-- ngrok (only with `--profile dev`)
 
 **View logs:**
 ```bash
-docker compose logs -f nginx
+docker compose logs -f calnio_backend
 ```
 
 **Stop services:**
@@ -193,10 +186,10 @@ START_SERVER.bat --reset
  uv sync
  
  # Run migrations
- python manage.py upgrade
+ python manage.py upgrade  # if manage.py imports are fixed in your tree
  
  # Start the server
- uvicorn server.app.main:app --reload --port 8000
+ uvicorn server.main:app --reload --port 8080
  ```
 
 ## Recent changes (Docker + deps)
@@ -209,10 +202,10 @@ Over the last few commits, the container build/runtime flow was updated:
 
 ## Access the Application
 
-- **API (via nginx):** http://localhost/
-- **API Documentation:** http://localhost/schema
-- **Health Check (nginx):** http://localhost/health
-- **Backend direct (internal):** the container listens on port 8000 inside the Docker network
+- **Current docker-compose backend:** http://localhost:8080
+- **Current backend docs (FastAPI default):** http://localhost:8080/docs
+- **Current backend OpenAPI JSON:** http://localhost:8080/openapi.json
+- **Note:** this repository's current `docker-compose.yml` exposes only backend + redis (no nginx service).
 
 ## Development Utilities
 
@@ -224,7 +217,7 @@ cloc --include-lang=Python,BourneShell,Markdown,HTML,CSS,Text \
 
 **Run with HTTPS (local development):**
 ```bash
-uvicorn server.app.main:app --reload \
+uvicorn server.main:app --reload --port 8080 \
   --ssl-certfile localhost+2.pem \
   --ssl-keyfile localhost+2-key.pem
 ```
@@ -241,6 +234,9 @@ pytest tests/
 This project uses **Alembic** for database migrations, which allows you to safely add new columns, modify existing tables, and track database schema changes without losing data.
 
 ## Quick Start
+
+> Note: in the current tree, `manage.py` imports stale module paths and can fail before command execution.
+> If that happens, use the direct `alembic` commands in the next section.
 
 ### 1. Apply Current Migrations
 When you first set up the project or pull changes that include new migrations:
@@ -265,7 +261,7 @@ python manage.py upgrade
 
 ## Common Alembic Commands
 
-### Using manage.py (Recommended)
+### Using manage.py (if imports are fixed)
 
 ```bash
 # Check database connection
@@ -309,10 +305,10 @@ alembic downgrade <revision_id>
 
 ## Workflow for Model Changes
 
-1. **Modify your models** in `backend/app/models/`
-2. **Generate migration**: `python manage.py migrate "Description"`
+1. **Modify your models** in `server/db/models/`
+2. **Generate migration**: `python manage.py migrate "Description"` (or `alembic revision --autogenerate -m "Description"`)
 3. **Review the migration** in `alembic/versions/` directory
-4. **Apply migration**: `python manage.py upgrade`
+4. **Apply migration**: `python manage.py upgrade` (or `alembic upgrade head`)
 5. **Commit both model changes and migration files** to git
 
 ## Important Notes
@@ -338,7 +334,9 @@ python manage.py migrate "Merged changes"
 ### Reset Database (Development Only)
 **This will delete all data!**
 ```bash
-python server/app/db/recreate_tables.py
+# Prefer explicit Alembic rollback/reset commands for this tree.
+alembic downgrade base
+alembic upgrade head
 ```
 
 ### Manual Migration Creation
@@ -358,7 +356,7 @@ Calnio uses [ngrok](https://ngrok.com/) to expose the local backend to the inter
 
 - **Domain:** `calnio.ngrok.dev`
 - **Version:** ngrok v3
-- **Local Port:** 8000
+- **Local Port:** 8080
 - **Protocol:** HTTP/HTTPS
 
 ## Setup Instructions
@@ -390,7 +388,7 @@ The project includes a pre-configured `ngrok.yml` file. Start the tunnel with:
 ngrok start --all --config ngrok.yml
 ```
 
-Or use Docker Compose (recommended):
+Or use Docker Compose if your local compose file defines an `ngrok` service/profile:
 
 ```bash
 docker compose --profile dev up -d ngrok
@@ -398,10 +396,10 @@ docker compose --profile dev up -d ngrok
 
 ### 4. Access Your Backend
 
-Once ngrok is running, your local backend (port 8000) will be accessible at:
+Once ngrok is running, your local backend (port 8080) will be accessible at:
 
 - **Public URL:** `https://calnio.ngrok.dev`
-- **Local URL:** `http://localhost:8000`
+- **Local URL:** `http://localhost:8080`
 
 ### Configuration File
 
@@ -415,7 +413,7 @@ endpoints:
   - name: calnio
     url: calnio.ngrok.dev
     upstream:
-      url: calnio:8000
+      url: calnio:8080
 ```
 
 ## Monitoring
@@ -521,8 +519,8 @@ python manage.py upgrade head
 
 **5. Port Already in Use**
 ```bash
-# Find and kill process using port 8000
-lsof -ti:8000 | xargs kill -9
+# Find and kill process using port 8080
+lsof -ti:8080 | xargs kill -9
 ```
 
 ---
